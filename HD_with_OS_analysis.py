@@ -647,7 +647,7 @@ def main():
         out_noisedraws[1] = sig
         out_noisedraws[2] = sn
 
-        np.savetxt(args.result+'_NM.txt', out_noisedraws.transpose(), delimiter='\t')
+        np.savetxt(args.result+'_NM.txt', out_noisedraws, delimiter='\t')
     
     return 0
     
