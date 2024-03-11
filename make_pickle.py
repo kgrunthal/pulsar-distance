@@ -232,9 +232,11 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
                 tspan = 5.*365.25    # days
                 LT.add_rednoise(ltp,10**-14,2.2, tspan=tspan, components=3)
                 outstr += ' added CRN'
- 
-            elif s=='GWB':
+                
+                
                 ''' old method
+            elif s=='GWB':
+                
                 gamma = 13./3.
                 alpha = (3.-gamma)/2.
                 log10_A_gw = -14.5
@@ -247,19 +249,9 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
                 flow = 5e-10
                 fhigh = 6e-9
                 LT.add_gwb(ltp, gwAmp=10**log10_A_gw, alpha=alpha, flow=flow, fhigh=fhigh)
-                outstr += ' added GWB with log10A={}, alpha={:.2}'.format(log10_A_gw,alpha)
-                '''
-                
-                gamma = 13./3.
-                log10_A_gw = -14.5
-                
-                LT.createGWB(ltp, 10**log10_A_gw, gamma)
-                
-                outstr += ' added GWB with log10A={}, gama={:.2}'.format(log10_A_gw,gamma)
-                
+                outstr += ' added GWB with log10A={}, alpha={:.2}'.format(log10_A_gw,alpha)                
             
             elif s=='GWBbroken':
-                ''' old method
                 gamma_1 = 20./3.
                 alpha_1 = (3.-gamma_1)/2.
                 log10_A_gw_1 = -14.3
@@ -275,18 +267,11 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
                 fhigh_2 = 1e-5
 
                 LT.add_gwb(ltp, gwAmp=10**log10_A_gw_2, alpha=alpha_2, flow=flow_2, fhigh=fhigh_2)
-                '''
-                
-                gamma = 15./3.
-                log10_A_gw = -15.5
-                f0 = 10**(-7.9)
-                beta = 2/3
-                
-                LT.createGWB(ltp, 10**log10_A_gw, gamma, turnover=True,  beta = beta, f0 = f0)
-                
 
                 outstr += ' added broken GWB '
-
+                '''
+            
+            
             elif s=='CGW':
                 print(fgw)
                 for n in range(int(Ncgw)):
@@ -325,7 +310,27 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
             else:
                 print('unsupported signal type')
                 break
+        
+    for s in sgn:
+        if s=='GWB':
+            gamma = 13./3.
+            log10_A_gw = -14.5
             
+            LT.createGWB(psrs, 10**log10_A_gw, gamma)
+            
+            outstr += ' added GWB with log10A={}, gama={:.2}'.format(log10_A_gw,gamma)
+                
+            
+        elif s=='GWBbroken':
+            gamma = 15./3.
+            log10_A_gw = -15.5
+            f0 = 10**(-7.9)
+            beta = 2/3
+            
+            LT.createGWB(psrs, 10**log10_A_gw, gamma, turnover=True,  beta = beta, f0 = f0)
+            
+            outstr += ' added broken GWB '
+        
         print(outstr)
     
         ePSRs.append(Pulsar(ltp, dist=pdistances[ii]))
