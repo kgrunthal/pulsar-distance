@@ -278,10 +278,11 @@ def PTA_model(psrs, obtimes, ptamodel, mode=None):
             outstring += 'WN '
     
         elif m=='RN':
-            log10_A = parameter.Uniform(-15., -12.)
-            gamma = parameter.Uniform(1.5, 2.5)
-            pl = utils.powerlaw(log10_A=log10_A, gamma=gamma)
-            s.append(gp_signals.FourierBasisGP(spectrum=pl, Tspan=Tspan, components=10) )
+            #log10_A = parameter.Uniform(-15., -12.)
+            #gamma = parameter.Uniform(1.5, 2.5)
+            #pl = utils.powerlaw(log10_A=log10_A, gamma=gamma)
+            #s.append(gp_signals.FourierBasisGP(spectrum=pl, Tspan=Tspan, components=20) )
+            s.append(blocks.red_noise_block(components = 20))
             outstring += 'RN '
         
         elif m=='CRN_fs':
