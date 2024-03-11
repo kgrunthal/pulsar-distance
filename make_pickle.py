@@ -239,6 +239,7 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
                 log10_A_gw = -14.5
                 
                 LT.createGWB([ltp], 10**log10_A_gw, gamma)
+                outstr += ' added GWB with log10A={}, gamma={:.2}'.format(log10_A_gw,gamma)
                 ''' old method
             elif s=='GWB':
                 
