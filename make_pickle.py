@@ -233,7 +233,12 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
                 LT.add_rednoise(ltp,10**-14,2.2, tspan=tspan, components=3)
                 outstr += ' added CRN'
                 
+            
+            elif s=='GWB':
+                gamma = 13./3.
+                log10_A_gw = -14.5
                 
+                LT.createGWB([ltp], 10**log10_A_gw, gamma)
                 ''' old method
             elif s=='GWB':
                 
@@ -310,7 +315,7 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
             else:
                 print('unsupported signal type')
                 break
-        
+        '''
     for s in sgn:
         if s=='GWB':
             gamma = 13./3.
@@ -318,7 +323,7 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
             
             LT.createGWB(psrs, 10**log10_A_gw, gamma)
             
-            outstr += ' added GWB with log10A={}, gama={:.2}'.format(log10_A_gw,gamma)
+            outstr += ' added GWB with log10A={}, gamma={:.2}'.format(log10_A_gw,gamma)
                 
             
         elif s=='GWBbroken':
@@ -332,7 +337,7 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
             outstr += ' added broken GWB '
         
         print(outstr)
-    
+        '''
         ePSRs.append(Pulsar(ltp, dist=pdistances[ii]))
         
     return ePSRs
