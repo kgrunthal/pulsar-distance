@@ -336,9 +336,9 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
             LT.createGWB(psrs, 10**log10_A_gw, gamma, turnover=True,  beta = beta, f0 = f0)
             
             outstr += ' added broken GWB '
-        
-        print(outstr)
         '''
+        print(outstr)
+        
         ePSRs.append(Pulsar(ltp, dist=pdistances[ii]))
         
     return ePSRs
