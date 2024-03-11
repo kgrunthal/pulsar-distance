@@ -615,7 +615,7 @@ def main():
 
                 for jj, p in enumerate(pta.param_names):
                     setpars[p] = chain[idx][jj]
-                    setpars['gw_log10_rho'] = chain[idx][:-4]
+                    setpars['gw_log10_rho'] = chain[idx][-24:-4]
 
                 # compute OS stat for the drawn parameters
                 _, _, _, OS_temp, OS_sig_temp = ostat.compute_os(params=setpars, psd='spectrum', fgw=f)
