@@ -1,0 +1,2 @@
+WARNING: AstropyDeprecationWarning: The private astropy._erfa module has been made into its own package, pyerfa, which is a dependency of astropy and can be imported directly using "import erfa" [astropy._erfa]
+slurmstepd: error: *** JOB 12575601 ON hc209 CANCELLED AT 2024-02-05T11:26:55 ***

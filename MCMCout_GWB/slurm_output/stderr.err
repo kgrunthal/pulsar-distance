@@ -1,0 +1,24 @@
+WARNING: AstropyDeprecationWarning: The private astropy._erfa module has been made into its own package, pyerfa, which is a dependency of astropy and can be imported directly using "import erfa" [astropy._erfa]
+WARNING: Could not find pulsar distance for PSR J0234+0837. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J2054-0251. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J0724-7148. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J0114+7148. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J1024+5812. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J1144+0251. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J1724+1428. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J0354-4032. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J1514-1428. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J1304-4835. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J0024-2029. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J2304+2644. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J2214-5812. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J0934-2644. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J0444+4032. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J1354+3322. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J1934+4835. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J1844-3322. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J0814+2029. Setting value to 1 with 20% uncertainty.
+WARNING: Could not find pulsar distance for PSR J0604-0837. Setting value to 1 with 20% uncertainty.
+/u/kgrunthal/HD/HD_with_OS.py:333: FutureWarning: arrays to stack must be passed as a "sequence" type such as list or tuple. Support for non-sequence iterables such as generators is deprecated as of NumPy 1.16 and will raise an error in the future.
+/usr/local/lib/python3.9/dist-packages/enterprise/signals/parameter.py:62: RuntimeWarning: divide by zero encountered in log
+/usr/local/lib/python3.9/dist-packages/PTMCMCSampler/PTMCMCSampler.py:464: RuntimeWarning: All-NaN axis encountered
