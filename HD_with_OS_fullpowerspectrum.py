@@ -565,30 +565,13 @@ def main():
     ostat = opt_stat.OptimalStatistic(ePSRs, pta=pta, orf='hd')
     
     if args.noisemarginalised == False:
-        out = np.zeros((len(test_frequencies), 4))
-
         print('Calculating OS stats (maximum LH)')
-        for ii, f in enumerate(test_frequencies):
-            print(50*'-' + '\n', f, '\n' + 50*'-')        
+        xi, rho, sig, OS, OS_sig = ostat.compute_os(params=setpars, psd='powerspectrum')
+        xi_mean, xi_err, rho_avg, sig_avg = sort_and_bin(xi, rho, sig)
 
-            # free spectrum approach
-            xi, rho, sig, OS, OS_sig = ostat.compute_os(params=setpars, psd='powerspectrum', fgw=f)
-            xi_mean, xi_err, rho_avg, sig_avg = sort_and_bin(xi, rho, sig)
+        out = np.array([OS, OS_sig, args.zeta])
+        HD_output = np.array([xi_mean, xi_err, np.array(rho_avg), np.array(sig_avg)])
 
-            OS_output = np.array([f, OS, OS_sig, args.zeta])
-            HD_output = np.array([xi_mean, xi_err, np.array(rho_avg), np.array(sig_avg)])
-
-            plt.errorbar(xi_mean*180/np.pi, rho_avg, xerr=xi_err*180/np.pi, marker='o', ls='', color='k', capsize=4)
-
-            eta = np.linspace(0.01,180,100)
-            HD = get_HD_curve(eta+1)
-            plt.plot(eta, OS*HD, ls='--', label='Hellings-Downs', color='b')
-
-            plt.savefig('{}/HDcurve_{}.png'.format(args.outdir, '{:.2e}'.format(f)))
-            plt.clf()
-        
-            #np.savetxt('./output/HD_output_WNRN_{:.2e}.txt'.format(f), HD_output.transpose(), delimiter='\t')
-            out[ii] = OS_output
         out = out.transpose() 
         
     else:

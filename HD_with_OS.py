@@ -337,7 +337,7 @@ def PTA_model(psrs, obtimes, ptamodel, mode=None):
 
 
 
-def run_sampler(pta, outdir = ''):
+def run_sampler(pta, outdir = '', resume=False):
 
     N = int(1e7)                                    # number of samples
     x0 = np.hstack(p.sample() for p in pta.params)  # initial parameter vector
@@ -348,7 +348,7 @@ def run_sampler(pta, outdir = ''):
     cov = np.diag(np.ones(ndim) * 0.01**2)
     
     #initialize the sampler object
-    sampler = ptmcmc(ndim, pta.get_lnlikelihood, pta.get_lnprior, cov, outDir=outdir, resume=False)
+    sampler = ptmcmc(ndim, pta.get_lnlikelihood, pta.get_lnprior, cov, outDir=outdir, resume=resume)
     
     # additional jumps
     jp = sp.JumpProposal(pta)
@@ -481,7 +481,7 @@ def get_HD_curve(zeta):
 
 
 
-def do_analysis(PSRs, obstimes, signal, ptamodel, Ncgw = 1, fgw=[5e-8], mc=[10**9], zeta=1., outdir = '', cornerplot=False, Filter=True, psrTerm = True):
+def do_analysis(PSRs, obstimes, signal, ptamodel, Ncgw = 1, fgw=[5e-8], mc=[10**9], zeta=1., outdir = '', cornerplot=False, Filter=True, psrTerm = True, resume=False):
     #distances = np.random.uniform(0.8,1.2, len(PSRs))
     distances = np.ones(len(PSRs)) * 1.
     
@@ -495,7 +495,7 @@ def do_analysis(PSRs, obstimes, signal, ptamodel, Ncgw = 1, fgw=[5e-8], mc=[10**
 
     pta = PTA_model(ePSRs, obstimes, ptamodel)
 
-    run_sampler(pta, '{}/'.format(outdir))
+    run_sampler(pta, '{}/'.format(outdir), resume = resume)
     chain = produce_output('{}/'.format(outdir), cornerplot=cornerplot)
         
     with open('{}/maxlike.json'.format(outdir), 'r') as f:
@@ -531,6 +531,7 @@ def set_up_global_options():
     parser.add_argument('--noisemarginalised', action="store_true", default=False, help='draw samples from MCMC to get distribution of OS values')
     parser.add_argument('--psrpickle', type=str, default=None, help='psrpickle')
     parser.add_argument('--OStype', type=str, default='spectrum', help='type for OS')
+    parser.add_argument('--resume', action="store_true", default=False, help='Resume MCMC run')
 
     return parser.parse_args()
 
@@ -560,7 +561,7 @@ def main():
             PSRs.append(psr)
 
 
-    ePSRs, pta, setpars, chain = do_analysis(PSRs, obstimes, args.signal, args.ptamodel, fgw=np.array(args.fgw)*1e-9, mc=10**np.array(args.lmc), zeta=args.zeta, outdir=args.outdir, Ncgw=args.ncgw,  cornerplot=args.cornerplot, psrTerm=args.psrTerm, Filter=False)
+    ePSRs, pta, setpars, chain = do_analysis(PSRs, obstimes, args.signal, args.ptamodel, fgw=np.array(args.fgw)*1e-9, mc=10**np.array(args.lmc), zeta=args.zeta, outdir=args.outdir, Ncgw=args.ncgw,  cornerplot=args.cornerplot, psrTerm=args.psrTerm, Filter=False, resume = args.resume)
 
 
     print('Initiating OS stats')
