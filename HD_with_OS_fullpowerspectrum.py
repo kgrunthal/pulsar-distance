@@ -576,43 +576,34 @@ def main():
         
     else:
         N=args.N
-        out = np.zeros((len(test_frequencies)*3, N))
+        out = np.zeros((3, N))
         
         print('Calculating OS stats (noisemarginalised)')
         print('...Iterating over {} chain draws'.format(N))
+        
+        opt_temp = []
+        sig_temp = []
+        for n in range(N):
+            idx = np.random.randint(0, chain.shape[0])
+                
+            print('...on sample {}'.format(n), end='\r', flush=True)
+                
+            for jj, p in enumerate(pta.param_names):
+                setpars[p] = chain[idx][jj]
+                setpars['gw_log10_rho'] = chain[idx][:-4]
+                
+            # compute OS stat for the drawn parameters
+            _, _, _, OS_temp, OS_sig_temp = ostat.compute_os(params=setpars, psd='powerspectrum')
+                
+            opt_temp.append(OS_temp)
+            sig_temp.append(OS_sig_temp)
 
-        for ii, f in enumerate(test_frequencies):
-            print(50*'-' + '\n', f)
             
+        out[0] = np.array(opt_temp)
+        out[1] = np.array(sig_temp)
+        out[2] = np.array(opt_temp)/np.array(sig_temp)
             
-            opt_temp = []
-            sig_temp = []
-            for n in range(N):
-                idx = np.random.randint(0, chain.shape[0])
-                
-                print('...on sample {}'.format(n), end='\r', flush=True)
-                
-                for jj, p in enumerate(pta.param_names):
-                    setpars[p] = chain[idx][jj]
-                    setpars['gw_log10_rho'] = chain[idx][:-4]
-                
-                # compute OS stat for the drawn parameters
-                _, _, _, OS_temp, OS_sig_temp = ostat.compute_os(params=setpars, psd='spectrum', fgw=f)
-                
-                opt_temp.append(OS_temp)
-                sig_temp.append(OS_sig_temp)
-            
-
-            opt = np.array(opt_temp)
-            sig = np.array(sig_temp)
-            sn = opt/sig
-            
-            
-            out[int(3*ii)] = opt
-            out[int(3*ii+1)] = sig
-            out[int(3*ii+2)] = sn
-            
-            print(50*'-' + '\n')
+        print(50*'-' + '\n')
 
 
     np.savetxt(args.result, out.transpose(), delimiter='\t')
