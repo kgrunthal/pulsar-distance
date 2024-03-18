@@ -474,7 +474,7 @@ def do_analysis(PSRs, obstimes, signal, ptamodel, Ncgw = 1, fgw=[5e-8], mc=[10**
     with open('{}/maxlike.json'.format(outdir), 'r') as f:
         ml_params = json.load(f)
     f.close()
-        
+    print(ml_params)    
         
     setpars = (pta.map_params(list(ml_params.values())))
     setpars.update(ml_params)
@@ -532,7 +532,7 @@ def main():
             PSRs.append(psr)
 
     ePSRs, pta, setpars, chain = do_analysis(PSRs, obstimes, args.signal, args.ptamodel, fgw=np.array(args.fgw)*1e-9, mc=10**np.array(args.lmc), zeta=args.zeta, outdir=args.outdir, Ncgw=args.ncgw,  cornerplot=args.cornerplot, psrTerm=args.psrTerm, Filter=False)
-
+    print(setpars)
     print('Initiating OS stats')
     ostat = opt_stat.OptimalStatistic(ePSRs, pta=pta, orf='hd')
    
@@ -565,7 +565,6 @@ def main():
         
             #np.savetxt('./output/HD_output_WNRN_{:.2e}.txt'.format(f), HD_output.transpose(), delimiter='\t')
             out_maxLH[ii] = OS_output
-
         np.savetxt(args.result + '.txt', out_maxLH, delimiter='\t')
 
         print()
@@ -611,11 +610,9 @@ def main():
         print('OS type: powerlaw')
         print(50*'-' + '\n' + 50*'-')
         print('Calculating OS stats (maximum LH)')
-
         xi, rho, sig, OS, OS_sig = ostat.compute_os(params=setpars, psd='powerlaw')
         out_maxLH = np.array([OS, OS_sig, OS/OS_sig])
         print(out_maxLH)
-
 
         print(50*'-' + '\n' + 50*'-')
         print('Calculating OS stats (noise draws)')

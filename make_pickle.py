@@ -41,6 +41,22 @@ KPC2S = sc.parsec / sc.c * 1e3
 MPC2S = sc.parsec / sc.c * 1e6
 
 
+
+def S(logA, gamma, f):
+    A = 10**logA
+    fc = 1/(365.25*86000)
+    A_c = (A**2)/(12*np.pi**2.)
+    return A_c*((f/fc)**(-1*gamma))*(fc**(-3.))
+
+def singlebin(logA, gamma, f_window, f):
+    spectrum = 1e-50*np.ones(len(f))
+    window = [ii for ii in range(len(f)) if f[ii] > f_window[0] and f[ii] < f_window[1]]
+    spectrum[window] = S(logA, gamma, f[window])
+    return spectrum
+
+
+
+
 def ADD_CGW(
     psr,
     gwtheta,
@@ -235,7 +251,7 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
                 
             
             elif s=='GWB':
-                ''' old method
+                # old method
                 gamma = 13./3.
                 alpha = (3.-gamma)/2.
                 log10_A_gw = -14.5
@@ -246,22 +262,22 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
 
                 # first bin
                 flow = 5e-10
-                fhigh = 6e-9
+                fhigh = 1e-5
                 LT.add_gwb(ltp, gwAmp=10**log10_A_gw, alpha=alpha, flow=flow, fhigh=fhigh)
                 outstr += ' added GWB with log10A={}, alpha={:.2}'.format(log10_A_gw,alpha)  
                 '''
                 
                 gamma = 13./3.
-                log10_A_gw = -15.
+                log10_A_gw = -14.8
                 
                 LT.createGWB([ltp], 10**log10_A_gw, gamma)
                 outstr += ' added GWB with log10A={}, gamma={:.2}'.format(log10_A_gw,gamma)
-                
+                '''
                 
             
             elif s=='GWBbroken':
-                ''' old method
-                gamma_1 = 20./3.
+                # old method
+                gamma_1 = 16./3.
                 alpha_1 = (3.-gamma_1)/2.
                 log10_A_gw_1 = -14.3
                 flow_1 = 1e-9
@@ -269,9 +285,9 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
                 
                 LT.add_gwb(ltp, gwAmp=10**log10_A_gw_1, alpha=alpha_1, flow=flow_1, fhigh=fhigh_1)
                 
-                gamma_2 = 13./3.
+                gamma_2 = 10./3.
                 alpha_2 = (3.-gamma_1)/2.
-                log10_A_gw_2 = -14.6
+                log10_A_gw_2 = -14.3
                 flow_2 = 9.6*1e-9
                 fhigh_2 = 1e-5
 
@@ -280,15 +296,28 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
                 outstr += ' added broken GWB '
                 '''
                 
-                gamma = 15./3.
-                log10_A_gw = -15.5
+                gamma = 13./3.
+                log10_A_gw = -14.5
                 f0 = 10**(-7.9)
-                beta = 2/3
+                beta = 5/3
                 
-                LT.createGWB(psrs, 10**log10_A_gw, gamma, turnover=True,  beta = beta, f0 = f0)
+                LT.createGWB([ltp], 10**log10_A_gw, gamma, turnover=True,  beta = beta, f0 = f0)
                 
                 outstr += ' added broken GWB '
-            
+                '''
+
+            elif s=='GWBsinglebin':
+                gamma = 13./3.
+                log10_A_gw = -14.5
+                window = [3./(3625*86400), 4./(3625*86400)]
+                f_test = np.linspace(1/(3625*86400), 20/(3625*86400), 100) 
+                S = singlebin(log10_A_gw, gamma, window, f_test)
+
+                f_test = f_test.astype('float128')
+                S = S.astype('float128')
+                customSpec = np.array([f_test, S]).transpose()
+                LT.createGWB([ltp], 10**log10_A_gw, gamma, userSpec = customSpec)
+
             
             elif s=='CGW':
                 print(fgw)

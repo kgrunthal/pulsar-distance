@@ -571,7 +571,8 @@ def main():
 
         out = np.array([OS, OS_sig, args.zeta])
         HD_output = np.array([xi_mean, xi_err, np.array(rho_avg), np.array(sig_avg)])
-
+        print(out)
+        return
         out = out.transpose() 
         
     else:

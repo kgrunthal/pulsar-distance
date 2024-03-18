@@ -8,7 +8,7 @@ Created on Mon Mar 11 14:25:56 2024
 
 import pickle
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 
 F0 = {'J0024-2029': 238.6718614640,
@@ -34,16 +34,23 @@ F0 = {'J0024-2029': 238.6718614640,
       }
 
 
-basepath = '/u/kgrunthal/HD/MCMCout_RNCGW9.0_zeta1.0'
+#basepath = '/u/kgrunthal/HD/MCMCout_RNCGW9.0_zeta1.0/'
+basepath = '/u/kgrunthal/HD/MCMCout_GWB_test/'
 psrs = pickle.load(open(basepath + 'psrs.pkl', 'rb'))
 
 
 for p in psrs:
+    print(p.name)
     fig, ax1 = plt.subplots()
-    ax2 = ax1.twinx
+    ax2 = ax1.twinx()
     ax1.errorbar(p.toas, p.residuals, yerr=p.toaerrs,capsize=2, ls='', fmt='kx')
-    ax2.errorbar(p.toas, p.residuals, yerr=p.toaerrs,capsize=2, ls='', fmt='')
-
-    ax2.set_yticks(ax1.get_xticks(), labels=ax1.get_xticks()*F0[p.name])
-    plt.savefig(basepath + p.name + '.png')
+    ax2.plot(p.toas, p.residuals, ls='')
+    #print(ax1.get_yticks())
+    ax2.set_yticks(ax1.get_yticks(), labels= [np.round(x, 2) for x in ax1.get_yticks()*F0[p.name]*1e3] )
+    
+    plt.title(p.name)
+    ax1.set_xlabel('MJD')
+    ax1.set_ylabel('residual / s')
+    ax2.set_ylabel('$\Delta\Phi$ / 1e-3')
+    plt.savefig(basepath + p.name + '.png', bbox_inches='tight')
     
