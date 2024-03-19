@@ -41,6 +41,21 @@ KPC2S = sc.parsec / sc.c * 1e3
 MPC2S = sc.parsec / sc.c * 1e6
 
 
+
+def S(A, gamma, f):
+    fc = 1/(365.25*86000)
+    A_c = (A**2)/(12*np.pi**2.)
+    return A_c*((f/fc)**(-1*gamma))*(fc**(-3.))
+
+def singlebin(amp, gamma, f_window, f):
+    spectrum = 1e-50*np.ones(len(f))
+    window = [ii for ii in range(len(f)) if f[ii] > f_window[0] and f[ii] < f_window[1]]
+    spectrum[window] = S(amp, gamma, f[window])
+    return spectrum
+
+
+
+
 def ADD_CGW(
     psr,
     gwtheta,
@@ -233,63 +248,6 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
                 LT.add_rednoise(ltp,10**-14,2.2, tspan=tspan, components=3)
                 outstr += ' added CRN'
                 
-            
-            elif s=='GWB':
-                ''' old method
-                gamma = 13./3.
-                alpha = (3.-gamma)/2.
-                log10_A_gw = -14.5
-                
-                # single bin
-                #flow = 7e-9
-                #fhigh = 1.1e-8
-
-                # first bin
-                flow = 5e-10
-                fhigh = 6e-9
-                LT.add_gwb(ltp, gwAmp=10**log10_A_gw, alpha=alpha, flow=flow, fhigh=fhigh)
-                outstr += ' added GWB with log10A={}, alpha={:.2}'.format(log10_A_gw,alpha)  
-                '''
-                
-                gamma = 13./3.
-                log10_A_gw = -15.
-                
-                LT.createGWB([ltp], 10**log10_A_gw, gamma)
-                outstr += ' added GWB with log10A={}, gamma={:.2}'.format(log10_A_gw,gamma)
-                
-                
-            
-            elif s=='GWBbroken':
-                ''' old method
-                gamma_1 = 20./3.
-                alpha_1 = (3.-gamma_1)/2.
-                log10_A_gw_1 = -14.3
-                flow_1 = 1e-9
-                fhigh_1 = 9.6*1e-9
-                
-                LT.add_gwb(ltp, gwAmp=10**log10_A_gw_1, alpha=alpha_1, flow=flow_1, fhigh=fhigh_1)
-                
-                gamma_2 = 13./3.
-                alpha_2 = (3.-gamma_1)/2.
-                log10_A_gw_2 = -14.6
-                flow_2 = 9.6*1e-9
-                fhigh_2 = 1e-5
-
-                LT.add_gwb(ltp, gwAmp=10**log10_A_gw_2, alpha=alpha_2, flow=flow_2, fhigh=fhigh_2)
-
-                outstr += ' added broken GWB '
-                '''
-                
-                gamma = 15./3.
-                log10_A_gw = -15.5
-                f0 = 10**(-7.9)
-                beta = 2/3
-                
-                LT.createGWB(psrs, 10**log10_A_gw, gamma, turnover=True,  beta = beta, f0 = f0)
-                
-                outstr += ' added broken GWB '
-            
-            
             elif s=='CGW':
                 print(fgw)
                 for n in range(int(Ncgw)):
@@ -301,37 +259,88 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
                             zeta = zeta,
                             psrTerm=psrTerm, phase_approx=phase_approx, evolve=evolve)
                     outstr += ' added CGW {}'.format(n+1)
-                
-                if Filter == True:
-                    if f0 - 5/(3652*24*3600) > 1/(3652*24*3600):
-                        low = f0 - 5/(3652*24*3600)
-                    else:
-                        low = 1/(3652*24*3600)
-
-
-                    if f0 + 5/(3652*24*3600) < 1/(2*14*24*3600):
-                        high = f0 + 5/(3652*34*3600)
-                    else:
-                        high = 1/(1.5*14*24*3600)
-
-                    sos = signal.butter(20, [low, high], btype='bandpass', output='sos', fs = 1/(14*24*3600), analog=False)
-                    filtered_res = signal.sosfiltfilt(sos, ltp.residuals())
-
-                    if f0 == 16/(3652*24*3600):
-                        ltp.stoas[:] = stoas_temp + filtered_res/86400
-                        
-                        plt.plot(ltp.toas(), filtered_res)
-                        plt.plot(ltp.toas(), ltp.residuals())
-                        plt.savefig('./{}.png'.format(ltp.name))
-                        plt.clf()
             
             else:
                 print('unsupported signal type')
                 break
-        ltp.fit()
+            
+            ''' old methods
+            elif s=='GWB':
+                # old method
+                gamma = 13./3.
+                alpha = (3.-gamma)/2.
+                log10_A_gw = -14.5
+                
+                # single bin
+                #flow = 7e-9
+                #fhigh = 1.1e-8
+
+                # first bin
+                flow = 5e-10
+                fhigh = 1e-5
+                LT.add_gwb(ltp, gwAmp=10**log10_A_gw, alpha=alpha, flow=flow, fhigh=fhigh)
+                outstr += ' added GWB with log10A={}, alpha={:.2}'.format(log10_A_gw,alpha)  
+            
+            elif s=='GWBbroken':
+                # old method
+                gamma_1 = 16./3.
+                alpha_1 = (3.-gamma_1)/2.
+                log10_A_gw_1 = -14.3
+                flow_1 = 1e-9
+                fhigh_1 = 9.6*1e-9
+                
+                LT.add_gwb(ltp, gwAmp=10**log10_A_gw_1, alpha=alpha_1, flow=flow_1, fhigh=fhigh_1)
+                
+                gamma_2 = 10./3.
+                alpha_2 = (3.-gamma_1)/2.
+                log10_A_gw_2 = -14.3
+                flow_2 = 9.6*1e-9
+                fhigh_2 = 1e-5
+
+                LT.add_gwb(ltp, gwAmp=10**log10_A_gw_2, alpha=alpha_2, flow=flow_2, fhigh=fhigh_2)
+
+                outstr += ' added broken GWB '
+            '''
         print(outstr)
+    
+    cstring = ''
+    for s in sgn:
+        if s=='GWB':
+            amp = 2e-15
+            gamma = 13./3.
+                
+            LT.createGWB(psrs, amp, gamma)
+            cstring += ' added GWB with log10A={}, gamma={:.2}'.format(np.log10(amp),gamma)
+
+
+        elif s=='GWBbroken':
+            amp = 2e-15
+            gamma = 13./3.
+            beta = 5/3
+            f0 = 10**(-7.9)
+                
+            LT.createGWB(psrs, amp, gamma, turnover=True,  beta = beta, f0 = f0)
+            cstring += ' added broken GWB '
+
+
+        elif s=='GWBsinglebin':
+            amp = 2e-15
+            gamma = 13./3.
+            window = [3./(3625*86400), 4./(3625*86400)]
+            
+            f_test = np.linspace(1/(3625*86400), 20/(3625*86400), 100) 
+            S = singlebin(amp, gamma, window, f_test)
+            f_test = f_test.astype('float128')
+            S = S.astype('float128')
+                
+            customSpec = np.array([f_test, S]).transpose()
+            LT.createGWB(psrs, amp, gamma, userSpec = customSpec)
+            cstring += ' added single bin GWB '
+            
+    print(cstring, flush=True)   
         
-        ePSRs.append(Pulsar(ltp, dist=pdistances[ii]))
+    for p in psrs:
+        ePSRs.append(Pulsar(p, dist=pdistances[ii]))
         
     return ePSRs
 
