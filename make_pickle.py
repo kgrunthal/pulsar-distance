@@ -260,9 +260,6 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
                             psrTerm=psrTerm, phase_approx=phase_approx, evolve=evolve)
                     outstr += ' added CGW {}'.format(n+1)
             
-            else:
-                print('unsupported signal type')
-                break
             
             ''' old methods
             elif s=='GWB':
