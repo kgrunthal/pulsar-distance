@@ -1,0 +1,13 @@
+WARNING: AstropyDeprecationWarning: The private astropy._erfa module has been made into its own package, pyerfa, which is a dependency of astropy and can be imported directly using "import erfa" [astropy._erfa]
+/u/kgrunthal/HD/HD_with_OS.py:343: FutureWarning: arrays to stack must be passed as a "sequence" type such as list or tuple. Support for non-sequence iterables such as generators is deprecated as of NumPy 1.16 and will raise an error in the future.
+/usr/local/lib/python3.9/dist-packages/enterprise/signals/parameter.py:62: RuntimeWarning: divide by zero encountered in log
+/usr/local/lib/python3.9/dist-packages/PTMCMCSampler/PTMCMCSampler.py:464: RuntimeWarning: All-NaN axis encountered
+Traceback (most recent call last):
+  File "/u/kgrunthal/HD/HD_with_OS.py", line 688, in <module>
+    main()
+  File "/u/kgrunthal/HD/HD_with_OS.py", line 600, in main
+    np.savetxt(args.result + '.txt', out_maxLH, delimiter='\t')
+  File "<__array_function__ internals>", line 180, in savetxt
+  File "/usr/local/lib/python3.9/dist-packages/numpy/lib/npyio.py", line 1383, in savetxt
+    open(fname, 'wt').close()
+FileNotFoundError: [Errno 2] No such file or directory: '/u/kgrunthal/HD/out//OS_spectrum_RNCGW9.5_pulsar/.txt'
