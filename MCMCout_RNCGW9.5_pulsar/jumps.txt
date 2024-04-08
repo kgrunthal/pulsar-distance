@@ -1,6 +1,6 @@
-covarianceJumpProposalAM 0.17
+covarianceJumpProposalSCAM 0.28
 draw_from_prior 0.034
 draw_from_gw_prior 0.069
 DEJump 0.38
 draw_from_red_noise_prior 0.069
-covarianceJumpProposalSCAM 0.28
+covarianceJumpProposalAM 0.17

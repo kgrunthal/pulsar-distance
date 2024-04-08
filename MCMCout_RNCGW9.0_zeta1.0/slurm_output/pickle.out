@@ -1,45 +1,45 @@
 Optional mpi4py package is not installed.  MPI support is not available.
 psrTerm= True
 [2.23e-08]
-J0234+0837 added WN added RN (logA = -12.805959444199372, gamma=2.005257282057996) added CGW 1
+J0234+0837 added WN added RN (logA = -12.929983071467674, gamma=1.4939011222709) added CGW 1
 [2.23e-08]
-J2054-0251 added WN added RN (logA = -12.960824958974847, gamma=2.179032975241761) added CGW 1
+J2054-0251 added WN added RN (logA = -11.817456384167388, gamma=2.959387085339641) added CGW 1
 [2.23e-08]
-J0724-7148 added WN added RN (logA = -12.412517317412268, gamma=1.7132695041091124) added CGW 1
+J0724-7148 added WN added RN (logA = -12.352636816079878, gamma=1.0542246653494216) added CGW 1
 [2.23e-08]
-J0114+7148 added WN added RN (logA = -13.645681493278593, gamma=2.1783323742413025) added CGW 1
+J0114+7148 added WN added RN (logA = -11.627339185357425, gamma=2.333778379247721) added CGW 1
 [2.23e-08]
-J1024+5812 added WN added RN (logA = -12.205077134184602, gamma=1.9109084643720218) added CGW 1
+J1024+5812 added WN added RN (logA = -13.616552524871265, gamma=1.5966421659243297) added CGW 1
 [2.23e-08]
-J1144+0251 added WN added RN (logA = -12.84891475646775, gamma=2.109848542876453) added CGW 1
+J1144+0251 added WN added RN (logA = -12.96129412897708, gamma=1.9098453341037325) added CGW 1
 [2.23e-08]
-J1724+1428 added WN added RN (logA = -13.684049524154974, gamma=1.8597221072941248) added CGW 1
+J1724+1428 added WN added RN (logA = -13.279588376261522, gamma=2.58791001889057) added CGW 1
 [2.23e-08]
-J0354-4032 added WN added RN (logA = -13.883964996553471, gamma=1.8235262768447593) added CGW 1
+J0354-4032 added WN added RN (logA = -13.980355048978902, gamma=1.4180632126074981) added CGW 1
 [2.23e-08]
-J1514-1428 added WN added RN (logA = -13.16401190146573, gamma=1.719829774413101) added CGW 1
+J1514-1428 added WN added RN (logA = -12.199027377921567, gamma=1.0643207132013301) added CGW 1
 [2.23e-08]
-J1304-4835 added WN added RN (logA = -13.789834224274925, gamma=1.7788400943912253) added CGW 1
+J1304-4835 added WN added RN (logA = -13.861671382338475, gamma=2.461072045744374) added CGW 1
 [2.23e-08]
-J0024-2029 added WN added RN (logA = -12.828260529879117, gamma=1.9417904570709714) added CGW 1
+J0024-2029 added WN added RN (logA = -13.499485884830765, gamma=1.938907617498205) added CGW 1
 [2.23e-08]
-J2304+2644 added WN added RN (logA = -13.797190777169574, gamma=1.8970401850859955) added CGW 1
+J2304+2644 added WN added RN (logA = -12.159954218014843, gamma=1.9393358172747934) added CGW 1
 [2.23e-08]
-J2214-5812 added WN added RN (logA = -12.839949860274002, gamma=1.8933745370167097) added CGW 1
+J2214-5812 added WN added RN (logA = -12.529941258158706, gamma=2.9764586539983577) added CGW 1
 [2.23e-08]
-J0934-2644 added WN added RN (logA = -12.163513964728079, gamma=1.8121074737971772) added CGW 1
+J0934-2644 added WN added RN (logA = -11.868103303354124, gamma=2.1131823198512727) added CGW 1
 [2.23e-08]
-J0444+4032 added WN added RN (logA = -12.641897961721995, gamma=1.9644167011927287) added CGW 1
+J0444+4032 added WN added RN (logA = -11.734877973473626, gamma=1.7058357752187885) added CGW 1
 [2.23e-08]
-J1354+3322 added WN added RN (logA = -12.507931553651748, gamma=1.9608993270187662) added CGW 1
+J1354+3322 added WN added RN (logA = -11.913340695351268, gamma=2.645138500700371) added CGW 1
 [2.23e-08]
-J1934+4835 added WN added RN (logA = -13.306017373512393, gamma=1.9861497511802158) added CGW 1
+J1934+4835 added WN added RN (logA = -12.286372298808597, gamma=2.339021903731902) added CGW 1
 [2.23e-08]
-J1844-3322 added WN added RN (logA = -13.67408806141359, gamma=2.1441195752429034) added CGW 1
+J1844-3322 added WN added RN (logA = -11.985855509574126, gamma=2.9394684488757794) added CGW 1
 [2.23e-08]
-J0814+2029 added WN added RN (logA = -12.358418463629349, gamma=1.8955932982682049) added CGW 1
+J0814+2029 added WN added RN (logA = -12.280702365582885, gamma=2.3685041655728343) added CGW 1
 [2.23e-08]
-J0604-0837 added WN added RN (logA = -13.69227333540362, gamma=1.7689147785040993) added CGW 1
+J0604-0837 added WN added RN (logA = -11.515828653200188, gamma=2.9011257687722933) added CGW 1
 
 [tempo2Util.C:396] Warning: [PAR2] Have not set a DM epoch. The period epoch will be used instead. /u/kgrunthal/HD/par/isotropic/J0234+0837.par
 [tempo2Util.C:396] Warning: [TIM1] Please place MODE flags in the parameter file 

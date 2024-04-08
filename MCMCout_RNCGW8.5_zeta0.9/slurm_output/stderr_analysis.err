@@ -1,1 +1,17 @@
 WARNING: AstropyDeprecationWarning: The private astropy._erfa module has been made into its own package, pyerfa, which is a dependency of astropy and can be imported directly using "import erfa" [astropy._erfa]
+Traceback (most recent call last):
+  File "/u/kgrunthal/HD/HD_with_OS_analysis.py", line 654, in <module>
+    main()
+  File "/u/kgrunthal/HD/HD_with_OS_analysis.py", line 534, in main
+    ePSRs, pta, setpars, chain = do_analysis(PSRs, obstimes, args.signal, args.ptamodel, fgw=np.array(args.fgw)*1e-9, mc=10**np.array(args.lmc), zeta=args.zeta, outdir=args.outdir, Ncgw=args.ncgw,  cornerplot=args.cornerplot, psrTerm=args.psrTerm, Filter=False)
+  File "/u/kgrunthal/HD/HD_with_OS_analysis.py", line 472, in do_analysis
+    chain = produce_output('{}/'.format(outdir), cornerplot=cornerplot)
+  File "/u/kgrunthal/HD/HD_with_OS_analysis.py", line 358, in produce_output
+    chain = np.loadtxt(outdir + chainname + '.txt')
+  File "/usr/local/lib/python3.9/dist-packages/numpy/lib/npyio.py", line 1042, in loadtxt
+    fh = np.lib._datasource.open(fname, 'rt', encoding=encoding)
+  File "/usr/local/lib/python3.9/dist-packages/numpy/lib/_datasource.py", line 193, in open
+    return ds.open(path, mode, encoding=encoding, newline=newline)
+  File "/usr/local/lib/python3.9/dist-packages/numpy/lib/_datasource.py", line 532, in open
+    raise FileNotFoundError(f"{path} not found.")
+FileNotFoundError: /u/kgrunthal/HD/MCMCout_RNCGW8.5_zeta0.9//chain_1.txt not found.
