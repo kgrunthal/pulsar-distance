@@ -1,19 +1,19 @@
 #!/bin/bash
 
-lmc=9.0
-zeta=1.0
+lmc=9.5
+zeta=0.8
 term=earth
 
 PAR_DIR=/u/kgrunthal/HD/par/isotropic/
-#MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_RNCGW$lmc\_zeta$zeta\/
-MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_RNCGW$lmc\_$term\/
+MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_RNCGW$lmc\_zeta$zeta\/
+#MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_RNCGW$lmc\_$term\/
 
 #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_GWB_test/
 
 RESULT_DIR=/u/kgrunthal/HD/out/
 
-#OUTFILE=OS_spectrum_RNCGW$lmc\_zeta$zeta
-OUTFILE=OS_spectrum_RNCGW$lmc\_$term
+OUTFILE=OS_spectrum_RNCGW$lmc\_zeta$zeta
+#OUTFILE=OS_spectrum_RNCGW$lmc\_$term
 
 #NAME=RNCGW$lmc\_zeta$zeta
 NAME=RNCGW$lmc\_$term

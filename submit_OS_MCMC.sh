@@ -1,16 +1,37 @@
 #!/bin/bash
 
-lmc=8.5
-zeta=1.0
-term=earth
-
 PAR_DIR=/u/kgrunthal/HD/par/isotropic/
-#MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_RNCGW$lmc\_zeta$zeta\/
-MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_RNCGW$lmc\_$term\/
-
 RESULT_DIR=/u/kgrunthal/HD/out/
 
-#NAME=RNCGW$lmc\_zeta$zeta
+
+# different zeta
+
+for lmc in 8.5 9.0 9.5 ; do
+    for zeta in 0.8 0.9 1.0 ; do
+        MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_RNCGW$lmc\_zeta$zeta\_2/
+        #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_RNCGW$lmc\_earth/
+        OUTFILE=OS_spectrum_RNCGW$lmc\_zeta$zeta\_2
+        NAME=$lmc\_$zeta\_spec
+
+        if [ ! -d "$MCMC_OUTDIR/" ]; then
+            mkdir $MCMC_OUTDIR
+        fi
+
+        if [ ! -d "$MCMC_OUTDIR/slurm_output" ]; then
+            mkdir $MCMC_OUTDIR/slurm_output
+        fi
+ 
+        sbatch -p long.q --time=17:00:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/spectrum.out --error=$MCMC_OUTDIR/slurm_output/spectrum.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /u/kgrunthal/EPTA_ENTERPRISE.sif python3 /u/kgrunthal/HD/HD_with_OS.py --par $PAR_DIR --outdir $MCMC_OUTDIR/ --result $RESULT_DIR/$OUTFILE --psrpickle $MCMC_OUTDIR/psrs.pkl --ptamodel TM,WN,RN,CRN_fs --OStype spectrum --N 1000"
+
+    done
+done
+
+
+: <<'END_COMMENT'
+
+term=earth
+MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_RNCGW$lmc\_$term\/
+OUTFILE=OS_spectrum_RNCGW$lmc\_$term
 NAME=RNCGW$lmc\_$term\/
 
 if [ ! -d "$MCMC_OUTDIR/" ]; then
@@ -22,15 +43,13 @@ if [ ! -d "$MCMC_OUTDIR/slurm_output" ]; then
 fi
 
 
-#OUTFILE=OS_spectrum_RNCGW$lmc\_zeta$zeta
-OUTFILE=OS_spectrum_RNCGW$lmc\_$term\
 
 sbatch -p long.q --time=16:00:00 --mem=10GB --output=$MCMC_OUTDIR/slurm_output/spectrum.out --error=$MCMC_OUTDIR/slurm_output/spectrum.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /u/kgrunthal/EPTA_ENTERPRISE.sif python3 /u/kgrunthal/HD/HD_with_OS.py --par $PAR_DIR --outdir $MCMC_OUTDIR/ --result $RESULT_DIR/$OUTFILE --psrpickle $MCMC_OUTDIR/psrs.pkl --ptamodel TM,WN,RN,CRN_fs --OStype spectrum --N 1000"
 
 
 #sbatch -p long.q --time=16:00:00 --mem=10GB --output=$MCMC_OUTDIR/slurm_output/spectrum.out --error=$MCMC_OUTDIR/slurm_output/spectrum.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /u/kgrunthal/EPTA_ENTERPRISE.sif python3 /u/kgrunthal/HD/HD_with_OS.py --par $PAR_DIR --outdir $MCMC_OUTDIR/ --result $RESULT_DIR/$OUTFILE --signal RN,CGW --lmc 9.0 --fgw 22.3 --ncgw 1 --psrTerm --psrpickle $MCMC_OUTDIR/psrs.pkl --ptamodel TM,WN,RN,CRN_fs --OStype spectrum --N 1000 --zeta 1.0 --resume"
 
-
+END_COMMENT
 
 
 : <<'END_COMMENT'
