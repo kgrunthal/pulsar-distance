@@ -42,6 +42,11 @@ MPC2S = sc.parsec / sc.c * 1e6
 
 
 
+def hc_f(A, gamma, f):
+    fyr = 1/(365.25*86000)
+    alpha = -0.5*(gamma-3)
+    return A*((f/fyr)**alpha)
+
 def S(A, gamma, f):
     fc = 1/(365.25*86000)
     A_c = (A**2)/(12*np.pi**2.)
@@ -50,7 +55,7 @@ def S(A, gamma, f):
 def singlebin(amp, gamma, f_window, f):
     spectrum = 1e-50*np.ones(len(f))
     window = [ii for ii in range(len(f)) if f[ii] > f_window[0] and f[ii] < f_window[1]]
-    spectrum[window] = S(amp, gamma, f[window])
+    spectrum[window] = hc_f(amp, gamma, f[window])
     return spectrum
 
 
@@ -166,21 +171,20 @@ def ADD_CGW(
     # use approximation that frequency does not evlolve over observation time
     elif phase_approx:
 
-        # frequencies
+        # frequencies and phases
         omega = w0
-        
-        if zeta == None:
+        phase = phase0 + omega * toas
+        if zeta < 0.:
             omega_p = w0 * (1 + fac1 * pd * (1 - cosMu)) ** (-3 / 8)
+            phase_p = phase0 + fac2 * (w053 - omega_p ** (-5 / 3)) + omega_p * toas + np.random.uniform(0,2*np.pi)
             
         elif zeta == 1.:
             omega_p = omega
+            phase_p = np.random.uniform(0,2*np.pi) + omega_p * toas
         else:
             omega_p = zeta*float(omega)
+            phase_p = np.random.uniform(0,2*np.pi) + omega_p * toas
 
-        # phases
-        phase = phase0 + omega * toas
-        #phase_p = phase0 + fac2 * (w053 - omega_p ** (-5 / 3)) + omega_p * toas
-        phase_p = np.random.uniform(0,2*np.pi) + omega_p * toas
 
     # no evolution
     else:
@@ -240,6 +244,9 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
             if s=='RN':
                 log10A = np.random.uniform(-14.,-12.)
                 gamma = np.random.uniform(1.7,2.2)
+
+                #log10A = np.random.uniform(-14.,-11.)
+                #gamma = np.random.uniform(1.0,3.0)
                 LT.add_rednoise(ltp,10**log10A, gamma, components=20)
                 outstr += ' added RN (logA = {}, gamma={})'.format(log10A, gamma)
             
@@ -252,7 +259,9 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
                 print(fgw)
                 for n in range(int(Ncgw)):
                     ADD_CGW(ltp,
-                            np.pi, 0., #CGWtheta CGWphi
+                            #np.pi, 0., #CGWtheta CGWphi isotropic
+                            #0., 0., #CGWtheta CGWphi ring,perpendicular
+                            0.3*np.pi, 0., #CGWtheta CGWphi ring,test
                             Mc[n], 15., fgw[n],
                             0., 0., 0.,
                             pdist = pdistances[ii],
@@ -306,24 +315,25 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
             amp = 2e-15
             gamma = 13./3.
                 
-            LT.createGWB(psrs, amp, gamma)
+            LT.createGWB(psrs, amp, gamma, corr='HD')
             cstring += ' added GWB with log10A={}, gamma={:.2}'.format(np.log10(amp),gamma)
 
 
         elif s=='GWBbroken':
-            amp = 2e-15
+            amp = 2e-14
             gamma = 13./3.
-            beta = 5/3
-            f0 = 10**(-7.9)
+            beta = 13./3.
+            f0 = 1.2e-8
+            power = 2.
                 
-            LT.createGWB(psrs, amp, gamma, turnover=True,  beta = beta, f0 = f0)
+            LT.createGWB(psrs, amp, gamma, turnover=True,  beta = beta, f0 = f0, corr='HD', power=power)
             cstring += ' added broken GWB '
 
 
         elif s=='GWBsinglebin':
-            amp = 2e-15
+            amp = 2e-14
             gamma = 13./3.
-            window = [3./(3625*86400), 4./(3625*86400)]
+            window = [3./(3625*86400), 5./(3625*86400)]
             
             f_test = np.linspace(1/(3625*86400), 20/(3625*86400), 100) 
             S = singlebin(amp, gamma, window, f_test)
@@ -331,13 +341,13 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
             S = S.astype('float128')
                 
             customSpec = np.array([f_test, S]).transpose()
-            LT.createGWB(psrs, amp, gamma, userSpec = customSpec)
+            LT.createGWB(psrs, amp, gamma, userSpec = customSpec, corr='HD')
             cstring += ' added single bin GWB '
             
     print(cstring, flush=True)   
         
     for p in psrs:
-        ePSRs.append(Pulsar(p, dist=pdistances[ii]))
+        ePSRs.append(Pulsar(p))
         
     return ePSRs
 
@@ -356,6 +366,7 @@ def set_up_global_options():
 
     parser.add_argument('--psrTerm', action="store_true", default=False, help='Simulate CGW with or without pulsar term')
     parser.add_argument('--zeta', type=float, default=1.0)
+    parser.add_argument('--pdistance', type=float, default=1.0)
     return parser.parse_args()
 
 
@@ -374,7 +385,7 @@ def main():
 
     obstimes = np.arange(50000,53652,14)
     toaerr = 0.1 # in us
-    distances = np.ones(len(parfiles)) * 1.
+    distances = np.ones(len(parfiles)) * args.pdistance
 
     PSRs = []
     for p in parfiles:
