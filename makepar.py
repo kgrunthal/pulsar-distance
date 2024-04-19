@@ -107,5 +107,5 @@ datadir = "./"
 # 1. create pulsars
 subprocess.run("mkdir {}".format(datadir+'par').split(' '))
 
-make_parfiles(int(sys.argv[1]), distribution='isotropic', datadir=datadir)
+make_parfiles(int(sys.argv[1]), distribution='ring', datadir=datadir)
 
