@@ -37,8 +37,8 @@ from PTMCMCSampler.PTMCMCSampler import PTSampler as ptmcmc
 
 def set_up_global_options():
     parser = argparse.ArgumentParser(description='Generate sensitivity curves for PTA datasets.')
-    parser.add_argument('--folder', type=str, default=None, help='Path to the parfiles.')
-    parser.add_argument('--outdir', type=str, default=None, help='Directory for the MCMC output')
+    parser.add_argument('--basedir', type=str, default=None, help='Path to the parfiles.')
+    parser.add_argument('--outdir', type=str, default=None, help='Path to the parfiles.')
     
     parser.add_argument('--ptamodel', type=str, default='CGW', help='Which signals to include in the PTA model')
     parser.add_argument('--lmc', type=float, nargs='*', default=9.5)
@@ -166,11 +166,15 @@ def produce_output(outdir = ''):
 def main():
     args = set_up_global_options
     
-    outD = args.folder + '/MCMC_CGWsearch/'
-    PSRs = args.psrpickle
-    #obstimes = np.arange(50000,53652,14)
+    outD = args.outdir
     
-    PTA = PTA_model(PSRs, args.ptamodel, psrTerm=args.psrTerm)
+    with open(args.basedir + '/psrs.pkl', 'rb') as psrpickle:
+        ePSRs = pickle.load(psrpickle)
+        print('loaded pulsars from pickle')
+    psrpickle.close()
+   
+    
+    PTA = PTA_model(ePSRs, args.ptamodel, psrTerm=args.psrTerm)
     
     
     x0 = np.hstack([p.sample() for p in PTA.params])
