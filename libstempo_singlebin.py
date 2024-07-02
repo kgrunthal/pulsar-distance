@@ -466,13 +466,13 @@ print('powerlaw: A^2 = {} +/- {} with S/N = {}'.format(OSpl, OSpl_sig, OSpl/OSpl
 
 
 
-fig, axs = plt.subplots((1,2), sharey=True, hspace=0)
-
+fig, axs = plt.subplots((1,2), sharey=True)
+plt.subplots_adjust(hspace=0)
 
 # Hide x labels and tick labels for all but bottom plot.
 for ax in axs:
     ax.label_outer()
-axs[0].set_xscale('log"')
+axs[0].set_xscale('log')
 axs[0].errorbar(freq_list, snr_list, fmt='ko', ls='')
 axs[1].errorbar(1, OSpl/OSpl_sig)
 axs[1].set_xticklabels('PL S/N')
