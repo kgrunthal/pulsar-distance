@@ -413,13 +413,13 @@ def run_sampler(pta, outdir = ''):
     
     return None
 
-print(pta.param_names)
+#print(pta.param_names)
 
 #run_sampler(pta, "/u/kgrunthal/HD/epta_sim/test_1/")
 
 
 
-'''
+
 chainname = 'chain_1'
 chain = np.loadtxt("/u/kgrunthal/HD/epta_sim/test_1/" + chainname + '.txt')
 
@@ -449,8 +449,8 @@ chain_r = chain[:, :-4]
 param_dict = {}
 param_dict[pta.param_names[0][:-2]] = chain_r[100]
 
-for i in range(30):
-    param_dict
+for i,p in enumerate(pta.param_names):
+    param_dict[p] = chain_r[100][i]
 
 
 print(param_dict)
@@ -467,15 +467,15 @@ print('powerlaw: A^2 = {} +/- {} with S/N = {}'.format(OSpl, OSpl_sig, OSpl/OSpl
 
 
 fig, axs = plt.subplots((1,2), sharey=True, hspace=0)
-axs[0].plot(x, y ** 2)
-axs[1].plot(x, 0.3 * y, 'o')
-axs[2].plot(x, y, '+')
+
 
 # Hide x labels and tick labels for all but bottom plot.
 for ax in axs:
     ax.label_outer()
-plt.xscale("log")
-plt.plot(freq_list, snr_list)
+axs[0].set_xscale('log"')
+axs[0].errorbar(freq_list, snr_list, fmt='ko', ls='')
+axs[1].errorbar(1, OSpl/OSpl_sig)
+axs[1].set_xticklabels('PL S/N')
 plt.savefig("/u/kgrunthal/HD/epta_sim/test_1/snr.png")
 plt.clf()
 
@@ -489,4 +489,3 @@ param_dict[pta.param_names[0][:-2]] = chain_r[100]
 plt.plot(chain_r[100])
 plt.savefig("/u/kgrunthal/HD/epta_sim/test_1/chain.png")
 plt.clf()
-'''
