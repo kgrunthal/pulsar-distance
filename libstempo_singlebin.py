@@ -288,7 +288,7 @@ def createFreq(
 
 
 
-'''
+
 parfiles = sorted(glob.glob('/u/kgrunthal/HD/epta_sim/par/*.par'))
 Npsr = len(parfiles)
 print(parfiles)
@@ -320,23 +320,23 @@ for ii in range(0,Npsr):
 #define the spectrum
 freq = createFreq(psrs, howml=howml)
 spec = 1e-50*np.ones(len(freq))
-spec[7*howml] = 5e-12*np.ones(1)
+spec[7*howml] = 1e-12*np.ones(1)
 userSpec = np.asarray([freq, spec]).T
 
 createGWB(psrs, Amp=Amp, gam=gamma, howml=howml, userSpec=userSpec)
 
+basedir='/u/kgrunthal/HD/epta_sim/test_bin7_A1e-12/'
+
 for Psr in psrs:
 
-    Psr.savepar("/u/kgrunthal/HD/epta_sim/par/" + Psr.name + '.par')
-    Psr.savetim("/u/kgrunthal/HD/epta_sim/tim/" + Psr.name + '.tim')
-    T.purgetim("/u/kgrunthal/HD/epta_sim/tim/" + Psr.name + '.tim')
+    Psr.savepar(basedir + Psr.name + '.par')
+    Psr.savetim(basedir + Psr.name + '.tim')
+    T.purgetim(basedir + Psr.name + '.tim')
 
-'''
 
-basedir='/u/kgrunthal/HD/epta_sim/test_1/'
 
-parfiles = sorted(glob.glob('/u/kgrunthal/HD/epta_sim/par/*.par'))
-timfiles = sorted(glob.glob('/u/kgrunthal/HD/epta_sim/tim/*.tim'))
+parfiles = sorted(glob.glob(basedir + '/*.par'))
+timfiles = sorted(glob.glob(basedir + '/*.tim'))
 
 psrs = []
 ephemeris = None
@@ -435,7 +435,7 @@ burn = int(0.3*chain.shape[0])
 
 fs = (np.arange(30) + 1) / Tspan
 parts = plt.violinplot(chain[burn:,:-4], positions=fs, widths=0.07*fs)
-plt.savefig(basedir+"violinplot_single_bin.png")
+plt.savefig(basedir+"violinplot.png")
 plt.clf()
 
 
