@@ -417,7 +417,7 @@ def run_sampler(pta, outdir = ''):
 
 #print(pta.param_names)
 
-#run_sampler(pta, "/u/kgrunthal/HD/epta_sim/test_1/")
+run_sampler(pta, "/u/kgrunthal/HD/epta_sim/test_1/")
 
 
 
