@@ -333,6 +333,8 @@ for Psr in psrs:
 
 '''
 
+basedir='/u/kgrunthal/HD/epta_sim/test_1/'
+
 parfiles = sorted(glob.glob('/u/kgrunthal/HD/epta_sim/par/*.par'))
 timfiles = sorted(glob.glob('/u/kgrunthal/HD/epta_sim/tim/*.tim'))
 
@@ -346,7 +348,7 @@ for p, t in zip(parfiles, timfiles):
 for j in psrs:
     plt.plot(j.residuals)
 
-plt.savefig("/u/kgrunthal/HD/epta_sim/test_1/residuals.png")
+plt.savefig(basedir+"residuals.png")
 plt.clf()
 
     
@@ -421,7 +423,7 @@ def run_sampler(pta, outdir = ''):
 
 
 chainname = 'chain_1'
-chain = np.loadtxt("/u/kgrunthal/HD/epta_sim/test_1/" + chainname + '.txt')
+chain = np.loadtxt(basedir + chainname + '.txt')
 
 burn = int(0.3*chain.shape[0])
 
@@ -433,7 +435,7 @@ burn = int(0.3*chain.shape[0])
 
 fs = (np.arange(30) + 1) / Tspan
 parts = plt.violinplot(chain[burn:,:-4], positions=fs, widths=0.07*fs)
-plt.savefig("/u/kgrunthal/HD/epta_sim/test_1/violinplot_single_bin.png")
+plt.savefig(basedir+"violinplot_single_bin.png")
 plt.clf()
 
 
@@ -443,7 +445,7 @@ ostat = opt_stat.OptimalStatistic(psrs, pta=pta, orf='hd')
 
 
 
-chain = np.genfromtxt("/u/kgrunthal/HD/epta_sim/test_1/chain_1.txt")
+chain = np.genfromtxt(basedir+"chain_1.txt")
 chain_r = chain[:, :-4]
 
 param_dict = {}
@@ -466,17 +468,14 @@ print('powerlaw: A^2 = {} +/- {} with S/N = {}'.format(OSpl, OSpl_sig, OSpl/OSpl
 
 
 
-fig, axs = plt.subplots(nrows=1, ncols=2, sharey=True)
-plt.subplots_adjust(hspace=0)
-
-# Hide x labels and tick labels for all but bottom plot.
-for ax in axs:
-    ax.label_outer()
+fig, axs = plt.subplots(nrows=1, ncols=2, sharey=True, gridspec_kw={'width_ratios': [2, 1]})
+plt.subplots_adjust(wspace=0)
+    
 axs[0].set_xscale('log')
 axs[0].errorbar(freq_list, snr_list, fmt='ko', ls='')
-axs[1].errorbar(1, OSpl/OSpl_sig)
+axs[1].errorbar(1, OSpl/OSpl_sig, fmt='bo', ls='')
 axs[1].set_xticks([1], ['PL S/N'])
-plt.savefig("/u/kgrunthal/HD/epta_sim/test_1/snr.png")
+plt.savefig(basedir+"snr.png")
 plt.clf()
 
 
@@ -487,5 +486,5 @@ param_dict[pta.param_names[0][:-2]] = chain_r[100]
 
 
 plt.plot(chain_r[100])
-plt.savefig("/u/kgrunthal/HD/epta_sim/test_1/chain.png")
+plt.savefig(basedir+"chain.png")
 plt.clf()
