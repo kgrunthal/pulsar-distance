@@ -475,7 +475,7 @@ for ax in axs:
 axs[0].set_xscale('log')
 axs[0].errorbar(freq_list, snr_list, fmt='ko', ls='')
 axs[1].errorbar(1, OSpl/OSpl_sig)
-axs[1].set_xticklabels('PL S/N')
+axs[1].set_xticks(1, 'PL S/N')
 plt.savefig("/u/kgrunthal/HD/epta_sim/test_1/snr.png")
 plt.clf()
 
