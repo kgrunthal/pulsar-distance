@@ -288,7 +288,7 @@ def createFreq(
 
 
 
-
+'''
 parfiles = sorted(glob.glob('/u/kgrunthal/HD/epta_sim/par/*.par'))
 Npsr = len(parfiles)
 print(parfiles)
@@ -331,7 +331,7 @@ for Psr in psrs:
     Psr.savetim("/u/kgrunthal/HD/epta_sim/tim/" + Psr.name + '.tim')
     T.purgetim("/u/kgrunthal/HD/epta_sim/tim/" + Psr.name + '.tim')
 
-
+'''
 
 parfiles = sorted(glob.glob('/u/kgrunthal/HD/epta_sim/par/*.par'))
 timfiles = sorted(glob.glob('/u/kgrunthal/HD/epta_sim/tim/*.tim'))
@@ -413,13 +413,13 @@ def run_sampler(pta, outdir = ''):
     
     return None
 
-print(pta.params)
+print(pta.param_names)
 
-run_sampler(pta, "/u/kgrunthal/HD/epta_sim/test_1/")
-
-
+#run_sampler(pta, "/u/kgrunthal/HD/epta_sim/test_1/")
 
 
+
+'''
 chainname = 'chain_1'
 chain = np.loadtxt("/u/kgrunthal/HD/epta_sim/test_1/" + chainname + '.txt')
 
@@ -449,6 +449,9 @@ chain_r = chain[:, :-4]
 param_dict = {}
 param_dict[pta.param_names[0][:-2]] = chain_r[100]
 
+for i in range(30):
+    param_dict
+
 
 print(param_dict)
 snr_list = []
@@ -457,9 +460,20 @@ for j in range(len(freq_list)):
     xi, rho, sig, OS, OS_sig = ostat.compute_os(params = param_dict, psd = "spectrum", fgw=freq_list[j])
     print(OS, OS_sig)
     snr_list = np.append(snr_list, OS/OS_sig)
-    
+
+_, _, _, OSpl, OSpl_sig = ostat.compute_os(params = param_dict)
+print('powerlaw: A^2 = {} +/- {} with S/N = {}'.format(OSpl, OSpl_sig, OSpl/OSpl_sig))
 
 
+
+fig, axs = plt.subplots((1,2), sharey=True, hspace=0)
+axs[0].plot(x, y ** 2)
+axs[1].plot(x, 0.3 * y, 'o')
+axs[2].plot(x, y, '+')
+
+# Hide x labels and tick labels for all but bottom plot.
+for ax in axs:
+    ax.label_outer()
 plt.xscale("log")
 plt.plot(freq_list, snr_list)
 plt.savefig("/u/kgrunthal/HD/epta_sim/test_1/snr.png")
@@ -475,3 +489,4 @@ param_dict[pta.param_names[0][:-2]] = chain_r[100]
 plt.plot(chain_r[100])
 plt.savefig("/u/kgrunthal/HD/epta_sim/test_1/chain.png")
 plt.clf()
+'''
