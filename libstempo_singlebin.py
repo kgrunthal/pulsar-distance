@@ -466,7 +466,7 @@ print('powerlaw: A^2 = {} +/- {} with S/N = {}'.format(OSpl, OSpl_sig, OSpl/OSpl
 
 
 
-fig, axs = plt.subplots((1,2), sharey=True)
+fig, axs = plt.subplots(nrows=1, ncols=2, sharey=True)
 plt.subplots_adjust(hspace=0)
 
 # Hide x labels and tick labels for all but bottom plot.
