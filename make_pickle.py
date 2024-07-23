@@ -80,6 +80,7 @@ def ADD_CGW(
     evolve=True,
     phase_approx=False,
     tref=0,
+    pd_fix = False
 ):
     """
     Function to create GW-induced residuals from a SMBMB as
@@ -178,7 +179,10 @@ def ADD_CGW(
         phase = phase0 + omega * toas
         if zeta < 0.:
             omega_p = w0 * (1 + fac1 * pd * (1 - cosMu)) ** (-3 / 8)
-            phase_p = phase0 + fac2 * (w053 - omega_p ** (-5 / 3)) + omega_p * toas + np.random.uniform(0,2*np.pi)
+            if pd_fix == True:
+                phase_p = phase0 + fac2 * (w053 - omega_p ** (-5 / 3)) + omega_p * toas
+            else:
+                phase_p = phase0 + fac2 * (w053 - omega_p ** (-5 / 3)) + omega_p * toas + np.random.uniform(0,2*np.pi)
             
         elif zeta == 1.:
             omega_p = omega
@@ -457,7 +461,7 @@ def createFreq(
     return f
 
 
-def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=True, phase_approx=True, evolve=False, Filter=False, f0=None):
+def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=True, phase_approx=True, evolve=False, Filter=False, f0=None, distance_fix = False):
     ePSRs = []
     sgn = signal.split(',')
     print('psrTerm=', psrTerm)
@@ -491,13 +495,14 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
                     ADD_CGW(ltp,
                             #np.pi, 0., #CGWtheta CGWphi isotropic
                             #0., 0., #CGWtheta CGWphi ring,perpendicular
-                            0.3*np.pi, 0., #CGWtheta CGWphi ring,test
+                            np.pi/2., np.pi, #Violin plot test
+                            #0.3*np.pi, 0., #CGWtheta CGWphi ring,test
                             Mc[n], 15., fgw[n],
-                            0., 0., 0.,
+                            np.pi, np.pi, np.pi,
                             pdist = pdistances[ii],
                             zeta = zeta,
-                            psrTerm=psrTerm, phase_approx=phase_approx, evolve=evolve)
-                    outstr += ' added CGW {}'.format(n+1)
+                            psrTerm=psrTerm, phase_approx=phase_approx, evolve=evolve, pd_fix = distance_fix)
+                    outstr += ' added CGW psrterm={} evolve={}, pdist_fix={}, {}'.format(psrTerm, evolve, distance_fix, n+1)
             
             
             ''' old methods
@@ -541,45 +546,35 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
     
     cstring = ''
     for s in sgn:
+        howml = 2
         if s=='GWB':
-            amp = 2e-15
+            amp = 1e-14
             gamma = 13./3.
                 
-            LT.createGWB(psrs, amp, gamma, corr='HD')
+            LT.createGWB(psrs, amp, gamma, corr='HD', howml=howml)
             cstring += ' added GWB with log10A={}, gamma={:.2}'.format(np.log10(amp),gamma)
 
 
         elif s=='GWBbroken':
-            amp = 2e-14
+            amp = 1e-14
             gamma = 13./3.
             beta = 13./3.
             f0 = 1.2e-8
             power = 2.
                 
-            LT.createGWB(psrs, amp, gamma, turnover=True,  beta = beta, f0 = f0, corr='HD', power=power)
+            LT.createGWB(psrs, amp, gamma, turnover=True,  beta = beta, f0 = f0, corr='HD', power=power, howml=howml)
             cstring += ' added broken GWB '
 
 
         elif s=='GWBsinglebin':
             Amp = 2e-14
             gamma = 13./3.
-            howml = 2
-            
-            '''
-            window = [3./(3625*86400), 4./(3625*86400)]
-            f_test = np.linspace(1/(3625*86400), 20/(3625*86400), 100) 
-            S = singlebin(amp, gamma, window, f_test)
-            f_test = f_test.astype('float128')
-            S = S.astype('float128')
-            customSpec = np.array([f_test, S]).transpose()
-            LT.createGWB(psrs, amp, gamma, userSpec = customSpec, corr='HD')
-            '''
             
             #make spectrum
             #define the spectrum
             freq = createFreq(psrs, howml=howml)
             spec = 1e-50*np.ones(len(freq))
-            spec[4*howml] = 1e-12*np.ones(1)
+            spec[19*howml] = 6e-15*np.ones(1)
             userSpec = np.asarray([freq, spec]).T
 
             ADD_SINGLEBIN(psrs, Amp=Amp, gam=gamma, howml=howml, userSpec=userSpec)
@@ -609,6 +604,8 @@ def set_up_global_options():
     parser.add_argument('--psrTerm', action="store_true", default=False, help='Simulate CGW with or without pulsar term')
     parser.add_argument('--zeta', type=float, default=1.0)
     parser.add_argument('--pdistance', type=float, default=1.0)
+    parser.add_argument('--pdist_fix', action="store_true", default=False, help='create fixed pulsar distances')
+
     return parser.parse_args()
 
 
@@ -627,12 +624,18 @@ def main():
 
     obstimes = np.arange(50000,53652,14)
     toaerr = 0.1 # in us
-    distances = np.ones(len(parfiles)) * args.pdistance
+
+    if args.pdist_fix == True:
+        distances = np.random.uniform(0.8*args.pdistance, 1.2*args.pdistance, len(parfiles))
+    else:
+        distances = np.ones(len(parfiles)) * args.pdistance
 
     PSRs = []
-    for p in parfiles:
+    pd_dict = {}
+    for jj, p in enumerate(parfiles):
         psr = LT.fakepulsar(p, obstimes, toaerr)
         PSRs.append(psr)
+        pd_dict[psr.name] = distances[jj]
      
     fgw = np.array(args.fgw)*1e-9
     mc = 10**np.array(args.lmc)
@@ -640,10 +643,15 @@ def main():
     ePSRs = prime_pulsars(PSRs, distances,
                           args.signal,
                           args.ncgw, fgw, mc, zeta = args.zeta,
-                          Filter=False, psrTerm = args.psrTerm)
+                          Filter=False, psrTerm = args.psrTerm, evolve=False, phase_approx=True, distance_fix = args.pdist_fix)
 
     with open(args.outdir+'psrs.pkl', 'wb') as psrpickle:
         pickle.dump(ePSRs, psrpickle)
+
+    with open(args.outdir+'distances.json', 'w') as f:
+        json.dump(pd_dict, f, indent=4)
+    f.close()
+
     psrpickle.close()
     print('Simulation done')
 
