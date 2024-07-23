@@ -41,7 +41,7 @@ def cw_delay(toas, pos, pdist,
              cos_gwtheta=0, gwphi=0, cos_inc=0,
              log10_mc=9, log10_fgw=-8, log10_dist=None, log10_h=None,
              phase0=0, psi=0,
-             psrTerm=False, p_dist=1, p_phase=None,
+             psrTerm=False, p_dist=None, p_phase=None,
              evolve=False, phase_approx=False, check=False,
              tref=0):
     """
@@ -99,7 +99,13 @@ def cw_delay(toas, pos, pdist,
     fgw = 10**log10_fgw
     gwtheta = np.arccos(cos_gwtheta)
     inc = np.arccos(cos_inc)
-    p_dist = p_dist*const.kpc/const.c
+    
+    if p_dist == None:
+        p_dist = pdist[0] * const.kpc/const.c
+    else:
+        p_dist = p_dist*const.kpc/const.c
+
+    print(p_dist)
 
     if log10_h is None and log10_dist is None:
         raise ValueError("one of log10_dist or log10_h must be non-None")
@@ -232,8 +238,8 @@ def set_up_global_options():
     parser.add_argument('--pd', type=float, default=1.0)
     
     parser.add_argument('--analysis', action="store_true", default=False, help='Save cornerplot from the MCMC run')
-    
-    parser.add_argument('--Nsample', type=int, default=1e6, help='number of MCMC draws')
+    parser.add_argument('--use_distance', action="store_true", default=False, help='Use the randomly drawn distance')
+    parser.add_argument('--Nsample', type=int, default=5e5, help='number of MCMC draws')
     return parser.parse_args()
 
 
@@ -277,10 +283,10 @@ def PTA_model(psrs, ptamodel, psrTerm=True, pdist=1.):
             cos_inc = parameter.Uniform(-1, 1)('cos_inc')           # inclination of binary with respect to Earth
 
             if psrTerm == True:
-                p_phase = parameter.Uniform(0, np.pi)
-                #p_dist = parameter.Normal(pdist, 0.5)
-                p_dist = pdist
-                #p_phase = None
+                #p_phase = parameter.Uniform(0, np.pi)
+                p_dist = parameter.Uniform(0.7*pdist, 1.3*pdist)
+                #p_dist = pdist
+                p_phase = None
 
             else:
                 p_phase = None
@@ -362,7 +368,7 @@ def produce_output(outdir = '' , plot = 'chainconsumer'):
         cc.add_chain(chain[:,:-4], parameters = params, name='cornerplot')
 
         cc.configure(max_ticks = 3, colors=clr,
-                     tick_font_size=14, label_font_size=12, spacing=1.0,diagonal_tick_labels=True,
+                     tick_font_size=14, label_font_size=8, spacing=1.0,diagonal_tick_labels=True,
                      contour_labels='confidence', contour_label_font_size=14, #shade_gradient=[3.0], 
                      sigmas=[1,2,3], shade_alpha=0.6, linewidths=1.5,
                      summary=False, sigma2d=True)
@@ -391,8 +397,13 @@ def main():
         print('loaded pulsars from pickle')
     psrpickle.close()
    
-    
-    PTA = PTA_model(ePSRs, args.ptamodel, psrTerm=args.psrTerm, pdist=args.pd)
+    if os.path.isfile(args.basedir + '/distances.json') and args.use_distance == True:
+        pdistances = json.load(open(args.basedir + '/distances.json', 'r'))
+        for p in ePSRs:
+            p._pdist = (pdistances[p.name], 0.2)
+        PTA = PTA_model(ePSRs, args.ptamodel, psrTerm=args.psrTerm, pdist=None)
+    else:
+        PTA = PTA_model(ePSRs, args.ptamodel, psrTerm=args.psrTerm, pdist=args.pd)
     
     print(PTA.params) 
     x0 = np.hstack([p.sample() for p in PTA.params])
