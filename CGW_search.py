@@ -100,12 +100,7 @@ def cw_delay(toas, pos, pdist,
     gwtheta = np.arccos(cos_gwtheta)
     inc = np.arccos(cos_inc)
     
-    if p_dist == None:
-        p_dist = pdist[0] * const.kpc/const.c
-    else:
-        p_dist = p_dist*const.kpc/const.c
-
-    print(p_dist)
+    p_dist = p_dist*const.kpc/const.c
 
     if log10_h is None and log10_dist is None:
         raise ValueError("one of log10_dist or log10_h must be non-None")
@@ -239,11 +234,13 @@ def set_up_global_options():
     
     parser.add_argument('--analysis', action="store_true", default=False, help='Save cornerplot from the MCMC run')
     parser.add_argument('--use_distance', action="store_true", default=False, help='Use the randomly drawn distance')
+    parser.add_argument('--sample_pdist', action="store_true", default=False, help='Use the randomly drawn distance')
+
     parser.add_argument('--Nsample', type=int, default=5e5, help='number of MCMC draws')
     return parser.parse_args()
 
 
-def PTA_model(psrs, ptamodel, psrTerm=True, pdist=1.):
+def PTA_model(psrs, ptamodel, psrTerm=True, pdist=1., sample_pdist=False):
     #find the maximum time span to set GW frequency sampling
     Tspan = model_utils.get_tspan(psrs)
     
@@ -283,23 +280,46 @@ def PTA_model(psrs, ptamodel, psrTerm=True, pdist=1.):
             cos_inc = parameter.Uniform(-1, 1)('cos_inc')           # inclination of binary with respect to Earth
 
             if psrTerm == True:
-                #p_phase = parameter.Uniform(0, np.pi)
-                p_dist = parameter.Uniform(0.7*pdist, 1.3*pdist)
-                #p_dist = pdist
-                p_phase = None
+                if pdist == None:
+                    if sample_pdist == True:
+                       p_dist = parameter.Normal(0,1)
+                    else:
+                       p_dist = 0
+                    
+                    p_phase = parameter.Uniform(0, np.pi)
+
+                    cw_wf = deterministic.cw_delay(cos_gwtheta=cos_gwtheta, gwphi=gwphi, log10_mc=log10_mc,
+                                                   log10_h=log10_h, log10_fgw=log10_fgw, phase0=phase0,
+                                                   psi=psi, cos_inc=cos_inc,
+                                                   evolve=True, psrTerm=True, phase_approx=True,
+                                                   p_dist=p_dist, p_phase=p_phase)
+
+                else:
+                    p_phase = parameter.Uniform(0, np.pi)
+                    p_dist = parameter.Uniform(0.7*pdist, 1.3*pdist)
+                    #p_dist = pdist
+                    #p_phase = None
+
+                    cw_wf = cw_delay(cos_gwtheta=cos_gwtheta, gwphi=gwphi, log10_mc=log10_mc,
+                                     log10_h=log10_h, log10_fgw=log10_fgw, phase0=phase0,
+                                     psi=psi, cos_inc=cos_inc,
+                                     evolve=True, psrTerm=True, phase_approx=True,
+                                     p_dist=p_dist, p_phase=p_phase)
+
 
             else:
                 p_phase = None
                 p_dist = 0
             
-            cw_wf = cw_delay(cos_gwtheta=cos_gwtheta, gwphi=gwphi, log10_mc=log10_mc, 
-                                           log10_h=log10_h, log10_fgw=log10_fgw, phase0=phase0, 
-                                           psi=psi, cos_inc=cos_inc,
-                                           psrTerm=psrTerm, phase_approx=True,
-                                           p_dist=p_dist, p_phase=p_phase)
+                cw_wf = cw_delay(cos_gwtheta=cos_gwtheta, gwphi=gwphi, log10_mc=log10_mc, 
+                                 log10_h=log10_h, log10_fgw=log10_fgw, phase0=phase0, 
+                                 psi=psi, cos_inc=cos_inc,
+                                 evolve = False, psrTerm=False, phase_approx=False,
+                                 p_dist=p_dist, p_phase=p_phase)
+            
+
             CGW = deterministic.CWSignal(cw_wf, ecc=False, psrTerm=psrTerm)
             
-            #CGW = deterministic.cw_block_circ(psrTerm=psrTerm)
             s.append(CGW)
             outstring += 'CGW '
             
@@ -401,9 +421,10 @@ def main():
         pdistances = json.load(open(args.basedir + '/distances.json', 'r'))
         for p in ePSRs:
             p._pdist = (pdistances[p.name], 0.2)
-        PTA = PTA_model(ePSRs, args.ptamodel, psrTerm=args.psrTerm, pdist=None)
+        PTA = PTA_model(ePSRs, args.ptamodel, psrTerm=args.psrTerm, pdist=None, sample_pdist = args.sample_pdist)
     else:
         PTA = PTA_model(ePSRs, args.ptamodel, psrTerm=args.psrTerm, pdist=args.pd)
+    
     
     print(PTA.params) 
     x0 = np.hstack([p.sample() for p in PTA.params])
