@@ -288,6 +288,51 @@ def createFreq(
 
 
 
+def run_sampler(pta, outdir = ''):
+
+    N = int(1e5)                                    # number of samples
+    x0 = np.hstack(p.sample() for p in pta.params)  # initial parameter vector
+    ndim = len(x0)                                  # number of dimensions
+    print('x0 =', x0)
+
+    # initial jump covariance matrix
+    cov = np.diag(np.ones(ndim) * 0.01**2)
+
+    #initialize the sampler object
+    sampler = ptmcmc(ndim, pta.get_lnlikelihood, pta.get_lnprior, cov, outDir=outdir, resume=False)
+
+    # additional jumps
+    jp = sp.JumpProposal(pta)
+    sampler.addProposalToCycle(jp.draw_from_prior, 5)
+
+    sel_sig = ["rn", "red_noise", "dm_gp", "fcn", "chrom-rn", "srn", "dm_srn", "freechrom-srn", "chrom-srn",
+                        "dm-expd", "freechrom-expd", "chrom-expd",
+                        "dm-y", "freechrom-y", "chrom-y",
+                        "gw"]
+    for s in sel_sig:
+        if any([s in p for p in pta.param_names]):
+            #pnames = [p.name for p in pta.params if s in p.name]
+            #print('Adding %s prior draws with parameters :'%s, pnames, '\n')
+            print('Adding %s prior draws.'%s)
+            sampler.addProposalToCycle(jp.draw_from_par_prior(s), 10)
+
+
+    sampler.sample(x0, N, SCAMweight=40, AMweight=25, DEweight=55) # these weights relate to frequency of jumps
+
+    # write a list of the parameters to a text file
+    # and a list of the parameter groupings used
+    filename = outdir + '/params.txt'
+    np.savetxt(filename,list(map(str, pta.param_names)), fmt='%s')
+
+    return None
+
+
+
+
+
+
+basedir='/u/kgrunthal/HD/epta_sim/test_bin7_A1e-11_2/'
+#basedir='/u/kgrunthal/HD/epta_sim/test_GW+RN_single/'
 
 parfiles = sorted(glob.glob('/u/kgrunthal/HD/epta_sim/par/*.par'))
 Npsr = len(parfiles)
@@ -298,6 +343,8 @@ psrs = []
 Amp = 2e-14
 gamma = 13./3.
 howml = 2
+
+
 
 for ii in range(0,Npsr):
 
@@ -316,16 +363,37 @@ for ii in range(0,Npsr):
 
 #LT.createGWB(psrs, Amp=Amp, gam=gamma, howml=100)
 
-#make spectrum
-#define the spectrum
+
+
+### make HD spectrum
+
+bin_pos = 7
 freq = createFreq(psrs, howml=howml)
 spec = 1e-50*np.ones(len(freq))
-spec[7*howml] = 1e-12*np.ones(1)
+spec[bin_pos*howml] = 1e-11*np.ones(1)
 userSpec = np.asarray([freq, spec]).T
+
+print(freq[bin_pos*howml])
+
 
 createGWB(psrs, Amp=Amp, gam=gamma, howml=howml, userSpec=userSpec)
 
-basedir='/u/kgrunthal/HD/epta_sim/test_bin7_A1e-12/'
+
+'''
+### make uncorrelated injection
+bin_pos_rn = 10
+freq = createFreq(psrs, howml=howml)
+spec_single_rn = 1e-50*np.ones(len(freq))
+spec_single_rn[bin_pos_rn*howml] = 1e-11*np.ones(1)
+userSpec_single_rn = np.asarray([freq, spec_single_rn]).T
+
+createGWB(psrs, Amp=Amp, gam=gamma, howml=howml, userSpec=userSpec_single_rn, noCorr=True)
+'''
+
+
+
+
+## save tim files ##
 
 for Psr in psrs:
 
@@ -334,6 +402,7 @@ for Psr in psrs:
     T.purgetim(basedir + Psr.name + '.tim')
 
 
+del psrs
 
 parfiles = sorted(glob.glob(basedir + '/*.par'))
 timfiles = sorted(glob.glob(basedir + '/*.tim'))
@@ -372,52 +441,13 @@ s += blocks.common_red_noise_block(psd='spectrum', prior='log-uniform', Tspan=Ts
 
 # We set up the PTA object using the signal we defined above and the pulsars
 pta = signal_base.PTA([s(p) for p in psrs])
-
-
-
-
-
-def run_sampler(pta, outdir = ''):
-
-    N = int(1e5)                                    # number of samples
-    x0 = np.hstack(p.sample() for p in pta.params)  # initial parameter vector
-    ndim = len(x0)                                  # number of dimensions
-    print('x0 =', x0)
-
-    # initial jump covariance matrix
-    cov = np.diag(np.ones(ndim) * 0.01**2)
-    
-    #initialize the sampler object
-    sampler = ptmcmc(ndim, pta.get_lnlikelihood, pta.get_lnprior, cov, outDir=outdir, resume=False)
-    
-    # additional jumps
-    jp = sp.JumpProposal(pta)
-    sampler.addProposalToCycle(jp.draw_from_prior, 5)
-    
-    sel_sig = ["rn", "red_noise", "dm_gp", "fcn", "chrom-rn", "srn", "dm_srn", "freechrom-srn", "chrom-srn",
-                        "dm-expd", "freechrom-expd", "chrom-expd",
-                        "dm-y", "freechrom-y", "chrom-y",
-                        "gw"]
-    for s in sel_sig:
-        if any([s in p for p in pta.param_names]):
-            #pnames = [p.name for p in pta.params if s in p.name]
-            #print('Adding %s prior draws with parameters :'%s, pnames, '\n')
-            print('Adding %s prior draws.'%s)
-            sampler.addProposalToCycle(jp.draw_from_par_prior(s), 10)
-
-        
-    sampler.sample(x0, N, SCAMweight=40, AMweight=25, DEweight=55) # these weights relate to frequency of jumps
-
-    # write a list of the parameters to a text file
-    # and a list of the parameter groupings used
-    filename = outdir + '/params.txt'
-    np.savetxt(filename,list(map(str, pta.param_names)), fmt='%s')
-    
-    return None
-
 #print(pta.param_names)
 
-run_sampler(pta, "/u/kgrunthal/HD/epta_sim/test_1/")
+
+
+
+
+run_sampler(pta, basedir)
 
 
 
@@ -435,6 +465,7 @@ burn = int(0.3*chain.shape[0])
 
 fs = (np.arange(30) + 1) / Tspan
 parts = plt.violinplot(chain[burn:,:-4], positions=fs, widths=0.07*fs)
+plt.axvline(fs[bin_pos-1])
 plt.savefig(basedir+"violinplot.png")
 plt.clf()
 
@@ -475,6 +506,7 @@ axs[0].set_xscale('log')
 axs[0].errorbar(freq_list, snr_list, fmt='ko', ls='')
 axs[1].errorbar(1, OSpl/OSpl_sig, fmt='bo', ls='')
 axs[1].set_xticks([1], ['PL S/N'])
+axs[0].axvline(fs[bin_pos-1])
 plt.savefig(basedir+"snr.png")
 plt.clf()
 
