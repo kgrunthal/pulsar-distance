@@ -643,7 +643,7 @@ def main():
     ePSRs = prime_pulsars(PSRs, distances,
                           args.signal,
                           args.ncgw, fgw, mc, zeta = args.zeta,
-                          Filter=False, psrTerm = args.psrTerm, evolve=False, phase_approx=True, distance_fix = args.pdist_fix)
+                          Filter=False, psrTerm = args.psrTerm, evolve=True, phase_approx=False, distance_fix = args.pdist_fix)
 
     with open(args.outdir+'psrs.pkl', 'wb') as psrpickle:
         pickle.dump(ePSRs, psrpickle)
