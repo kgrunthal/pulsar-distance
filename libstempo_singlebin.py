@@ -465,7 +465,7 @@ burn = int(0.3*chain.shape[0])
 
 fs = (np.arange(30) + 1) / Tspan
 parts = plt.violinplot(chain[burn:,:-4], positions=fs, widths=0.07*fs)
-plt.axvline(fs[bin_pos-1])
+plt.axvline(fs[bin_pos-1], ls =':', color = 'gray')
 plt.savefig(basedir+"violinplot.png")
 plt.clf()
 
@@ -489,8 +489,8 @@ for i,p in enumerate(pta.param_names):
 print(param_dict)
 snr_list = []
 freq_list = 10**np.arange(-9, -6, 0.1)
-for j in range(len(freq_list)):
-    xi, rho, sig, OS, OS_sig = ostat.compute_os(params = param_dict, psd = "spectrum", fgw=freq_list[j])
+for j in range(len(fs)):
+    xi, rho, sig, OS, OS_sig = ostat.compute_os(params = param_dict, psd = "spectrum", fgw=fs[j])
     print(OS, OS_sig)
     snr_list = np.append(snr_list, OS/OS_sig)
 
@@ -503,11 +503,11 @@ fig, axs = plt.subplots(nrows=1, ncols=2, sharey=True, gridspec_kw={'width_ratio
 plt.subplots_adjust(wspace=0)
     
 axs[0].set_xscale('log')
-axs[0].errorbar(freq_list, snr_list, fmt='ko', ls='')
+axs[0].errorbar(fs, snr_list, fmt='ko', ls='')
 axs[1].errorbar(1, OSpl/OSpl_sig, fmt='bo', ls='')
 axs[1].set_xticks([1], ['PL S/N'])
-axs[0].axvline(fs[bin_pos-1])
-plt.savefig(basedir+"snr.png")
+axs[0].axvline(fs[bin_pos-1], ls =':', color='gray')
+plt.savefig(basedir+"snr_new.png")
 plt.clf()
 
 
