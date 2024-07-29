@@ -21,5 +21,3 @@ WARNING: Could not find pulsar distance for PSR J2019+2425. Setting value to 1 w
 WARNING: Could not find pulsar distance for PSR J2033+1734. Setting value to 1 with 20% uncertainty.
 WARNING: Could not find pulsar distance for PSR J2229+2643. Setting value to 1 with 20% uncertainty.
 WARNING: Could not find pulsar distance for PSR J2322+2057. Setting value to 1 with 20% uncertainty.
-/hercules/u/kgrunthal/HD/epta_sim/../libstempo_multibin.py:294: FutureWarning: arrays to stack must be passed as a "sequence" type such as list or tuple. Support for non-sequence iterables such as generators is deprecated as of NumPy 1.16 and will raise an error in the future.
-/usr/local/lib/python3.9/dist-packages/enterprise/signals/parameter.py:62: RuntimeWarning: divide by zero encountered in log
