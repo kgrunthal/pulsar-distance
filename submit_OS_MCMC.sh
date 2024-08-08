@@ -1,16 +1,18 @@
 #!/bin/bash
 
 PAR_DIR=/u/kgrunthal/HD/par/isotropic/
+#PAR_DIR=/u/kgrunthal/HD/par/ring/
 RESULT_DIR=/u/kgrunthal/HD/out/
 
-
+: <<'END_COMMENT'
 # different zeta
-
+for i in {1..10}; do
 for lmc in 8.5 9.0 9.5 ; do
     for zeta in 0.8 0.9 1.0 ; do
-        MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_RNCGW$lmc\_zeta$zeta\_2/
+        RESULT_DIR=/u/kgrunthal/HD/out/WN_RN_CGW_ring/run_$i\/
+        MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_RNCGW$lmc\_zeta$zeta\_$i\/
         #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_RNCGW$lmc\_earth/
-        OUTFILE=OS_spectrum_RNCGW$lmc\_zeta$zeta\_2
+        OUTFILE=OS_spectrum_CGW$lmc\_zeta$zeta
         NAME=$lmc\_$zeta\_spec
 
         if [ ! -d "$MCMC_OUTDIR/" ]; then
@@ -25,7 +27,44 @@ for lmc in 8.5 9.0 9.5 ; do
 
     done
 done
+done
+END_COMMENT
 
+
+
+################################
+
+#: <<'END_COMMENT'
+for i in 1; do
+for lmc in 8.5 9.0 9.5 10.0 ; do
+    for pd in 1.0; do
+        RESULT_DIR=/u/kgrunthal/HD/out/WN_CGW_earth_test/
+        #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_singleRN_CGW$lmc\_pd$pd\_$i\/
+        MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_CGW$lmc\_earth/
+        OUTFILE=OS_spectrum_CGW$lmc\_pd$pd
+        NAME=$lmc\_$pd\_spec
+
+        if [ ! -d "$MCMC_OUTDIR/" ]; then
+            mkdir $MCMC_OUTDIR
+        fi
+
+        if [ ! -d "$MCMC_OUTDIR/slurm_output" ]; then
+            mkdir $MCMC_OUTDIR/slurm_output
+        fi
+        
+        if [ ! -d "$RESULT_DIR/" ]; then
+            mkdir $RESULT_DIR
+        fi
+
+        sbatch -p long.q --time=17:00:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/spectrum.out --error=$MCMC_OUTDIR/slurm_output/spectrum.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 /u/kgrunthal/HD/HD_with_OS.py --par $PAR_DIR --outdir $MCMC_OUTDIR/ --result $RESULT_DIR/run_$i\/$OUTFILE --psrpickle $MCMC_OUTDIR/psrs.pkl --ptamodel TM,WN,CRN_fs --OStype spectrum --N 1000"
+
+    done
+done
+done
+
+#END_COMMENT
+
+#############################
 
 : <<'END_COMMENT'
 
