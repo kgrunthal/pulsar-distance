@@ -17,6 +17,8 @@ import libstempo.plot as LP
 
 import matplotlib.pyplot as plt
 
+import ephem
+
 from enterprise import constants as const
 from enterprise.signals import signal_base, gp_signals, white_signals, utils, gp_priors
 from enterprise.pulsar import Pulsar
@@ -129,7 +131,7 @@ def ADD_CGW(
     if "RAJ" and "DECJ" in psr.pars(which='all'):
         ptheta = np.pi / 2 - psr["DECJ"].val
         pphi = psr["RAJ"].val
-    elif "ELONG" and "ELAT" in psr.pars():
+    elif "ELONG" and "ELAT" in psr.pars(which='all'):
         fac = 180.0 / np.pi
         coords = ephem.Equatorial(ephem.Ecliptic(str(psr["ELONG"].val * fac), str(psr["ELAT"].val * fac)))
 
@@ -472,7 +474,7 @@ def prime_pulsars(psrs, pdistances, signal, noisedict,
         EQUAD = 10**(noisedict[ltp.name + '_log10_tnequad'])
                      
         LT.add_efac(ltp, efac=EFAC)
-        LT.add_eqaud(ltp, equad=EQUAD)
+        LT.add_equad(ltp, equad=EQUAD)
         
         outstr += ' added WN'
         
@@ -507,7 +509,7 @@ def prime_pulsars(psrs, pdistances, signal, noisedict,
                     outstr += ' added CGW psrterm={} evolve={}, pdist_fix={}, {}'.format(psrTerm, evolve, distance_fix, n+1)
 
             
-        print(outstr)
+        print(outstr, flush=True)
     
     cstring = ''
     for s in sgn:
@@ -566,6 +568,9 @@ def set_up_global_options():
     parser.add_argument('--fgw', type=float, nargs='*', default=22.3)
     parser.add_argument('--psrTerm', action="store_true", default=False, help='Simulate CGW with or without pulsar term')
 
+    parser.add_argument('--zeta', type=float, default=1.0)
+    parser.add_argument('--ncgw', type=int, default=1)
+
     return parser.parse_args()
 
 
@@ -577,11 +582,9 @@ def main():
     
     # load pulsars and specs
     print('Load par files', flush=True)
-    pars = sorted(glob.glob(args.datadir + '/par/*.par'))
-    
+    pars = sorted(glob.glob(args.datadir + '/*.par'))
     print('Load pulsar list', flush=True)
     psr_list = np.loadtxt(args.psr_list, dtype=str)
-    
     
     print('Load pulsar properties', flush=True)
     with open('/u/kgrunthal/HD/ipta_sim/metadata/pulsar_properties.json', 'r') as tmpf:
@@ -590,9 +593,8 @@ def main():
     
     names = pspec.keys()
     
-    
     print('Load WN numbers', flush=True)
-    with open('/u/kgrunthal/HD/ipta_sim/WN_dictionary', 'r') as WNfile:
+    with open('/u/kgrunthal/HD/ipta_sim/WN_dictionary.json', 'r') as WNfile:
         WNdict = json.load(WNfile)
     WNfile.close()
     
@@ -609,12 +611,12 @@ def main():
             obstimes_var = np.random.uniform(-0.25*cad, 0.25*cad, len(obstimes_0))
             obstimes = obstimes_0 + obstimes_var
         
-            fpsr = LT.tempopulsar(parfile = par,
-                                  toas = obstimes,
-                                  toaerr = pspec[name]['toaerr'])
+            fpsr = LT.fakepulsar(parfile = par,
+                                 obstimes = obstimes,
+                                 toaerr = pspec[name]['toa_err'], iters=1)
         
             PSRs.append(fpsr)
-            distances.append(pspec[name]['distance'])
+            distances.append(pspec[name]['dist_dm'])
         
         else:
             continue
@@ -625,10 +627,10 @@ def main():
     mc = 10**np.array(args.lmc)
 
     ePSRs = prime_pulsars(PSRs, np.array(distances),
-                          args.signal, WNdict,
+                          args.ptamodel, WNdict,
                           args.ncgw, fgw, mc, zeta = args.zeta,
                           psrTerm = args.psrTerm, evolve=True, phase_approx=False,
-                          distance_fix = args.pdist_fix)
+                          distance_fix = True)
 
     with open(args.outdir+'psrs.pkl', 'wb') as psrpickle:
         pickle.dump(ePSRs, psrpickle)
@@ -637,4 +639,10 @@ def main():
     print('Simulation done')
 
     return 0
+
+
+
+if __name__ == '__main__':
+    main()
+
         
