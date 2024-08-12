@@ -14,7 +14,7 @@
         "start": 53267.0,
         "end": 59065.0,
         "cad": 13.0,
-	"dist_dm": 2.896,
+		"dist_dm": 2.896,
         "dist": 3.500
     },
     "B1953+29": {
@@ -143,6 +143,15 @@
         "dist_dm": 0.210,
         "dist": 0.714 
     },
+    "J0636-3044": {
+    	"pta": "mpta",
+    	"toa_err": 5.32,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 0.679,
+        "dist": 0.679
+    },
     "J0645+5158": {
         "pta": "ng",
         "toa_err": 0.823,
@@ -206,6 +215,15 @@
         "dist_dm": 3.722,
         "dist": 3.722  
     },
+    "J0955-6150": {
+    	"pta": "mpta",
+    	"toa_err": 3.50,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 2.173,
+        "dist": 2.173
+    },
     "J1012+5307": {
         "pta": "epta",
         "toa_err": 5.05,
@@ -260,6 +278,24 @@
         "dist_dm": 0.334,
         "dist": 0.340 
     },
+    "J1101-6425": {
+    	"pta": "mpta",
+    	"toa_err": 4.22,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 2.175,
+        "dist": 2.175
+    },
+    "J1103-5403": {
+    	"pta": "mpta",
+    	"toa_err": 3.49,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 1.683,
+        "dist": 1.683
+    },
     "J1125+7819": {
         "pta": "ng",
         "toa_err": 2.175,
@@ -268,6 +304,15 @@
         "cad": 17.0,
         "dist_dm": 0.903,
         "dist": 0.903 
+    },
+    "J1125-5825": {
+    	"pta": "mpta",
+    	"toa_err": 0.52,
+        "start": ,
+        "end": ,
+        "cad": ,
+        "dist_dm": 1.744,
+        "dist": 1.744
     },
     "J1125-6014": {
         "pta": "ppta",
@@ -278,6 +323,15 @@
         "dist_dm": 0.988,
         "dist": 0.988
     },
+    "J1216-6410": {
+    	"pta": "mpta",
+    	"toa_err": 1.11,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 1.098,
+        "dist": 1.098
+    },
     "J1312+0051": {
         "pta": "ng",
         "toa_err": 2.012,
@@ -286,6 +340,42 @@
         "cad": 35.0,
         "dist_dm": 1.465,
         "dist": 1.465 
+    },
+    "J1327-0755": {
+    	"pta": "mpta",
+    	"toa_err": 2.30,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 25.000,
+        "dist": 25.000
+    },
+    "J1421-4409": {
+    	"pta": "mpta",
+    	"toa_err": 5.22,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 2.085,
+        "dist": 2.085
+    },
+    "J1431-5740": {
+    	"pta": "mpta",
+    	"toa_err": 4.11,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 3.553,
+        "dist": 3.553
+    },
+    "J1435-6100": {
+    	"pta": "mpta",
+    	"toa_err": 3.26,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 2.816,
+        "dist": 2.816
     },
     "J1446-4701": {
         "pta": "ppta",
@@ -314,6 +404,24 @@
         "dist_dm": 0.684,
         "dist": 0.769
     },
+    "J1525-5545": {
+    	"pta": "mpta",
+    	"toa_err": 3.61,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 3.140,
+        "dist": 3.140
+    },
+    "J1543-5149": {
+    	"pta": "mpta",
+    	"toa_err": 4.72,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 1.149,
+        "dist": 1.149
+    },
     "J1545-4550": {
         "pta": "ppta",
         "toa_err": 1.404,
@@ -322,6 +430,15 @@
         "cad": 12.0,
         "dist_dm": 2.247,
         "dist": 2.222 
+    },
+    "J1547-5709": {
+    	"pta": "mpta",
+    	"toa_err": 4.28,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 2.695,
+        "dist": 2.695
     },
     "J1600-3053": {
         "pta": "ng",
@@ -350,6 +467,15 @@
         "dist_dm":1.394,
         "dist":  0.700  
     },
+    "J1629-6902": {
+    	"pta": "mpta",
+    	"toa_err": 2.15,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 0.962,
+        "dist": 0.962
+    },
     "J1630+3734": {
         "pta": "ng",
         "toa_err": 1.08,
@@ -377,6 +503,33 @@
         "dist_dm": 0.790,
         "dist":0.740
     },
+    "J1652-4838": {
+    	"pta": "mpta",
+    	"toa_err": 3.08,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 4.395,
+        "dist": 4.395
+    },
+    "J1653-2054": {
+    	"pta": "mpta",
+    	"toa_err": 4.94,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 2.631,
+        "dist": 2.631
+    },
+    "J1658-5324": {
+    	"pta": "mpta",
+    	"toa_err": 2.49,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 0.880,
+        "dist": 0.880
+    },
     "J1705-1903": {
         "pta": "ng",
         "toa_err": 0.192,
@@ -385,6 +538,15 @@
         "cad": 22.0,
         "dist_dm":2.358,
         "dist":2.358    
+    },
+    "J1708-3506": {
+    	"pta": "mpta",
+    	"toa_err": 3.67,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 3.320,
+        "dist": 3.320
     },
     "J1713+0747": {
         "pta": "ng",
@@ -404,6 +566,15 @@
         "dist_dm":0.336,
         "dist":0.336 
     },
+    "J1721-2457": {
+    	"pta": "mpta",
+    	"toa_err": 4.53,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 1.393,
+        "dist": 1.393
+    },
     "J1730-2304": {
         "pta": "ng",
         "toa_err": 1.187,
@@ -412,6 +583,24 @@
         "cad": 17.0,
         "dist_dm":  0.512,
         "dist":0.620
+    },
+    "J1732-5049": {
+    	"pta": "mpta",
+    	"toa_err": 3.93,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 1.874,
+        "dist": 1.874
+    },
+    "J1737-0811": {
+    	"pta": "mpta",
+    	"toa_err": 4.82,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 0.206,
+        "dist": 0.206
     },
     "J1738+0333": {
         "pta": "ng",
@@ -467,6 +656,15 @@
         "dist_dm":1.088,
         "dist":1.088
     },
+    "J1757-5322": {
+    	"pta": "mpta",
+    	"toa_err": 2.54,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 0.945,
+        "dist": 0.945
+    },
     "J1801-1417": {
         "pta": "epta",
         "toa_err": 9.23,
@@ -512,6 +710,15 @@
         "dist_dm": 3.706,
         "dist": 5.370
     },
+    "J1825-0319": {
+    	"pta": "mpta",
+    	"toa_err": 3.60,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 3.862,
+        "dist": 3.862
+    },
     "J1832-0836": {
         "pta": "ng",
         "toa_err": 0.605,
@@ -556,6 +763,15 @@
         "cad": 32.0,
         "dist_dm": 6.120,
         "dist":7.000
+    },
+    "J1903-7051": {
+    	"pta": "mpta",
+    	"toa_err": 2.89,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 0.930,
+        "dist": 0.930
     },
     "J1909-3744": {
         "pta": "ng",
@@ -629,6 +845,15 @@
         "dist_dm":6.938,
         "dist":6.938 
     },
+    "J1946-5403": {
+    	"pta": "mpta",
+    	"toa_err":,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": ,
+        "dist": 
+    },
     "J2010-1323": {
         "pta": "ng",
         "toa_err": 1.069,
@@ -655,6 +880,15 @@
         "cad": 37.0,
         "dist_dm":1.741,
         "dist":1.741 
+    },
+    "J2039-3616": {
+    	"pta": "mpta",
+    	"toa_err": 1.51,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 1.150,
+        "dist": 1.150
     },
     "J2043+1711": {
         "pta": "ng",
@@ -692,6 +926,15 @@
         "dist_dm":0.693,
         "dist":0.625
     },
+    "J2150-0326": {
+    	"pta": "mpta",
+    	"toa_err": 2.77, 
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 1.975,
+        "dist": 1.975
+    },
     "J2214+3000": {
         "pta": "ng",
         "toa_err": 0.844,
@@ -700,6 +943,15 @@
         "cad": 32.0,
         "dist_dm":1.673,
         "dist":0.600
+    },
+    "J2222-0137": {
+    	"pta": "mpta",
+    	"toa_err": 4.31,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 0.267,
+        "dist": 0.267
     },
     "J2229+2643": {
         "pta": "ng",
@@ -763,5 +1015,14 @@
         "cad": 34.0,
         "dist_dm": 1.011,
         "dist": 1.011
-    }
+    },
+    "J2322-2650": {
+    	"pta": "mpta",
+    	"toa_err": 2.76,
+        "start":,
+        "end": ,
+        "cad": ,
+        "dist_dm": 0.760,
+        "dist": 2.000
+    },
 }
