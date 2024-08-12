@@ -1,0 +1,28 @@
+PSRJ           J1658-5324
+RAJ             16:58:39.3435926         1 
+DECJ           -53:24:6.97541            1 
+F0             409.95435572003520741     1 
+F1             -1.8763048262296506334e-15 1 
+PEPOCH         59020                       
+POSEPOCH       59020                       
+DMEPOCH        59000                       
+DM             30.830141274062644629     1 
+PMRA           -0.27513833233813995814   1 
+PMDEC          3.9614751318899568237     1 
+START          58557.225927785505284       
+FINISH         59483.720326936750013       
+TRACK          -2                          
+TZRMJD         59082.713237799379272       
+TZRFRQ         1404.7713490000001002    
+TZRSITE        meerkat   
+TRES           1.315        
+EPHVER         5                           
+NE_SW          4                           
+CLK            TT(BIPM2019)
+MODE 1
+EPHEM          DE438
+NITS           1
+NTOA           302
+CHI2R          0.9385 294
+TNGlobalEF 0.970527
+TNGLobalEQ -8.90599

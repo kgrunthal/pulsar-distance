@@ -1,0 +1,29 @@
+PSRJ           J1730-2304
+RAJ             17:30:21.6844779         1 
+DECJ           -23:04:31.24207           1 
+F0             123.11028703969151564     1 
+F1             -3.05800274561020354e-16  1 
+PEPOCH         59074                       
+POSEPOCH       59074                       
+DMEPOCH        59000                       
+DM             9.6255676145306634135     1 
+PMRA           16.72464037691662701      1 
+PMDEC          -67.932946632674430162    1 
+PX             2.3597221117284988539     1 
+START          58665.719104688360709       
+FINISH         59483.77330167342101        
+TZRMJD         59073.82983832542277        
+TZRFRQ         1210.7469699999999193    
+TZRSITE        meerkat   
+TRES           1.487        
+EPHVER         5                           
+NE_SW          4                           
+CLK            TT(BIPM2019)
+MODE 1
+EPHEM          DE438
+NITS           1
+NTOA           830
+CHI2R          516964.0904 821
+TNGlobalEF 0.996427
+TNGLobalEQ -6.37012
+TNECORR -f KAT_MKBF 0.505853
