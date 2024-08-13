@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-Created on Tue Aug 13 09:38:17 2024
+Created on Fri Aug  9 08:59:05 2024
 
 @author: kgrun
 """
-
 
 
 import numpy as np
@@ -16,36 +15,19 @@ from astropy.coordinates import SkyCoord
 
 
 
-def get_position(name):
-    tmp = {'PSR J1652-4838': SkyCoord('16h52m54s', '-48d45m00s', frame='icrs') }
-
-    if name in tmp.keys():
-        pos = tmp[name]
-    
-    else:
-        pos = SkyCoord.from_name(name, parse=True)
-    
-    if pos.ra.radian > np.pi:
-        ra, dec = 2*np.pi-pos.ra.radian, pos.dec.radian
-    else:
-        ra, dec = -1*pos.ra.radian, pos.dec.radian
-    #ra, dec = pos.ra.wrap_at(180*u.degree).radian, pos.dec.radian
-    
-    return ra, dec
-
-
-
-xticks = np.linspace(-np.pi, np.pi, 9)
-
-
 with open('metadata/pulsar_properties.json', 'r') as tmpf:
-    pulsar_dict = json.load(tmpf)
+    pulsar_dict_all = json.load(tmpf)
 tmpf.close()
 
-
+pulsar_dict = {}
+for key in pulsar_dict_all.keys():
+    if pulsar_dict_all[key]['pta'] != 'mpta':
+        pulsar_dict[key] = pulsar_dict_all[key]
+    else:
+        continue
     
 
-
+'''
 plt.figure(figsize=(8,4))
 
 
@@ -73,7 +55,7 @@ for k in pulsar_dict.keys():
         end_max = pulsar_dict[k]['end']
     
     # low ####################################################################
-    if (pulsar_dict[k]['dist_dm'] > 0.4) and (pulsar_dict[k]['dist_dm'] < 0.95) and (pulsar_dict[k]['toa_err'] < 4.):
+    if (pulsar_dict[k]['dist_dm'] > 0.805) and (pulsar_dict[k]['dist_dm'] < 1.05):
         plt.errorbar(pulsar_dict[k]['dist_dm'], pulsar_dict[k]['toa_err'],
                      fmt='go', ms=0.5*tobs)
         
@@ -86,7 +68,7 @@ for k in pulsar_dict.keys():
         
         
     # middle ##################################################################
-    elif (pulsar_dict[k]['dist_dm'] > 1.2) and (pulsar_dict[k]['dist_dm'] < 1.7) and (pulsar_dict[k]['toa_err'] < 4.):
+    elif (pulsar_dict[k]['dist_dm'] > 1.36) and (pulsar_dict[k]['dist_dm'] < 1.71):
         plt.errorbar(pulsar_dict[k]['dist_dm'], pulsar_dict[k]['toa_err'],
                      fmt='ro', ms=0.5*tobs)
         
@@ -97,7 +79,7 @@ for k in pulsar_dict.keys():
         if dinfo['mid']['end'] < pulsar_dict[k]['end']:
             dinfo['mid']['end'] = pulsar_dict[k]['end']
         
-    elif (pulsar_dict[k]['dist_dm'] > 2.0) and (pulsar_dict[k]['toa_err'] < 4.):
+    elif (pulsar_dict[k]['dist_dm'] > 1.9):
         plt.errorbar(pulsar_dict[k]['dist_dm'], pulsar_dict[k]['toa_err'],
                      fmt='bo', ms=0.5*tobs)
 
@@ -115,18 +97,11 @@ for k in pulsar_dict.keys():
 
 plt.xlabel('DM distance / kpc')
 plt.ylabel('ToA error / $\mu$s')
-plt.xlim(-0.5, 10)
 plt.savefig('ipta_batches_distribution.png', bbox_inches='tight', dpi=400)
 plt.show()
 
 
-print(dinfo['low'])
-print(dinfo['mid'])
-print(dinfo['high'])
-
-print('low \n', low)
-print('mid \n', middle)
-print('high \n', high)
+print(dinfo)
 
 
 ### cut out
@@ -191,12 +166,11 @@ for k in pulsar_dict.keys():
     
 plt.xlabel('DM distance / kpc')
 plt.ylabel('ToA error / $\mu$s')
-plt.xlim(-0.5, 10)
 plt.savefig('ipta_dropout_distribution.png', bbox_inches='tight', dpi=400)
 plt.show()
 
 
-'''
+
 ### gather stats ##############################################################
 
 for key in dinfo.keys():
@@ -245,90 +219,98 @@ print('> 1.5 dataset')
 print('    number of pulsars: {}'.format(dinfo['over_1.5']['npsr']))
 print('    Tobs: {} yr'.format(dinfo['over_1.5']['tobs']))
 print('    fmin: {} Hz'.format(dinfo['over_1.5']['fmin']))
-'''
+
 
 
 
 #### pulsar positions #########################################################
-'''
+
 plt.figure(figsize=(7,9))
 plt.subplot(projection="mollweide")
 
 for psr in low:
     name = 'PSR '+psr
-    ra, dec = get_position(name)
-    plt.errorbar(ra, dec, fmt='go')
-    print(name, end=' \r')
+    pos = SkyCoord.from_name(name, parse=True)
+    ra, dec = pos.ra.wrap_at(180*u.degree).radian, pos.dec.radian
     
+    plt.errorbar(ra, dec, fmt='go')
+    
+    print(name, end=' \r')
+
+
 for psr in middle:
     name = 'PSR '+psr
-    ra, dec = get_position(name)
+    pos = SkyCoord.from_name(name, parse=True)
+    ra, dec = pos.ra.wrap_at(180*u.degree).radian, pos.dec.radian
+    
     plt.errorbar(ra, dec, fmt='ro')
+    
     print(name, end=' \r')
+    
     
 for psr in high:
     name = 'PSR '+psr
-    ra, dec = get_position(name)
+    pos = SkyCoord.from_name(name, parse=True)
+    ra, dec = pos.ra.wrap_at(180*u.degree).radian, pos.dec.radian
+    
     plt.errorbar(ra, dec, fmt='bo')
+    
     print(name, end=' \r')
-
     
 plt.grid(which='both')
-plt.xticks(xticks, ['12h', '9h', '6h', '3h', '0h', '21h', '18h', '15h', ''])
 plt.savefig('ipta_batches_skydistribution.png', bbox_inches='tight', dpi=400)
 plt.show()
-'''
 
 
 
 
-'''
+
+
 plt.figure(figsize=(7,9))
 plt.subplot(projection="mollweide")
 
 for psr in psr_all:
     name = 'PSR '+psr
-    ra, dec = get_position(name)
+    pos = SkyCoord.from_name(name, parse=True)
+    ra, dec = pos.ra.wrap_at(180*u.degree).radian, pos.dec.radian
+    
     plt.errorbar(ra, dec, marker='*', color='lightskyblue')
+    
     print(name, end=' \r')
     
 for psr in psr_10:
     name = 'PSR '+psr
-    ra, dec = get_position(name)
+    pos = SkyCoord.from_name(name, parse=True)
+    ra, dec = pos.ra.wrap_at(180*u.degree).radian, pos.dec.radian
+    
     plt.errorbar(ra, dec, marker='*', color='dodgerblue')
+    
     print(name, end=' \r')
+
 
 for psr in psr_15:
     name = 'PSR '+psr
-    ra, dec = get_position(name)
+    pos = SkyCoord.from_name(name, parse=True)
+    ra, dec = pos.ra.wrap_at(180*u.degree).radian, pos.dec.radian
+    
     plt.errorbar(ra, dec, marker='*', color='mediumblue')
+    
     print(name, end=' \r')
+    
     
 for psr in high:
     name = 'PSR '+psr
-    ra, dec = get_position(name)
+    pos = SkyCoord.from_name(name, parse=True)
+    ra, dec = pos.ra.wrap_at(180*u.degree).radian, pos.dec.radian
+    
     plt.errorbar(ra, dec, marker='*', color='navy')
+    
     print(name, end=' \r')
     
 plt.grid(which='both')
-plt.xticks(xticks, ['12h', '9h', '6h', '3h', '0h', '21h', '18h', '15h', ''])
 plt.savefig('ipta_dropout_skydistribution.png', bbox_inches='tight', dpi=400)
 plt.show()
-'''
 
-'''
-plt.figure(figsize=(7,9))
-plt.subplot(projection="mollweide")
-for psr in psr_all:
-    name = 'PSR '+psr
-    ra, dec = get_position(name)
-    plt.errorbar(ra, dec, marker='*', color='teal')
-    print(name, end=' \r')
-    
-plt.grid(which='both')
-plt.xticks(xticks, ['12h', '9h', '6h', '3h', '0h', '21h', '18h', '15h', ''])
-plt.savefig('ipta_full_skydistribution.png', bbox_inches='tight', dpi=400)
-plt.show()
 '''
 
 
