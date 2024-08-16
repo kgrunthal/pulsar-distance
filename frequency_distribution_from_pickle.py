@@ -18,8 +18,9 @@ import scipy.constants as sc
 import matplotlib.pyplot as plt
 
 from astropy import units as u
-
 from astropy.coordinates import SkyCoord
+
+from enterprise_extensions import model_utils as util
 
 SOLAR2S = sc.G / sc.c**3 * 1.98855e30
 KPC2S = sc.parsec / sc.c * 1e3
@@ -64,7 +65,7 @@ def gw_frequencies(psr, gwtheta, gwphi, mc, dist, fgw):
     omega = w0
     omega_p = w0 * (1 + fac1 * pd * (1 - cosMu)) ** (-3 / 8)
             
-    return omega, omega_p
+    return omega / np.pi, omega_p / np.pi
 
 
 
@@ -82,6 +83,7 @@ def set_up_global_options():
 
 args = set_up_global_options()
 
+print(args.folder.split('/')[-1])
 with open(args.folder+'/psrs.pkl', 'rb') as psrfile:
     PSRs =  pickle.load(psrfile)
 psrfile.close()
@@ -99,24 +101,40 @@ gw_dist = 15   #Mpc
 
 dtype = [('name', 'U11'), ('freq', float)]
 tuples = []
+
+print('calculating frequencies')
 for ii, psr in enumerate(PSRs):
     psr._pdist = (pdistances[psr.name], 0.2)
-    omega, omega_p = gw_frequencies(psr, gwtheta, gwphi, 10**args.lmc, gw_dist, args.fgw*10**(-9))
-    tuples.append((psr.name, omega_p))
+    f_e, f_p = gw_frequencies(psr, gwtheta, gwphi, 10**args.lmc, gw_dist, args.fgw*10**(-9))
+    tuples.append((psr.name, f_p))
 
 values = np.array(tuples, dtype)
-
 sorted_values = np.flipud(np.sort(values, order = 'freq'))
 
-print(sorted_values)
+print('getting PTA information')
+
+Tobs = util.get_tspan(PSRs)
+f_pta = 1/Tobs
+
+bin_min = np.round(np.min(sorted_values['freq'])/f_pta)
+bin_max = np.round(f_e/f_pta)
+print(bin_min, bin_max)
 
 for jj in range(len(PSRs)):
-    plt.errorbar(jj, sorted_values['freq'][jj], fmt='ko', ls='')
+    plt.errorbar(jj, sorted_values['freq'][jj]*1e9, fmt='ko', ls='')
+
+plt.axhline(f_e*1e9, ls='-', color='darkgray')
+plt.text(len(PSRs), f_e*1e9+0.2, '$f_e$', fontsize=7, color='darkgray')
+for ff in range(int(bin_min), int(bin_max)):
+    plt.axhline(ff*f_pta*1e9, ls=':', color='gray')
+    plt.text(len(PSRs), ff*f_pta*1e9+0.2, '${}/T$'.format(ff), fontsize=7, color='lightgray')
 
 plt.xticks(range(len(PSRs)), sorted_values['name'])
 plt.tick_params(axis='x', labelrotation=90)
+plt.ylabel('f / nHz')
 
-plt.savefig(args.folder+'/frequency_distribution.png', dpi=400, bbox_inches='tight')
+plt.xlim(-1, len(PSRs)+2)
+plt.savefig('./frequency_distribution/' + args.folder.split('/')[-1] + '.png', dpi=400, bbox_inches='tight')
     
 
     

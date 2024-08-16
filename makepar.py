@@ -76,7 +76,7 @@ def generate_galactic_pulsars(Npsr, datadir, plots=True):
         
         plt.savefig(datadir + 'histograms.png', bbox_inches='tight', dpi=400)
         
-        
+        plt.clf() 
         ra_plt, dec_plt = np.zeros(Npsr), np.zeros(Npsr)
         for i in range(Npsr):
             if c[i].ra.radian > np.pi:
@@ -89,7 +89,8 @@ def generate_galactic_pulsars(Npsr, datadir, plots=True):
         plt.grid(which='both')
         plt.errorbar(ra_plt, dec_plt, fmt='ko', ls ='')
         plt.savefig(datadir + 'skydistribution.png', bbox_inches='tight', dpi=400)
-    
+        plt.clf()
+
     return ra, dec
 
 
@@ -164,7 +165,7 @@ def make_parfiles(Npsr, distribution='isotropic', datadir=''):
         thetas = np.ones(Npsr)*(np.pi/2. - np.pi/2.)
         
     elif distribution == 'galactic':
-        phis, thetas = generate_galactic_pulsars(Npsr, datadir, plots=False)
+        phis, thetas = generate_galactic_pulsars(Npsr, datadir, plots=True)
         
     for i,n in enumerate(np.arange(Npsr)):
         make_fake_pulsar(phis[i], thetas[i], DIR=datadir+'par/')
@@ -177,12 +178,12 @@ def make_parfiles(Npsr, distribution='isotropic', datadir=''):
 ##############################################################################
 ##############################################################################
 
-datadir = "./"
+datadir = "./par/SKA/"
 
 
 
 # 1. create pulsars
 subprocess.run("mkdir {}".format(datadir+'par').split(' '))
 
-make_parfiles(int(sys.argv[1]), distribution='ring', datadir=datadir)
+make_parfiles(int(sys.argv[1]), distribution='galactic', datadir=datadir)
 
