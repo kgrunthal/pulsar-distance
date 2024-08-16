@@ -21,6 +21,16 @@ from astropy.coordinates import SkyCoord
 import scipy.constants as sc
 
 
+plt.rcParams['font.family'] = "serif"
+plt.rcParams['font.sans-serif'] = "Times"
+
+plt.rcParams['text.usetex']= False
+plt.rcParams['xtick.labelsize'] = 11.0
+plt.rcParams['ytick.labelsize'] = 11.0
+plt.rcParams['axes.labelsize'] = 14.0
+
+
+
 SOLAR2S = sc.G / sc.c**3 * 1.98855e30
 KPC2S = sc.parsec / sc.c * 1e3
 MPC2S = sc.parsec / sc.c * 1e6
@@ -69,11 +79,13 @@ def generate_galactic_pulsars(Npsr, datadir, plots=True):
     distfile.close()
     
     if plots == True:
-        fig, axs = plt.subplots(nrows=1, ncols=2)
+        fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(10,6))
         
         axs[0].hist(z, bins=20)
         axs[1].hist(dist, bins=20)
         
+        axs[0].set_xlabel('scale height $z$')
+        axs[1].set_xlabel('helocentric distance / kpc')
         plt.savefig(datadir + 'histograms.png', bbox_inches='tight', dpi=400)
         
         plt.clf() 
@@ -88,6 +100,9 @@ def generate_galactic_pulsars(Npsr, datadir, plots=True):
         plt.subplot(projection="mollweide")
         plt.grid(which='both')
         plt.errorbar(ra_plt, dec_plt, fmt='ko', ls ='')
+        
+        plt.xticks(np.linspace(-np.pi, np.pi, 9), 
+                   ['12h', '9h', '6h', '3h', '0h', '21h', '18h', '15h', ''])
         plt.savefig(datadir + 'skydistribution.png', bbox_inches='tight', dpi=400)
         plt.clf()
 
