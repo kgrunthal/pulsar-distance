@@ -56,8 +56,7 @@ def gw_frequencies(psr, gwtheta, gwphi, mc, dist, fgw):
 
     cosMu = -np.dot(omhat, phat)
 
-    pd = pdist
-
+    pd = psr._pdist[0]
     # convert units
     pd *= KPC2S  # convert from kpc to seconds
 
@@ -73,8 +72,8 @@ def gw_frequencies(psr, gwtheta, gwphi, mc, dist, fgw):
 def set_up_global_options():
     parser = argparse.ArgumentParser(description='Generate sensitivity curves for PTA datasets.')
     parser.add_argument('--folder', type=str, default=None, help='Path to the MCMCfolder.')
-    parser.add_argument('--lmc', type=float, nargs='*', default=9.5)
-    parser.add_argument('--fgw', type=float, nargs='*', default=22.3)
+    parser.add_argument('--lmc', type=float, default=9.5)
+    parser.add_argument('--fgw', type=float, default=22.3)
 
     return parser.parse_args()
 
@@ -83,9 +82,14 @@ def set_up_global_options():
 
 args = set_up_global_options()
 
-with open(args.folder+'psrs.pkl', 'rb') as psrfile:
+with open(args.folder+'/psrs.pkl', 'rb') as psrfile:
     PSRs =  pickle.load(psrfile)
 psrfile.close()
+
+
+with open(args.folder + '/distances.json') as distfile:
+    pdistances = json.load(distfile)
+distfile.close()
 
 
 
@@ -93,13 +97,13 @@ gwtheta = np.pi
 gwphi = np.pi
 gw_dist = 15   #Mpc
 
-
-dtype = [('name', str), ('freq', float)]
+dtype = [('name', 'U11'), ('freq', float)]
 tuples = []
 for ii, psr in enumerate(PSRs):
+    psr._pdist = (pdistances[psr.name], 0.2)
     omega, omega_p = gw_frequencies(psr, gwtheta, gwphi, 10**args.lmc, gw_dist, args.fgw*10**(-9))
     tuples.append((psr.name, omega_p))
-    
+
 values = np.array(tuples, dtype)
 
 sorted_values = np.sort(values, order = 'freq')
