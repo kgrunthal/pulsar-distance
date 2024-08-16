@@ -106,8 +106,17 @@ for ii, psr in enumerate(PSRs):
 
 values = np.array(tuples, dtype)
 
-sorted_values = np.sort(values, order = 'freq')
+sorted_values = np.flipud(np.sort(values, order = 'freq'))
+
 print(sorted_values)
+
+for jj in range(len(PSRs)):
+    plt.errorbar(jj, sorted_values['freq'][jj], fmt='ko', ls='')
+
+plt.xticks(range(len(PSRs)), sorted_values['name'])
+plt.tick_params(axis='x', labelrotation=90)
+
+plt.savefig(args.folder+'/frequency_distribution.png', dpi=400, bbox_inches='tight')
     
 
     
