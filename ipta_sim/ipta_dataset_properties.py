@@ -16,6 +16,16 @@ from astropy.coordinates import SkyCoord
 
 
 
+plt.rcParams['font.family'] = "serif"
+plt.rcParams['font.sans-serif'] = "Times"
+
+plt.rcParams['text.usetex']= False
+plt.rcParams['xtick.labelsize'] = 11.0
+plt.rcParams['ytick.labelsize'] = 11.0
+plt.rcParams['axes.labelsize'] = 14.0
+
+
+
 def get_position(name):
     tmp = {'PSR J1652-4838': SkyCoord('16h52m54s', '-48d45m00s', frame='icrs') }
 

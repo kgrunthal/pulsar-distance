@@ -21,9 +21,23 @@ from astropy import units as u
 
 from astropy.coordinates import SkyCoord
 
+
+
+plt.rcParams['font.family'] = "serif"
+plt.rcParams['font.sans-serif'] = "Times"
+
+plt.rcParams['text.usetex']= False
+plt.rcParams['xtick.labelsize'] = 11.0
+plt.rcParams['ytick.labelsize'] = 11.0
+plt.rcParams['axes.labelsize'] = 14.0
+
+
+
 SOLAR2S = sc.G / sc.c**3 * 1.98855e30
 KPC2S = sc.parsec / sc.c * 1e3
 MPC2S = sc.parsec / sc.c * 1e6
+
+
 
 
 def gw_frequencies(psr, gwtheta, gwphi, mc, dist, fgw):
