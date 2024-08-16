@@ -61,12 +61,13 @@ count_high = 0
 low = []
 middle = []
 high = []
+distances = []
 
 start_min = 60000
 end_max = 0
 for k in pulsar_dict.keys():
     tobs = (pulsar_dict[k]['end']-pulsar_dict[k]['start'])/(365.25)
-    
+    distances.append(pulsar_dict[k]['dist_dm'])
     if start_min > pulsar_dict[k]['start']:
         start_min = pulsar_dict[k]['start']
     if end_max < pulsar_dict[k]['end']:
@@ -330,6 +331,10 @@ plt.xticks(xticks, ['12h', '9h', '6h', '3h', '0h', '21h', '18h', '15h', ''])
 plt.savefig('ipta_full_skydistribution.png', bbox_inches='tight', dpi=400)
 plt.show()
 '''
+
+plt.hist(distances, bins=50)
+plt.xlim(0, 10)
+plt.show()
 
 
 
