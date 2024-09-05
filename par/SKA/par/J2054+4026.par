@@ -1,0 +1,9 @@
+PSR           J2054+4026
+RAJ           20:54:13.7542276 1
+DECJ          +40:26:23.8974493 1
+F0            392.2657699559 1
+PEPOCH        55000.0
+POSEPOCH      55000.0
+EPHEM         DE440
+CLK           TT(BIPM2021)
+MODE 1
