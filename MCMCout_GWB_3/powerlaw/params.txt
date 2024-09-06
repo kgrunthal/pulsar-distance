@@ -1,2 +1,0 @@
-gw_gamma
-gw_log10_A
