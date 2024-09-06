@@ -1,5 +1,0 @@
-covarianceJumpProposalAM 0.19
-DEJump 0.41
-draw_from_gw_prior 0.074
-draw_from_prior 0.037
-covarianceJumpProposalSCAM  0.3
