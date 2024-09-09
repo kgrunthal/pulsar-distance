@@ -31,12 +31,12 @@ END_COMMENT
 #####################
 
 #: <<'END_COMMENT'
-for i in {1..50} ; do
+for i in 1 ; do
 #for lmc in 8.5 9.0 9.5; do
-for lmc in 8.5 9.0; do    
+for lmc in 7.5 8.0; do    
     for pd in 1.0; do
-        MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_earth_CGW$lmc\_pd$pd\_$i\/
-        #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_CGW$lmc\_earth/
+        #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_earth_CGW$lmc\_pd$pd\_$i\/
+        MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_CGW$lmc\_earth/
         NAME=$lmc\_$pd
 
         if [ ! -d "$MCMC_OUTDIR/" ]; then

@@ -36,7 +36,7 @@ END_COMMENT
 
 #: <<'END_COMMENT'
 for i in 1; do
-for lmc in 7.5 8.0 ; do
+for lmc in 8.5 9.0 9.5 10.0 ; do
     for pd in 1.0; do
         RESULT_DIR=/u/kgrunthal/HD/out/WN_CGW_earth_test/
         #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_singleRN_CGW$lmc\_pd$pd\_$i\/

@@ -9,7 +9,7 @@ Created on Mon Mar 11 14:25:56 2024
 import pickle
 import matplotlib.pyplot as plt
 import numpy as np
-
+import glob
 
 F0 = {'J0024-2029': 238.6718614640,
       'J0114+7148': 276.9603731761,
@@ -34,10 +34,12 @@ F0 = {'J0024-2029': 238.6718614640,
       }
 
 
-#basepath = '/u/kgrunthal/HD/MCMCout_RNCGW9.0_zeta1.0/'
-basepath = '/u/kgrunthal/HD/MCMCout_GWB_test/'
+basepath = '/u/kgrunthal/HD/MCMCout_IPTA_CGW9.5_over1.5_1/'
+#basepath = '/u/kgrunthal/HD/MCMCout_GWBsinglebin_1/'
 psrs = pickle.load(open(basepath + 'psrs.pkl', 'rb'))
 
+'''
+### isotropic pulsar arrangement ##################################################
 
 for p in psrs:
     print(p.name)
@@ -53,4 +55,40 @@ for p in psrs:
     ax1.set_ylabel('residual / s')
     ax2.set_ylabel('$\Delta\Phi$ / 1e-3')
     plt.savefig(basepath + p.name + '.png', bbox_inches='tight')
+
+'''
+
+
+### real pulsars ###########################################################
+fig, ax1 = plt.subplots()
+ax2 = ax1.twinx()
+
+for p in psrs:
+    with open('/u/kgrunthal/HD/ipta_sim/par/' + p.name + '.par') as parfile:
+        for line in parfile:
+            if 'F0' in line:
+                rot_freq = float(line.split(" ")[13])
+                print(p.name, line.split(" ")[13])
+    
+    #fig, ax1 = plt.subplots()
+    #ax2 = ax1.twinx()
+    #ax1.errorbar(p.toas, p.residuals, yerr=p.toaerrs,capsize=2, ls='', fmt='kx')
+    ax1.plot(p.toas, p.residuals, lw=1)
+    
+    ax2.plot(p.toas, p.residuals, ls='')
+    ax2.set_yticks(ax1.get_yticks(), labels= [np.round(x, 2) for x in ax1.get_yticks()*rot_freq*1e3] )
+    '''
+    plt.title(p.name)
+    ax1.set_xlabel('MJD')
+    ax1.set_ylabel('residual / s')
+    ax2.set_ylabel('$\Delta\Phi$ / 1e-3')
+    plt.savefig(basepath + p.name + '.png', bbox_inches='tight')
+    '''
+
+ax1.set_xlabel('MJD')
+ax1.set_ylabel('residual / s')
+ax2.set_ylabel('$\Delta\Phi$ / 1e-3')
+plt.savefig(basepath + 'all_residuals.png', bbox_inches='tight')
+
+ 
     

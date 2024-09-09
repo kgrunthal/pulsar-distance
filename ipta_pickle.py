@@ -499,8 +499,9 @@ def prime_pulsars(psrs, pdistances, signal, noisedict,
                     ADD_CGW(ltp,
                             #np.pi, 0., #CGWtheta CGWphi isotropic
                             #0., 0., #CGWtheta CGWphi ring,perpendicular
-                            np.pi/2., np.pi, #Violin plot test
+                            #np.pi/2., np.pi, #Violin plot test
                             #0.3*np.pi, 0., #CGWtheta CGWphi ring,test
+                            3.*np.pi/8., 3.*np.pi/2., #IPTA customized source 
                             Mc[n], 15., fgw[n],
                             np.pi, np.pi, np.pi,
                             pdist = pdistances[ii],
@@ -585,7 +586,7 @@ def main():
     pars = sorted(glob.glob(args.datadir + '/*.par'))
     print('Load pulsar list', flush=True)
     psr_list = np.loadtxt(args.psr_list, dtype=str)
-    
+    print(psr_list) 
     print('Load pulsar properties', flush=True)
     with open('/u/kgrunthal/HD/ipta_sim/metadata/pulsar_properties.json', 'r') as tmpf:
         pspec = json.load(tmpf)
@@ -602,6 +603,7 @@ def main():
     # simulate pulsars 
     PSRs = []
     distances = []
+    pd_dict = {}
     for par,name in zip(pars, names):
         if name in psr_list:
             start, end = pspec[name]['start'], pspec[name]['end']
@@ -617,7 +619,7 @@ def main():
         
             PSRs.append(fpsr)
             distances.append(pspec[name]['dist_dm'])
-        
+            pd_dict[name] = pspec[name]['dist_dm']
         else:
             continue
         
@@ -625,17 +627,20 @@ def main():
      
     fgw = np.array(args.fgw)*1e-9
     mc = 10**np.array(args.lmc)
-
+    print(np.array(distances))
     ePSRs = prime_pulsars(PSRs, np.array(distances),
                           args.ptamodel, WNdict,
                           args.ncgw, fgw, mc, zeta = args.zeta,
-                          psrTerm = args.psrTerm, evolve=True, phase_approx=False,
+                          psrTerm = args.psrTerm, evolve=False, phase_approx=True,
                           distance_fix = True)
 
     with open(args.outdir+'psrs.pkl', 'wb') as psrpickle:
         pickle.dump(ePSRs, psrpickle)
-
     psrpickle.close()
+
+    with open(args.outdir+'distances.json', 'w') as f:
+        json.dump(pd_dict, f, indent=4)
+    f.close()
     print('Simulation done')
 
     return 0
