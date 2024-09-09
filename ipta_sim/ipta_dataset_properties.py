@@ -63,7 +63,8 @@ dinfo = {'low': {'npsr': 0, 'start': 60000, 'end': 0, 'tobs': 0, 'fmin':0},
          'mid': {'npsr': 0, 'start': 60000, 'end': 0, 'tobs': 0, 'fmin':0},
          'high': {'npsr': 0, 'start': 60000, 'end': 0, 'tobs': 0, 'fmin':0},
          'over_1.0': {'npsr': 0, 'start': 60000, 'end': 0, 'tobs': 0, 'fmin':0},
-         'over_1.5': {'npsr': 0, 'start': 60000, 'end': 0, 'tobs': 0, 'fmin':0}
+         'over_1.5': {'npsr': 0, 'start': 60000, 'end': 0, 'tobs': 0, 'fmin':0},
+         'over_2.0': {'npsr': 0, 'start': 60000, 'end': 0, 'tobs': 0, 'fmin':0}
          }
 count_low = 0
 count_middle = 0
@@ -108,6 +109,7 @@ for k in pulsar_dict.keys():
         if dinfo['mid']['end'] < pulsar_dict[k]['end']:
             dinfo['mid']['end'] = pulsar_dict[k]['end']
         
+    # high ####################################################################
     elif (pulsar_dict[k]['dist_dm'] > 2.0) and (pulsar_dict[k]['toa_err'] < 4.):
         plt.errorbar(pulsar_dict[k]['dist_dm'], pulsar_dict[k]['toa_err'],
                      fmt='bo', ms=0.5*tobs)
@@ -197,6 +199,21 @@ for k in pulsar_dict.keys():
         psr_10.append(k)
         psr_15.append(k)
         psr_20.append(k)
+        dinfo['over_1.0']['npsr'] +=1
+        if dinfo['over_1.0']['start'] > pulsar_dict[k]['start']:
+            dinfo['over_1.0']['start'] = pulsar_dict[k]['start']
+        if dinfo['over_1.0']['end'] < pulsar_dict[k]['end']:
+            dinfo['over_1.0']['end'] = pulsar_dict[k]['end']
+        dinfo['over_1.5']['npsr'] +=1
+        if dinfo['over_1.5']['start'] > pulsar_dict[k]['start']:
+            dinfo['over_1.5']['start'] = pulsar_dict[k]['start']
+        if dinfo['over_1.5']['end'] < pulsar_dict[k]['end']:
+            dinfo['over_1.5']['end'] = pulsar_dict[k]['end']
+        dinfo['over_2.0']['npsr'] +=1
+        if dinfo['over_2.0']['start'] > pulsar_dict[k]['start']:
+            dinfo['over_2.0']['start'] = pulsar_dict[k]['start']
+        if dinfo['over_2.0']['end'] < pulsar_dict[k]['end']:
+            dinfo['over_2.0']['end'] = pulsar_dict[k]['end']
     
     
     
@@ -207,7 +224,7 @@ plt.savefig('ipta_dropout_distribution.png', bbox_inches='tight', dpi=400)
 plt.show()
 
 
-'''
+
 ### gather stats ##############################################################
 
 for key in dinfo.keys():
@@ -256,7 +273,12 @@ print('> 1.5 dataset')
 print('    number of pulsars: {}'.format(dinfo['over_1.5']['npsr']))
 print('    Tobs: {} yr'.format(dinfo['over_1.5']['tobs']))
 print('    fmin: {} Hz'.format(dinfo['over_1.5']['fmin']))
-'''
+
+print('> 2.0 dataset')
+print('    number of pulsars: {}'.format(dinfo['over_2.0']['npsr']))
+print('    Tobs: {} yr'.format(dinfo['over_2.0']['tobs']))
+print('    fmin: {} Hz'.format(dinfo['over_2.0']['fmin']))
+
 
 
 
@@ -315,7 +337,7 @@ for psr in psr_15:
     plt.errorbar(ra, dec, marker='*', color='mediumblue')
     print(name, end=' \r')
     
-for psr in high:
+for psr in psr_20:
     name = 'PSR '+psr
     ra, dec = get_position(name)
     plt.errorbar(ra, dec, marker='*', color='navy')
@@ -340,12 +362,12 @@ plt.grid(which='both')
 plt.xticks(xticks, ['12h', '9h', '6h', '3h', '0h', '21h', '18h', '15h', ''])
 plt.savefig('ipta_full_skydistribution.png', bbox_inches='tight', dpi=400)
 plt.show()
-'''
+
 
 plt.hist(distances, bins=50)
 plt.xlim(0, 10)
 plt.show()
-
+'''
 
 
 
