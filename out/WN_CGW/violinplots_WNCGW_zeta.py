@@ -119,26 +119,26 @@ def main():
     bins = 20
     test_frequencies = np.linspace(1/(3625*86400), 20/(3625*86400), bins)
     
-    head_dir = './out/WN_CGW/run_0/'
+    head_dir = './run_0/'
     ###########################################################################
     ###########################################################################
     outdir_maxLH = head_dir + '/maxLH/'
     
-    OS_95_08 = np.loadtxt(outdir_maxLH + 'OS_spectrum_CGW9.5_zeta0.8.txt')
-    OS_95_09 = np.loadtxt(outdir_maxLH + 'OS_spectrum_CGW9.5_zeta0.9.txt')
-    OS_95_10 = np.loadtxt(outdir_maxLH + 'OS_spectrum_CGW9.5_zeta1.0.txt')
-    OS_95_earth = np.loadtxt(outdir_maxLH + 'OS_spectrum_CGW9.5_earth.txt').transpose()
-    OS_95_pulsar = np.loadtxt(outdir_maxLH + 'OS_spectrum_CGW9.5_pulsar.txt').transpose()
+    OS_95_08 = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW9.5_zeta0.8.txt').transpose()
+    OS_95_09 = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW9.5_zeta0.9.txt').transpose()
+    OS_95_10 = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW9.5_zeta1.0.txt').transpose()
+    OS_95_earth = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW9.5_earth.txt').transpose()
+    OS_95_pulsar = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW9.5_pulsar.txt').transpose()
     
-    OS_90_08 = np.loadtxt(outdir_maxLH + 'OS_spectrum_CGW9.0_zeta0.8.txt')
-    OS_90_09 = np.loadtxt(outdir_maxLH + 'OS_spectrum_CGW9.0_zeta0.9.txt')
-    OS_90_10 = np.loadtxt(outdir_maxLH + 'OS_spectrum_CGW9.0_zeta1.0.txt')
+    OS_90_08 = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW9.0_zeta0.8.txt').transpose()
+    OS_90_09 = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW9.0_zeta0.9.txt').transpose()
+    OS_90_10 = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW9.0_zeta1.0.txt').transpose()
     OS_90_earth = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW9.0_earth.txt').transpose()
     OS_90_pulsar = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW9.0_pulsar.txt').transpose()
     
-    OS_85_08 = np.loadtxt(outdir_maxLH + 'OS_spectrum_CGW8.5_zeta0.8.txt')
-    OS_85_09 = np.loadtxt(outdir_maxLH + 'OS_spectrum_CGW8.5_zeta0.9.txt')
-    OS_85_10 = np.loadtxt(outdir_maxLH + 'OS_spectrum_CGW8.5_zeta1.0.txt')
+    OS_85_08 = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW8.5_zeta0.8.txt').transpose()
+    OS_85_09 = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW8.5_zeta0.9.txt').transpose()
+    OS_85_10 = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW8.5_zeta1.0.txt').transpose()
     OS_85_earth = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW8.5_earth.txt').transpose()
     OS_85_pulsar = np.loadtxt(outdir_maxLH + 'OS_spectrum_WNCGW8.5_pulsar.txt').transpose()
     
@@ -147,21 +147,21 @@ def main():
     ###########################################################################
     outdir_nm = head_dir + '/noisemarginalised/'
     
-    data95_08 = np.loadtxt(outdir_nm + 'OS_spectrum_CGW9.5_zeta0.8_NM.txt')
-    data95_09 = np.loadtxt(outdir_nm + 'OS_spectrum_CGW9.5_zeta0.9_NM.txt')
-    data95_10 = np.loadtxt(outdir_nm + 'OS_spectrum_CGW9.5_zeta1.0_NM.txt')
+    data95_08 = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW9.5_zeta0.8_NM.txt').transpose()
+    data95_09 = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW9.5_zeta0.9_NM.txt').transpose()
+    data95_10 = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW9.5_zeta1.0_NM.txt').transpose()
     data95_earth = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW9.5_earth_NM.txt').transpose()
     data95_pulsar = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW9.5_pulsar_NM.txt').transpose()
     
-    data90_08 = np.loadtxt(outdir_nm + 'OS_spectrum_CGW9.0_zeta0.8_NM.txt')
-    data90_09 = np.loadtxt(outdir_nm + 'OS_spectrum_CGW9.0_zeta0.9_NM.txt')
-    data90_10 = np.loadtxt(outdir_nm + 'OS_spectrum_CGW9.0_zeta1.0_NM.txt')
+    data90_08 = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW9.0_zeta0.8_NM.txt').transpose()
+    data90_09 = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW9.0_zeta0.9_NM.txt').transpose()
+    data90_10 = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW9.0_zeta1.0_NM.txt').transpose()
     data90_earth = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW9.0_earth_NM.txt').transpose()
     data90_pulsar = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW9.0_pulsar_NM.txt').transpose()
     
-    data85_08 = np.loadtxt(outdir_nm + 'OS_spectrum_CGW8.5_zeta0.8_NM.txt')
-    data85_09 = np.loadtxt(outdir_nm + 'OS_spectrum_CGW8.5_zeta0.9_NM.txt')
-    data85_10 = np.loadtxt(outdir_nm + 'OS_spectrum_CGW8.5_zeta1.0_NM.txt')
+    data85_08 = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW8.5_zeta0.8_NM.txt').transpose()
+    data85_09 = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW8.5_zeta0.9_NM.txt').transpose()
+    data85_10 = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW8.5_zeta1.0_NM.txt').transpose()
     #data85_earth = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW8.5_earth_NM.txt').transpose()
     #data85_pulsar = np.loadtxt(outdir_nm + 'OS_spectrum_WNCGW8.5_pulsar_NM.txt').transpose()
     
@@ -169,7 +169,7 @@ def main():
     ###########################################################################
 
     
-    '''
+    
     outdir_figure = head_dir
     
     #-- logMc = 9.5 -----------------------------------------------------------
@@ -196,7 +196,7 @@ def main():
     plt.savefig(outdir_figure + 'logMc9.5.png', dpi=400, bbox_inches='tight')
     plt.show()
     #--------------------------------------------------------------------------
-    
+    '''
     #-- logMc = 9.0 -----------------------------------------------------------
     fig_90, axs_90 = plt.subplots(nrows=1, ncols=3, figsize=(15, 4))
     #plt.subplots_adjust(wspace=0.05)

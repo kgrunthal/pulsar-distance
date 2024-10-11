@@ -130,7 +130,7 @@ def main():
     bins = 20
     test_frequencies = np.linspace(1/(3625*86400), 20/(3625*86400), bins)
     
-    head_dir = './out/WN_CGW_earth_test/run_1/'
+    head_dir = './WN_CGW_earth_test/run_1/'
     ###########################################################################
     ###########################################################################
     outdir_maxLH = head_dir 
