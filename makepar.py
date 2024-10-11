@@ -36,6 +36,106 @@ KPC2S = sc.parsec / sc.c * 1e3
 MPC2S = sc.parsec / sc.c * 1e6
 
 
+def draw_position(hdist, iteration):
+    # galactic longitude
+    l_rad = rng.uniform(0,2*np.pi)
+        
+    # scale height distribution
+    zavg = 1.0
+    zabs = rng.exponential(zavg)
+    z = (-1)**(iteration)* zabs
+        
+    # galactic latitude
+    b_rad = np.arcsin(z/hdist)
+
+    # convert to RA and DEC
+    c_gal = SkyCoord(l = l_rad, b=b_rad, unit='rad', frame='galactic')
+    c = c_gal.icrs
+    ra, dec = c.ra.radian, c.dec.radian
+    
+    return ra, dec, z
+
+
+
+def generate_ska_pulsars(Npsr, datadir, plots=True):
+    ra, dec, z = np.zeros(Npsr), np.zeros(Npsr), np.zeros(Npsr)
+    
+    # heliocentric distance
+    x = np.random.power(3, size = Npsr)
+    dist = 10*np.ones(Npsr) - 5*x
+    
+    nmax_sparse = 5
+    n_sparse = 0
+    for N in range(Npsr):
+        if n_sparse < nmax_sparse:
+            ra_new, dec_new, z_new = draw_position(dist[N], N)
+            while (dec_new > np.pi/6.):
+                ra_new, dec_new, z_new = draw_position(dist[N], N)
+                
+            ra[N], dec[N], z[N] = ra_new, dec_new, z_new
+            
+            if (ra_new < 3*np.pi/4. and dec_new > -3*np.pi/4.):
+                n_sparse += 1
+                
+            #print()
+            
+        else:
+            ra_new, dec_new, z_new = draw_position(dist[N], N)
+            while (dec_new > np.pi/6.) or (ra_new < 3*np.pi/4. and dec_new > -3*np.pi/4.):
+                ra_new, dec_new, z_new = draw_position(dist[N], N)
+
+            #print(N, ra_new*12/np.pi, dec_new*180/np.pi, dec_new < np.pi/6.)
+            #print()
+            
+            ra[N], dec[N], z[N] = ra_new, dec_new, z_new
+        
+    
+    dist_dict = {}
+    
+    for ii, (r, d) in enumerate(zip(ra, dec)):
+        c = SkyCoord(ra = r, dec=d, unit='rad', frame='icrs')
+        cstr = c.to_string('hmsdms')
+        #print cstr
+        RAJ = cstr.split(" ")[0].replace("h",":").replace("m",":")[:-1]
+        DECJ = cstr.split(" ")[1].replace("d",":").replace("m",":")[:-1]
+        cstr = cstr.replace(" ","")
+        name = "J"+RAJ[0:2]+RAJ[3:5]+DECJ[0]+DECJ[1:3]+DECJ[4:6]
+        
+        dist_dict[name] = dist[ii]
+    
+    with open(datadir + 'distances.json', 'w') as distfile:
+        json.dump(dist_dict, distfile, indent=4)
+    distfile.close()
+    
+    
+    if plots == True:
+        fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(10,6))
+        
+        axs[0].hist(z, bins=20)
+        axs[1].hist(dist, bins=20)
+        
+        axs[0].set_xlabel('scale height $z$')
+        axs[1].set_xlabel('helocentric distance / kpc')
+        plt.savefig(datadir + 'histograms.png', bbox_inches='tight', dpi=400)
+        
+        plt.clf() 
+        ra_plt, dec_plt = np.pi-ra, dec
+            
+        plt.figure(figsize=(7,9))
+        plt.subplot(projection="mollweide")
+        plt.grid(which='both')
+        plt.errorbar(ra_plt, dec_plt, fmt='ko', ls ='')
+        
+        plt.xticks(np.linspace(-np.pi, np.pi, 9), 
+                   ['12h', '9h', '6h', '3h', '0h', '21h', '18h', '15h', ''])
+        plt.savefig(datadir + 'skydistribution.png', bbox_inches='tight', dpi=400)
+        plt.clf()
+    
+    
+    return ra, dec
+
+
+
 def generate_galactic_pulsars(Npsr, datadir, plots=True):
     # galactic longitude
     l_rad = rng.uniform(0,2*np.pi, Npsr)
@@ -188,6 +288,9 @@ def make_parfiles(Npsr, distribution='isotropic', datadir=''):
 
     elif distribution == 'galactic':
         phis, thetas = generate_galactic_pulsars(Npsr, datadir, plots=True)
+        
+    elif distribution == 'ska':
+        phis, thetas = generate_ska_pulsars(Npsr, datadir, plots=False)
         
     for i,n in enumerate(np.arange(Npsr)):
         make_fake_pulsar(phis[i], thetas[i], DIR=datadir+'par/')

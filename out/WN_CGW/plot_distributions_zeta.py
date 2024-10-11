@@ -68,7 +68,7 @@ color_tabl = [colors_85, colors_90, colors_95]
 
 markers = ['D', 'o', '*', 'h']
 
-legends = ['$d_\mathrm{p} = 1.0$kpc', '$d_\mathrm{p} = 1.5$kpc', '$d_\mathrm{p} = 2.0$kpc']
+legends = ['$\zeta = 0.8$', '$\zeta = 0.9$', '$\zeta = 1.0$']
 
 
 '''
@@ -120,19 +120,19 @@ for ll, lmc in enumerate([8.5, 9.0, 9.5]):
 
 for ll, lmc in enumerate([8.5, 9.0, 9.5]):
     
-    fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(13, 5))
+    fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(15, 5))
     plt.subplots_adjust(wspace=0.02)
     axs[1].yaxis.set_label_position("right")
     axs[1].yaxis.tick_right() 
     plotconfig(fig, axs, fgw)
     
     legend_patch= []
-    for dd, pd in enumerate([1.0, 1.5, 2.0]):
+    for dd, zeta in enumerate([0.8, 0.9, 1.0]):
         OSarray = np.zeros((realisations, bins))
         SNarray = np.zeros((realisations, bins))
         for i in range(realisations):
             run_dir = 'run_{}/noisemarginalised/'.format(i+1)
-            data = np.loadtxt(run_dir + 'OS_spectrum_CGW{}_pd{}_NM.txt'.format(lmc, pd))
+            data = np.loadtxt(run_dir + 'OS_spectrum_CGW{}_zeta{}_NM.txt'.format(lmc, zeta))
             OS, SN = distribution(data, test_frequencies)
             OSarray[i], SNarray[i] = OS, SN
             
@@ -180,7 +180,7 @@ for ll, lmc in enumerate([8.5, 9.0, 9.5]):
     
     #plt.suptitle('log$M_\mathrm{c} =$' + '{}'.format(lmc), fontsize=20)
     plt.legend(legend_patch, legends, loc = 'upper left')
-    #plt.savefig(head_dir + 'PFOS_realisations_{}_new.png'.format(lmc), dpi=400, bbox_inches='tight')
+    plt.savefig('PFOS_realisations_{}_new.png'.format(lmc), dpi=400, bbox_inches='tight')
     plt.show()
         
 
