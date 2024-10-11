@@ -60,7 +60,7 @@ with open('SKA_properties.json', 'w') as skaprop:
 skaprop.close()
 
 with open('SKA_WN_dictionary.json', 'w') as skawn:
-    json.dump(SKA_dict, skawn, indent=4)
+    json.dump(WN_dict, skawn, indent=4)
 skawn.close()
 
 
