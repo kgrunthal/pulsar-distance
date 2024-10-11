@@ -339,7 +339,7 @@ def PTA_model(psrs, obtimes, ptamodel, mode=None):
 
 def run_sampler(pta, outdir = '', resume=False):
 
-    N = int(1e7)                                    # number of samples
+    N = int(1e6)                                    # number of samples
     x0 = np.hstack(p.sample() for p in pta.params)  # initial parameter vector
     ndim = len(x0)                                  # number of dimensions
     print('x0 =', x0)
@@ -563,16 +563,17 @@ def main():
 
     ePSRs, pta, setpars, chain = do_analysis(PSRs, obstimes, args.signal, args.ptamodel, fgw=np.array(args.fgw)*1e-9, mc=10**np.array(args.lmc), zeta=args.zeta, outdir=args.outdir, Ncgw=args.ncgw,  cornerplot=args.cornerplot, psrTerm=args.psrTerm, Filter=False, resume = args.resume)
 
-
+    tspan = model_utils.get_tspan(ePSRs)
+    tspan_yrs = tspan/(3600*24*365.25)
+    print('This PTA has a total time span of {} years \n'.format(tspan_yrs))
     print('Initiating OS stats')
     ostat = opt_stat.OptimalStatistic(ePSRs, pta=pta, orf='hd')
 
     if args.OStype == 'spectrum':
 
-        #test_frequencies = np.array([6.3e-9, 2.2e-8, 3e-8, 4e-8, 5e-8, 6e-8, 7e-8, 1.5e-7])
-        test_frequencies = np.linspace(1/(3625*86400), 20/(3625*86400), 20)
+        test_frequencies = np.linspace(1/tspan, 20/tspan, 20) 
+        #test_frequencies = np.linspace(1/(3625*86400), 20/(3625*86400), 20)
 
-        #test_frequencies = [7/(3625*86400)]
         print('OS type: free spectrum')
         print(50*'-' + '\n' + 50*'-')
         print('Calculating OS stats (maximum LH)')

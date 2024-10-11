@@ -26,7 +26,7 @@ from enterprise.signals import white_signals
 
 
 parfolder = '/hercules/u/kgrunthal/HD/par/EPTA/'
-outfolder = '/hercules/u/kgrunthal/HD/MCMCout_EPTA'
+outfolder = '/hercules/u/kgrunthal/HD/MCMCout_EPTA/'
 
 parfiles = sorted(glob.glob(parfolder + '/*.par'))
 Npsr = len(parfiles)
@@ -53,7 +53,8 @@ for ii in range(0,Npsr):
     # add to list
     psrs.append(psr)
 
-LT.createGWB(psrs, Amp=Amp, gam=gamma)
+#LT.createGWB(psrs, Amp=Amp, gam=gamma, corr='HD')
+LT.createGWB(psrs, Amp=Amp, gam=gamma, turnover=True, beta = 5/3, f0 = 10**(-7.9), corr='HD')
 
 for Psr in psrs:
 

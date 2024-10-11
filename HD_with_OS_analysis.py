@@ -565,6 +565,7 @@ def main():
         
             #np.savetxt('./output/HD_output_WNRN_{:.2e}.txt'.format(f), HD_output.transpose(), delimiter='\t')
             out_maxLH[ii] = OS_output
+        
         np.savetxt(args.result + '.txt', out_maxLH, delimiter='\t')
 
         print()

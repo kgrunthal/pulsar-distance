@@ -146,8 +146,12 @@ def cw_delay(toas, pos, pdist,
     # evolution
     if evolve:
         # calculate time dependent frequency at earth and pulsar
-        omega = w0 * (1 - 256/5 * mc**(5/3) * w0**(8/3) * toas)**(-3/8)
-        omega_p = w0 * (1 - 256/5 * mc**(5/3) * w0**(8/3) * tp)**(-3/8)
+        #omega = w0 * (1 - 256/5 * mc**(5/3) * w0**(8/3) * toas)**(-3/8)
+        #omega_p = w0 * (1 - 256/5 * mc**(5/3) * w0**(8/3) * tp)**(-3/8)
+
+        omega = w0 * np.sign( (1 - 256/5 * mc**(5/3) * w0**(8/3) * toas)) * (np.abs((1 - 256/5 * mc**(5/3) * w0**(8/3) * toas))) ** (-3/8)
+        omega_p = w0 * np.sign( (1 - 256/5 * mc**(5/3) * w0**(8/3) * toas)) * (np.abs((1 - 256/5 * mc**(5/3) * w0**(8/3) * toas))) ** (-3/8)
+
 
         if p_dist > 0:
             omega_p0 = w0 * (1 + 256/5
@@ -156,13 +160,14 @@ def cw_delay(toas, pos, pdist,
             omega_p0 = w0
 
         # calculate time dependent phase
-        phase = phase0 + 1/32/mc**(5/3) * (w0**(-5/3) - omega**(-5/3))
+        #phase = phase0 + 1/32/mc**(5/3) * (w0**(-5/3) - omega**(-5/3))
+        phase = phase0 + 1/32/mc**(5/3) * (w0**(-5/3) - np.sign(omega) * np.abs(omega)**(-5/3))
 
         if p_phase is None:
-            phase_p = phase0 + 1/32/mc**(5/3) * (w0**(-5/3) - omega_p**(-5/3))
+            phase_p = phase0 + 1/32/mc**(5/3) * (w0**(-5/3) - np.sign(omega_p) * np.abs(omega_p)**(-5/3))
         else:
             phase_p = (phase0 + p_phase
-                       + 1/32*mc**(-5/3) * (omega_p0**(-5/3) - omega_p**(-5/3)))
+                       + 1/32*mc**(-5/3) * (omega_p0**(-5/3) - np.sign(omega_p)*np.abs(omega_p)**(-5/3)))
 
     elif phase_approx:
         # monochromatic
@@ -272,7 +277,7 @@ def PTA_model(psrs, ptamodel, psrTerm=True, pdist=1., sample_pdist=False):
 
             cos_gwtheta = parameter.Uniform(-1, 1)('cos_gwtheta')   # position of source
             gwphi = parameter.Uniform(0, 2*np.pi)('gwphi')          # position of source
-            log10_mc = parameter.Uniform(6.5, 10.)('log10_Mc')      # chirp mass
+            log10_mc = parameter.Uniform(8., 10.)('log10_Mc')      # chirp mass
             log10_h = parameter.Uniform(-16, -11)('log10_h')        # strain amplitude
             log10_fgw = parameter.Uniform(-8.5, -6.5)('log10_fgw')    # gw frequency
             phase0 = parameter.Uniform(0, 2*np.pi)('phase0')        # gw phase
@@ -283,6 +288,7 @@ def PTA_model(psrs, ptamodel, psrTerm=True, pdist=1., sample_pdist=False):
                 if pdist == None:
                     if sample_pdist == True:
                        p_dist = parameter.Normal(0,1)
+                       #p_dist = parameter.Uniform(0,1)
                     else:
                        p_dist = 0
                     
@@ -291,7 +297,7 @@ def PTA_model(psrs, ptamodel, psrTerm=True, pdist=1., sample_pdist=False):
                     cw_wf = deterministic.cw_delay(cos_gwtheta=cos_gwtheta, gwphi=gwphi, log10_mc=log10_mc,
                                                    log10_h=log10_h, log10_fgw=log10_fgw, phase0=phase0,
                                                    psi=psi, cos_inc=cos_inc,
-                                                   evolve=True, psrTerm=True, phase_approx=True,
+                                                   evolve=True, psrTerm=True, phase_approx=False,
                                                    p_dist=p_dist, p_phase=p_phase)
 
                 else:
@@ -303,7 +309,7 @@ def PTA_model(psrs, ptamodel, psrTerm=True, pdist=1., sample_pdist=False):
                     cw_wf = cw_delay(cos_gwtheta=cos_gwtheta, gwphi=gwphi, log10_mc=log10_mc,
                                      log10_h=log10_h, log10_fgw=log10_fgw, phase0=phase0,
                                      psi=psi, cos_inc=cos_inc,
-                                     evolve=True, psrTerm=True, phase_approx=True,
+                                     evolve=False, psrTerm=True, phase_approx=True,
                                      p_dist=p_dist, p_phase=p_phase)
 
 
@@ -319,7 +325,7 @@ def PTA_model(psrs, ptamodel, psrTerm=True, pdist=1., sample_pdist=False):
             
 
             CGW = deterministic.CWSignal(cw_wf, ecc=False, psrTerm=psrTerm)
-            
+            #CGW = deterministic.cw_block_circ(psrTerm=True)
             s.append(CGW)
             outstring += 'CGW '
             
@@ -360,10 +366,10 @@ def produce_output(outdir = '' , plot = 'chainconsumer'):
             # sigma
             parameter_estimate_list = corner.quantile(chain[burn:,i], [0.16, 0.5, 0.84])
             # replace mean with maximum likelihood
-            #n, bins, patches = plt.hist(chain[burn:,i], bins=100)
-            #plt.clf()
-            #max_lh_pos = np.argmax(n)
-            #max_lh = bins[max_lh_pos]
+            n, bins, patches = plt.hist(chain[burn:,i], bins=100)
+            plt.clf()
+            max_lh_pos = np.argmax(n)
+            max_lh = bins[max_lh_pos]
             parameter_estimate_list[1] = max_lh
         
             outdict[p]=parameter_estimate_list.tolist()
@@ -421,6 +427,7 @@ def main():
         pdistances = json.load(open(args.basedir + '/distances.json', 'r'))
         for p in ePSRs:
             p._pdist = (pdistances[p.name], 0.2)
+            print(p.pdist)
         PTA = PTA_model(ePSRs, args.ptamodel, psrTerm=args.psrTerm, pdist=None, sample_pdist = args.sample_pdist)
     else:
         PTA = PTA_model(ePSRs, args.ptamodel, psrTerm=args.psrTerm, pdist=args.pd)
@@ -443,6 +450,7 @@ def main():
     
     if args.analysis == True:
         _ = produce_output(outdir = outD)
+        #_ = produce_output(outdir = outD, plot = 'corner')
         return None
     
     else:

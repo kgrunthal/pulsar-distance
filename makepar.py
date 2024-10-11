@@ -50,9 +50,9 @@ def generate_galactic_pulsars(Npsr, datadir, plots=True):
     loc, scale = 1.0, 1.5
     dist = np.zeros(Npsr)
     for i in range(Npsr):
-        dtmp = rng.laplace(loc, scale)
+        dtmp = np.abs(rng.laplace(loc, scale))
         while np.abs(z[i]/dtmp) > 1.:
-            dtmp = rng.laplace(loc, scale)
+            dtmp = np.abs(rng.laplace(loc, scale))
         dist[i]=dtmp
     
     # galactic latitude
@@ -78,8 +78,10 @@ def generate_galactic_pulsars(Npsr, datadir, plots=True):
         json.dump(dist_dict, distfile, indent=4)
     distfile.close()
     
+    np.savetxt(datadir + 'scaleheight.txt', z)
+    
     if plots == True:
-        fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(10,6))
+        fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(10,3))
         
         axs[0].hist(z, bins=20)
         axs[1].hist(dist, bins=20)
@@ -178,7 +180,12 @@ def make_parfiles(Npsr, distribution='isotropic', datadir=''):
     elif distribution == 'ring':
         phis = np.linspace(0, 2*np.pi, Npsr, endpoint=False)
         thetas = np.ones(Npsr)*(np.pi/2. - np.pi/2.)
-        
+
+    elif distribution == 'skew':
+        phis = np.linspace(0, 2*np.pi, Npsr, endpoint=False)
+        kappa = 25*(np.pi/180.)
+        thetas = np.max(np.tan(kappa)*(phis/2.)) - np.tan(kappa)*phis
+
     elif distribution == 'galactic':
         phis, thetas = generate_galactic_pulsars(Npsr, datadir, plots=True)
         
@@ -193,12 +200,12 @@ def make_parfiles(Npsr, distribution='isotropic', datadir=''):
 ##############################################################################
 ##############################################################################
 
-datadir = "./par/SKA/"
+datadir = "./par/skew/"
 
 
 
 # 1. create pulsars
 subprocess.run("mkdir {}".format(datadir+'par').split(' '))
 
-make_parfiles(int(sys.argv[1]), distribution='galactic', datadir=datadir)
+make_parfiles(int(sys.argv[1]), distribution='skew', datadir=datadir)
 

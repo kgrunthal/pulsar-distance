@@ -2,14 +2,11 @@
 
 #:<< END_COMMENT
 for i in {1..50}; do
-#for lmc in 8.5 9.0 9.5; do
-for lmc in 8.5 9.0; do
-for pd in 1.0; do
+for lmc in 8.5 9.0 9.5; do
+#for lmc in 8.5 9.0; do
+for pd in low mid high; do
 
-#lmc=9.5
-#pd=2.0
-#i=1
-    MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_earth_CGW$lmc\_pd$pd\_$i\/
+    MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_IPTA_CGW_RA18h-45deg_$lmc\_$pd\_$i\/
     NAME=CGW_$lmc\_$pd
     RESULT_DIR_noPT=$MCMC_OUTDIR/CGWsearch_noPT/
     RESULT_DIR_PT=$MCMC_OUTDIR/CGWsearch_PT/
@@ -23,12 +20,12 @@ for pd in 1.0; do
     #     mkdir $RESULT_DIR_PT
     #fi
 
-    if [ ! -d "$RESULT_DIR_PT_pphase/" ]; then
-         mkdir $RESULT_DIR_PT_pphase
-    fi
+    #if [ ! -d "$RESULT_DIR_PT_pphase/" ]; then
+    #     mkdir $RESULT_DIR_PT_pphase
+    #fi
 
     
-    sbatch -p short.q --time=02:00:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/CGW_noPT.out --error=$MCMC_OUTDIR/slurm_output/CGW_noPT.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /u/kgrunthal/EPTA_ENTERPRISE.sif python3 CGW_search.py --basedir $MCMC_OUTDIR --outdir $RESULT_DIR_noPT --ptamodel TM,WN,CGW --analysis --use_distance"
+    sbatch -p short.q --time=03:00:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/CGW_noPT.out --error=$MCMC_OUTDIR/slurm_output/CGW_noPT.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 CGW_search.py --basedir $MCMC_OUTDIR --outdir $RESULT_DIR_noPT --ptamodel TM,WN,CGW --analysis --use_distance"
 
      
 #    sbatch -p short.q --time=03:00:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/CGW_PT_pphase.out --error=$MCMC_OUTDIR/slurm_output/CGW_PT_pphase.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 CGW_search.py --basedir $MCMC_OUTDIR --outdir $RESULT_DIR_PT_pphase --ptamodel TM,WN,CGW --pd $pd --psrTerm --analysis --use_distance" 

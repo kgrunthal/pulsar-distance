@@ -406,7 +406,7 @@ def produce_output(outdir = '',):
     with open(outdir+"/maxlike.json", "w") as f:
         json.dump(outdict, f, indent=4)   
     f.close()
-    
+
     return chain[burn:], outdict
 
 
@@ -455,8 +455,8 @@ for Psr in psrs:
 '''
 
 
-parfiles = sorted(glob.glob('epta_sim/*.par'))
-timfiles = sorted(glob.glob('epta_sim/*.tim'))
+parfiles = sorted(glob.glob('epta_sim/par/*.par'))
+timfiles = sorted(glob.glob('epta_sim/tim/*.tim'))
 
 psrs = []
 ephemeris = None
@@ -489,15 +489,17 @@ pta = signal_base.PTA([s(p) for p in psrs])
     
 print(pta.params)
 
-run_sampler(pta, "./epta_sim/")
+#run_sampler(pta, "./epta_sim/")
 
 fs = (np.arange(30) + 1) / Tspan
 chainname = 'chain_1'
 chain = np.loadtxt("./epta_sim/" + chainname + '.txt')
 
 
-chain, setpars = produce_output("./epta_sim/")
+chain, ml_params = produce_output("./epta_sim/")
 
+setpars = (pta.map_params(list(ml_params.values())))
+setpars.update(ml_params)
 ostat = opt_stat.OptimalStatistic(psrs, pta=pta, orf='hd')
 
 print('OS type: free spectrum')
@@ -529,31 +531,31 @@ for ii, f in enumerate(fs):
     print('...Iterating over {} chain draws'.format(N))
     out_noisedraws = np.zeros((len(fs)*3, N))
     
-    for ii, f in enumerate(fs):
-        print('-- {}'.format(f), flush=True)
-        opt_temp = []
-        sig_temp = []
-        for n in range(N):
-            idx = np.random.randint(0, chain.shape[0])
-            print('...on sample {}'.format(n), end='\r', flush=True)
-            
-            for jj, p in enumerate(pta.param_names):
-                setpars[p] = chain[idx][jj]
-                setpars['gw_log10_rho'] = chain[idx][-24:-4]
+for ii, f in enumerate(fs):
+    print('-- {}'.format(f), flush=True)
+    opt_temp = []
+    sig_temp = []
+    for n in range(N):
+        idx = np.random.randint(0, chain.shape[0])
+        print('...on sample {}'.format(n), end='\r', flush=True)
+        
+        for jj, p in enumerate(pta.param_names):
+            setpars[p] = chain[idx][jj]
+            setpars['gw_log10_rho'] = chain[idx][-24:-4]
 
-            # compute OS stat for the drawn parameters
-            _, _, _, OS_temp, OS_sig_temp = ostat.compute_os(params=setpars, psd='spectrum', fgw=f)
-            
-            opt_temp.append(OS_temp)
-            sig_temp.append(OS_sig_temp)
+        # compute OS stat for the drawn parameters
+        _, _, _, OS_temp, OS_sig_temp = ostat.compute_os(params=setpars, psd='spectrum', fgw=f)
+          
+        opt_temp.append(OS_temp)
+        sig_temp.append(OS_sig_temp)
 
-        opt = np.array(opt_temp)
-        sig = np.array(sig_temp)
-        sn = opt/sig
+    opt = np.array(opt_temp)
+    sig = np.array(sig_temp)
+    sn = opt/sig
 
-        out_noisedraws[int(3*ii)] = opt
-        out_noisedraws[int(3*ii+1)] = sig
-        out_noisedraws[int(3*ii+2)] = sn
+    out_noisedraws[int(3*ii)] = opt
+    out_noisedraws[int(3*ii+1)] = sig
+    out_noisedraws[int(3*ii+2)] = sn
         
 np.savetxt('./epta_sim/GWBsinglebin_NM.txt', out_noisedraws, delimiter='\t') 
 

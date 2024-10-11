@@ -331,7 +331,7 @@ def run_sampler(pta, outdir = ''):
 
 
 
-basedir='/u/kgrunthal/HD/epta_sim/test_bin7_A1e-11_2/'
+basedir='/u/kgrunthal/HD/epta_sim/test_bin7_A5e-12_2/'
 #basedir='/u/kgrunthal/HD/epta_sim/test_GW+RN_single/'
 
 parfiles = sorted(glob.glob('/u/kgrunthal/HD/epta_sim/par/*.par'))
@@ -370,7 +370,7 @@ for ii in range(0,Npsr):
 bin_pos = 7
 freq = createFreq(psrs, howml=howml)
 spec = 1e-50*np.ones(len(freq))
-spec[bin_pos*howml] = 1e-11*np.ones(1)
+spec[bin_pos*howml] = 5e-12*np.ones(1)
 userSpec = np.asarray([freq, spec]).T
 
 print(freq[bin_pos*howml])
@@ -395,14 +395,14 @@ createGWB(psrs, Amp=Amp, gam=gamma, howml=howml, userSpec=userSpec_single_rn, no
 
 ## save tim files ##
 
-for Psr in psrs:
+#for Psr in psrs:
 
-    Psr.savepar(basedir + Psr.name + '.par')
-    Psr.savetim(basedir + Psr.name + '.tim')
-    T.purgetim(basedir + Psr.name + '.tim')
+#    Psr.savepar(basedir + Psr.name + '.par')
+#    Psr.savetim(basedir + Psr.name + '.tim')
+#    T.purgetim(basedir + Psr.name + '.tim')
 
 
-del psrs
+#del psrs
 
 parfiles = sorted(glob.glob(basedir + '/*.par'))
 timfiles = sorted(glob.glob(basedir + '/*.tim'))
@@ -447,7 +447,7 @@ pta = signal_base.PTA([s(p) for p in psrs])
 
 
 
-run_sampler(pta, basedir)
+#run_sampler(pta, basedir)
 
 
 
@@ -506,7 +506,7 @@ axs[0].set_xscale('log')
 axs[0].errorbar(fs, snr_list, fmt='ko', ls='')
 axs[1].errorbar(1, OSpl/OSpl_sig, fmt='bo', ls='')
 axs[1].set_xticks([1], ['PL S/N'])
-axs[0].axvline(fs[bin_pos-1], ls =':', color='gray')
+axs[0].axvline(fs[bin_pos], ls =':', color='gray')
 plt.savefig(basedir+"snr_new.png")
 plt.clf()
 
