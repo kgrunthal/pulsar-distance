@@ -40,18 +40,22 @@ def write_outline(openfile, maxdict, nparameter, idx):
     return None
  
 basepath='/u/kgrunthal/HD/'
-outdir = '/out/CGWparameter_recovery/ipta/RA18hDEC-45deg/high/'
+outdir = '/out/CGWparameter_recovery/ipta/RA12hDEC0deg/'
 
 start = 1
 end = 50
 
 #for lmc in [8.6]:
 for lmc in [8.5, 9.0, 9.5]:
-    for pd in [1.0]:
+    #for pd in ['low', 'mid', 'high']:
+    for pd in ['over1.0', 'over1.5', 'over2.0']:
+
         print(lmc, ' ', pd, ':')
         
         # create outputfiles
-        f_noPT = open(basepath + outdir + '/parameters_noPT_lmc{}_pd{}.txt'.format(lmc, pd), 'a')
+        #f_noPT = open(basepath + outdir + '/parameters_noPT_lmc{}_pd{}.txt'.format(lmc, pd), 'a')
+        f_noPT = open(basepath + outdir + '/parameters_noPT_lmc{}_{}.txt'.format(lmc, pd), 'a')
+
         #f_PT_pdist = open(basepath+'/out/CGWparameter_recovery/isotropic/parameters_PT_pdist_lmc{}_pd{}.txt'.format(lmc, pd), 'a')
         #f_PT_pphase = open(basepath+'/out/CGWparameter_recovery/isotropic/parameters_PT_pphase_lmc{}_pd{}.txt'.format(lmc, pd), 'a')
         #f_PT_pdist_pphase = open(basepath+'/out/CGWparameter_recovery/isotropic/parameters_PT_lmc{}_pd{}.txt'.format(lmc, pd), 'a')
@@ -59,7 +63,7 @@ for lmc in [8.5, 9.0, 9.5]:
         #iterate over realisations
         for i in range(start,end+1):
             #path = basepath+'/MCMCout_IPTA_CGW{}_pd{}_{}'.format(lmc, pd, i)
-            path = basepath+'/MCMCout_IPTA_CGW_RA18h-45deg_{}_high_{}'.format(lmc, i)
+            path = basepath+'/MCMCout_IPTA_WN_CGW_RA12hDEC0deg_{}_{}_{}'.format(lmc, pd, i)
             #path = basepath+'/MCMCout_IPTAhigh_CGW{}_mid_{}'.format(lmc, i)
             print('... on {}'.format(path))
             

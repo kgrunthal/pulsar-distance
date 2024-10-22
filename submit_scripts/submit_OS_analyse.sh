@@ -30,13 +30,13 @@ done
 END_COMMENT
 
 
-for i in {11..100}; do
+for i in {11..50}; do
 for lmc in 8.5 9.0 9.5 ; do
     for pd in 1.0 1.5 2.0 ; do
-        RESULT_DIR=/u/kgrunthal/HD/out/WN_CGW_pd/
-        MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_CGW$lmc\_pd$pd\_$i\/
+        RESULT_DIR=/u/kgrunthal/HD/out/20PSR-galactic/
+        MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_IPTA20_CGW$lmc\_pd$pd\_$i\/
         #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_CGW$lmc\_earth/
-        OUTFILE=OS_spectrum_CGW$lmc\_pd$pd
+        OUTFILE=OS_spectrum_IPTA20_CGW$lmc\_pd$pd
         NAME=$lmc\_$pd\_spec
 
         if [ ! -d "$MCMC_OUTDIR/" ]; then
@@ -55,7 +55,7 @@ for lmc in 8.5 9.0 9.5 ; do
             mkdir $RESULT_DIR/run_$i/
         fi
 
-        sbatch -p long.q --time=17:00:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/analysis.out --error=$MCMC_OUTDIR/slurm_output/analysis.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /u/kgrunthal/EPTA_ENTERPRISE.sif python3 /u/kgrunthal/HD/HD_with_OS_analysis.py --par $PAR_DIR --outdir $MCMC_OUTDIR/ --result $RESULT_DIR/run_$i\/$OUTFILE --psrpickle $MCMC_OUTDIR/psrs.pkl --ptamodel TM,WN,CRN_fs --OStype spectrum --N 1000"
+        sbatch -p long.q --time=17:00:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/analysis.out --error=$MCMC_OUTDIR/slurm_output/analysis.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 /u/kgrunthal/HD/HD_with_OS_analysis.py --par $PAR_DIR --outdir $MCMC_OUTDIR/ --result $RESULT_DIR/run_$i\/$OUTFILE --psrpickle $MCMC_OUTDIR/psrs.pkl --ptamodel TM,WN,CRN_fs --OStype spectrum --N 1000"
 
     done
 done

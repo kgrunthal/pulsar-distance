@@ -1,0 +1,33 @@
+PSR           J0024-2408
+RAJ           00:24:47.88808194 0
+DECJ          -24:08:51.86370128 0
+F0             172.64290990765853875     0  9.0557812916829779876e-13
+F1             -3.474079785842442661e-16 0  3.4357026956422718853e-20
+PEPOCH         57777                       
+POSEPOCH       57777                       
+DMEPOCH        57777                       
+DM             14.056062537940553903       
+DM1            0                           
+PMELONG        4.4438250546668833104     0  0.08827047003792455788   
+PMELAT         -9.902374698971424056     0  0.19345708490233848309   
+PX             -0.13821909589793900248   0  0.87774854922165179705   
+START          56497.971633020130753       
+FINISH         59056.000358024173519       
+TZRMJD         57767.458947980313301       
+TZRFRQ         436.25                   
+TZRSITE        arecibo   
+TRES           5.921        
+EPHVER         5                           
+NE_SW          0                           
+CLK            TT(TAI)
+MODE 1
+UNITS          TDB
+TIMEEPH        FB90
+DILATEFREQ     N
+PLANET_SHAPIRO Y
+T2CMETHOD      IAU2000B
+CORRECT_TROPOSPHERE  Y
+EPHEM          DE440
+NITS           1
+NTOA           2551
+CHI2R          0.9814 2472

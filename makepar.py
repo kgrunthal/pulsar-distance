@@ -231,11 +231,11 @@ def make_fake_pulsar(phi, theta, DIR=""):
     print(name)
     output = "PSR           %s\n"%name
     
-    output += "RAJ           %s 1\n"%RAJ
-    output += "DECJ          %s 1\n"%DECJ
-    
+    output += "RAJ           %s 0\n"%RAJ
+    output += "DECJ          %s 0\n"%DECJ
+    print(output)
     period = 0.001*np.random.uniform(1,5) #seconds
-    output += "F0            %0.10f 1\n"%(1.0/period)
+    output += "F0            %0.10f 0\n"%(1.0/period)
     
     output += "PEPOCH        55000.0\n"    
     output += "POSEPOCH      55000.0\n"
@@ -303,12 +303,12 @@ def make_parfiles(Npsr, distribution='isotropic', datadir=''):
 ##############################################################################
 ##############################################################################
 
-datadir = "./par/skew/"
+datadir = "./"
 
 
 
 # 1. create pulsars
-subprocess.run("mkdir {}".format(datadir+'par').split(' '))
+#subprocess.run("mkdir {}".format(datadir+'par').split(' '))
 
-make_parfiles(int(sys.argv[1]), distribution='skew', datadir=datadir)
+make_parfiles(int(sys.argv[1]), distribution='ring', datadir=datadir)
 
