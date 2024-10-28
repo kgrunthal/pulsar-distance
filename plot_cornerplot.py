@@ -57,9 +57,9 @@ def injected_values(fgw, logMc):
             'log10_h': np.log10(h),
             'log10_fgw': np.log10(fgw),
             'log10_Mc': logMc,
-            'cos_inc': np.cos(np.pi),
+            'cos_inc': np.cos(np.pi/2.),
             'phase0': np.pi,
-            'psi': np.pi
+            'psi': np.pi/2.
             }
 
 

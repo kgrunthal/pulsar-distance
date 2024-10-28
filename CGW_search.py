@@ -241,7 +241,7 @@ def set_up_global_options():
     parser.add_argument('--use_distance', action="store_true", default=False, help='Use the randomly drawn distance')
     parser.add_argument('--sample_pdist', action="store_true", default=False, help='Use the randomly drawn distance')
 
-    parser.add_argument('--Nsample', type=int, default=5e5, help='number of MCMC draws')
+    parser.add_argument('--Nsample', type=int, default=1e7, help='number of MCMC draws')
     return parser.parse_args()
 
 
