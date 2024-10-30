@@ -58,7 +58,7 @@ ylabels = {'cos_gwtheta': r'cos $\theta_\mathrm{gw}$',
            }
 
 
-basepath ='./out/CGWparameter_recovery/ipta/'
+basepath ='./'
 
 
 parameter = 'cos_gwtheta'
@@ -68,7 +68,7 @@ parameter = 'cos_gwtheta'
 
 
 ### BATCHES ###
-folders = ['low', 'mid', 'high']
+subsets = ['low', 'mid', 'high']
 fig, axs = plt.subplots(nrows=1, ncols=3, figsize=(10, 4), sharey=True)
 plt.subplots_adjust(wspace=0.05)
 for i, lmc in enumerate([8.5, 9.0, 9.5]):
@@ -76,8 +76,8 @@ for i, lmc in enumerate([8.5, 9.0, 9.5]):
     
     legend_colors = [mpatches.Patch(facecolor=cl, edgecolor=cl, alpha=0.5) for cl in color_tabl[i]]
     
-    for j in range(3):
-        data = np.genfromtxt(folders[j] + '/parameters_noPT_lmc{}_pd1.0.txt'.format(lmc), names=True)
+    for j, sub in enumerate(subsets):
+        data = np.genfromtxt('parameters_noPT_lmc{}_{}.txt'.format(lmc, sub), names=True)
         
         boxprops = dict(facecolor=color_tabl[i][j],  edgecolor=color_tabl[i][j], linewidth=0, alpha=0.5)
         flierprops = dict(marker='o', markerfacecolor=color_tabl[i][j], ms=2.5, markeredgecolor='none')
@@ -119,7 +119,7 @@ plt.show()
 
 
 ### REMOVAL ########################
-folders = ['over1.0', 'over1.5', 'over2.0']
+subsets = ['over1.0', 'over1.5', 'over2.0']
 
 fig, axs = plt.subplots(nrows=1, ncols=3, figsize=(10, 4), sharey=True)
 plt.subplots_adjust(wspace=0.05)
@@ -128,8 +128,8 @@ for i, lmc in enumerate([8.5, 9.0, 9.5]):
     
     legend_colors = [mpatches.Patch(facecolor=cl, edgecolor=cl, alpha=0.5) for cl in color_tabl[i]]
     
-    for j in range(0,3):
-        data = np.genfromtxt(folders[j] + '/parameters_noPT_lmc{}_pd1.0.txt'.format(lmc), names=True)
+    for j, sub in enumerate(subsets):
+        data = np.genfromtxt('parameters_noPT_lmc{}_{}.txt'.format(lmc, sub), names=True)
         
         
         boxprops = dict(facecolor=color_tabl[i][j],  edgecolor=color_tabl[i][j], linewidth=0, alpha=0.5)
@@ -164,11 +164,11 @@ axs[0].set_ylabel(ylabels[parameter])
     
     
 #plt.suptitle('Dropout\n', fontsize=16, y=1.003)
-plt.savefig('noPT_dropout_{}.png'.format(parameter), bbox_inches='tight', dpi=400)
+plt.savefig('noPT_removal_{}.png'.format(parameter), bbox_inches='tight', dpi=400)
 plt.show()
 
 
-
+'''
 ### BATCHES TEST ########################
 folders = ['mid_as_low', 'mid', 'mid_as_high']
 
@@ -221,137 +221,11 @@ axs[0].set_ylabel(ylabels[parameter])
 plt.savefig('noPT_batchestest_{}.png'.format(parameter), bbox_inches='tight', dpi=400)
 plt.show()
 
-
-
-
-
-
-
-
-
-
-
-
 '''
-#### VIOLIN PLOTS ####
-
-### BATCHES ###
-folders = ['low', 'mid', 'high']
-fig, axs = plt.subplots(nrows=1, ncols=3, figsize=(15, 4))
-plt.subplots_adjust(wspace=0.35)
-for i, lmc in enumerate([8.5, 9.0, 9.5]):
-    ivs = injected_values(22.3e-9, lmc)
-    
-    legend_colors = [mpatches.Patch(facecolor=cl, edgecolor=cl, alpha=0.5) for cl in color_tabl[i]]
-    
-    for j in range(3):
-        data = np.genfromtxt(folders[j] + '/parameters_noPT_lmc{}_pd1.0.txt'.format(lmc), names=True)
-        mask = np.argwhere((data['log10_fgw'] < -7.6) & (data['log10_fgw'] > -7.8))
-        
-        axs[i].errorbar(1+0.5*j*np.ones(len(data[parameter])), data[parameter], ls='', marker='o', ms=2, color=color_tabl[i][j])        #yerr=[data[parameter]-data[parameter+'_ll'], data[parameter+'_ul']-data[parameter]]
-        violin = axs[i].violinplot(data[parameter].transpose(), [1+0.5*j], showextrema=False, widths=0.2)
-        for vl in violin['bodies']:
-            vl.set_facecolor(color_tabl[i][j])
-            vl.set_edgecolor(color_tabl[i][j])
-            vl.set_alpha(0.5)
-        
-        uncertainty = data[parameter+'_ul'] - data[parameter+'_ll']
-        print(lmc, folders[j], np.nanmean(uncertainty, axis=0), np.count_nonzero(~np.isnan(uncertainty)))
-    print()
-    axs[i].axhline(ivs[parameter], ls=':', color='gray')
-    
-    
-    axs[i].set_title('log$_{10}M_\mathrm{c}$ = ' + '{}'.format(lmc))
-    axs[i].set_xlabel('pulsar distance / kpc')
-    axs[i].set_ylabel(ylabels[parameter])
-    
-        
-
-#plt.suptitle('Even Batches\n', fontsize=16, y=1.003)
-plt.savefig('noPT_batches_{}.png'.format(parameter), bbox_inches='tight')
-plt.show()
 
 
 
 
 
-### REMOVAL ########################
-folders = ['over1.0', 'over1.5', 'over2.0']
 
 
-
-fig, axs = plt.subplots(nrows=1, ncols=3, figsize=(15, 4))
-plt.subplots_adjust(wspace=0.35)
-for i, lmc in enumerate([8.5, 9.0, 9.5]):
-    ivs = injected_values(22.3e-9, lmc)
-    
-    legend_colors = [mpatches.Patch(facecolor=cl, edgecolor=cl, alpha=0.5) for cl in color_tabl[i]]
-    
-    for j in range(0,3):
-        data = np.genfromtxt(folders[j] + '/parameters_noPT_lmc{}_pd1.0.txt'.format(lmc), names=True)
-        mask = np.argwhere((data['log10_fgw'] < -7.6) & (data['log10_fgw'] > -7.8))
-        
-        axs[i].errorbar(1+0.5*j*np.ones(len(data[parameter])), data[parameter], ls='',marker='o', ms=2, color=color_tabl[i][j])        #yerr=[data[parameter]-data[parameter+'_ll'], data[parameter+'_ul']-data[parameter]]
-        violin = axs[i].violinplot(data[parameter].transpose(), [1+0.5*j], showextrema=False, widths=0.2)
-        for vl in violin['bodies']:
-            vl.set_facecolor(color_tabl[i][j])
-            vl.set_edgecolor(color_tabl[i][j])
-            vl.set_alpha(0.5)
-        uncertainty = data[parameter+'_ul'] - data[parameter+'_ll']
-        print(lmc, folders[j], np.nanmean(uncertainty, axis=0), np.count_nonzero(~np.isnan(uncertainty)))
-
-    print()
-        
-    axs[i].axhline(ivs[parameter], ls=':', color='gray')
-    
-    
-    axs[i].set_title('log$_{10}M_\mathrm{c}$ = ' + '{}'.format(lmc))
-    axs[i].set_xlabel('pulsar distance / kpc')
-    axs[i].set_ylabel(ylabels[parameter])
-    
-    
-#plt.suptitle('Dropout\n', fontsize=16, y=1.003)
-plt.savefig('noPT_dropout_{}.png'.format(parameter), bbox_inches='tight')
-plt.show()
-
-
-
-### BATCHES TEST ########################
-folders = ['mid_as_low', 'mid', 'mid_as_high']
-
-
-
-fig, axs = plt.subplots(nrows=1, ncols=3, figsize=(15, 4))
-plt.subplots_adjust(wspace=0.35)
-for i, lmc in enumerate([8.5, 9.0, 9.5]):
-    ivs = injected_values(22.3e-9, lmc)
-    
-    legend_colors = [mpatches.Patch(facecolor=cl, edgecolor=cl, alpha=0.5) for cl in color_tabl[i]]
-    
-    for j in range(0,3):
-        data = np.genfromtxt(folders[j] + '/parameters_noPT_lmc{}_pd1.0.txt'.format(lmc), names=True)
-        mask = np.argwhere((data['log10_fgw'] < -7.6) & (data['log10_fgw'] > -7.8))
-        
-        axs[i].errorbar(1+0.5*j*np.ones(len(data[parameter])), data[parameter], ls='',marker='o', ms=2, color=color_tabl[i][j])        #yerr=[data[parameter]-data[parameter+'_ll'], data[parameter+'_ul']-data[parameter]]
-        violin = axs[i].violinplot(data[parameter].transpose(), [1+0.5*j], showextrema=False, widths=0.2)
-        for vl in violin['bodies']:
-            vl.set_facecolor(color_tabl[i][j])
-            vl.set_edgecolor(color_tabl[i][j])
-            vl.set_alpha(0.5)
-        uncertainty = data[parameter+'_ul'] - data[parameter+'_ll']
-        print(lmc, folders[j], np.nanmean(uncertainty, axis=0), np.count_nonzero(~np.isnan(uncertainty)))
-
-    print()
-        
-    axs[i].axhline(ivs[parameter], ls=':', color='gray')
-    
-    
-    axs[i].set_title('log$_{10}M_\mathrm{c}$ = ' + '{}'.format(lmc))
-    axs[i].set_xlabel('pulsar distance / kpc')
-    axs[i].set_ylabel(ylabels[parameter])
-    
-    
-#plt.suptitle('Dropout\n', fontsize=16, y=1.003)
-plt.savefig('noPT_batchestest_{}.png'.format(parameter), bbox_inches='tight')
-plt.show()
-'''

@@ -12,22 +12,6 @@ import matplotlib.colors as colors
 import matplotlib.patches as mpatches
 
 
-def plotconfig_old(fig, axs, fgw):
-    axs[0].axvline(np.log10(fgw), ls=':', color='dimgray')
-    axs[0].axvline(np.log10(0.9*fgw), ls=':', color='darkgray')
-    axs[0].axvline(np.log10(0.8*fgw), ls=':', color='darkgray')
-    axs[1].axvline(np.log10(fgw), ls=':', color='dimgray')
-    axs[1].axvline(np.log10(0.9*fgw), ls=':', color='darkgray')
-    axs[1].axvline(np.log10(0.8*fgw), ls=':', color='darkgray')
-    
-    axs[0].set_xlabel('log$_{10}$($f$ / Hz)' , fontsize=14)
-    axs[1].set_xlabel('log$_{10}$($f$ / Hz)' , fontsize=14)
-    axs[0].set_ylabel('$P(f)$', fontsize=14)
-    axs[1].set_ylabel(r'$\overline{P} / (P_\mathrm{max}-P_\mathrm{min})$', fontsize=14)
-    
-    return None
-
-
 def plotconfig(fig, axs, fgw):
     axs[0].axvline(np.log10(fgw), ls=':', color='dimgray')
     axs[0].axvline(np.log10(0.9*fgw), ls=':', color='darkgray')
@@ -74,7 +58,6 @@ test_frequencies = np.linspace(1/(3625*86400), 20/(3625*86400), bins)
 
 realisations = 50
 
-head_dir = './'
 
 
 colors_85= ['mediumpurple', 'mediumorchid', 'plum']  # 0.8, 0.9, 1.0
@@ -85,7 +68,7 @@ color_tabl = [colors_85, colors_90, colors_95]
 
 markers = ['D', 'o', '*', 'h']
 
-legends = ['$d_\mathrm{p} = 1.0$kpc', '$d_\mathrm{p} = 1.5$kpc', '$d_\mathrm{p} = 2.0$kpc']
+legends = ['$\zeta = 1.0$', '$\zeta = 0.9$', '$\zeta = 0.8$']
 
 
 '''
@@ -135,23 +118,22 @@ for ll, lmc in enumerate([8.5, 9.0, 9.5]):
     plt.show()
 '''
 
-
 '''
 for ll, lmc in enumerate([8.5, 9.0, 9.5]):
     
-    fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(13, 5))
+    fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(15, 5))
     plt.subplots_adjust(wspace=0.02)
     axs[1].yaxis.set_label_position("right")
     axs[1].yaxis.tick_right() 
-    #plotconfig(fig, axs, fgw)
+    plotconfig(fig, axs, fgw)
     
     legend_patch= []
-    for dd, pd in enumerate([1.0, 1.5, 2.0]):
+    for dd, zeta in enumerate([1.0, 0.9, 0.8]):
         OSarray = np.zeros((realisations, bins))
         SNarray = np.zeros((realisations, bins))
         for i in range(realisations):
             run_dir = 'run_{}/noisemarginalised/'.format(i+1)
-            data = np.loadtxt(run_dir + 'OS_spectrum_CGW{}_pd{}_NM.txt'.format(lmc, pd))
+            data = np.loadtxt(run_dir + 'OS_spectrum_CGW{}_zeta{}_NM.txt'.format(lmc, zeta))
             OS, SN = distribution(data, test_frequencies)
             OSarray[i], SNarray[i] = OS, SN
             
@@ -175,17 +157,15 @@ for ll, lmc in enumerate([8.5, 9.0, 9.5]):
         #axs[1].errorbar(np.log10(test_frequencies)+dd*0.01, SN_avg, yerr = SN_range,
         #               ls='', markersize=0, capsize=3, linewidth=3, elinewidth=3,
         #               color=color_tabl[ll][dd])
-        
-
-        
+            
         
         
         # new version with spread of distribution
-        axs[0].errorbar(test_frequencies*1e9+dd*0.5, OS_avg, yerr = OS_range,
+        axs[0].errorbar(np.log10(test_frequencies)+dd*0.015, OS_avg, yerr = OS_range,
                        ls='', markersize=0, capsize=3, linewidth=3, elinewidth=3,
                        color=color_tabl[ll][dd])
         
-        axs[1].errorbar(test_frequencies*1e9, OS_avg/OS_range,
+        axs[1].errorbar(np.log10(test_frequencies), OS_avg/OS_range,
                         ls='', linewidth=3, elinewidth=3, marker=markers[dd],
                         color=color_tabl[ll][dd])
         
@@ -199,12 +179,13 @@ for ll, lmc in enumerate([8.5, 9.0, 9.5]):
     
     #plt.suptitle('log$M_\mathrm{c} =$' + '{}'.format(lmc), fontsize=20)
     plt.legend(legend_patch, legends, loc = 'upper left')
-    #plt.savefig(head_dir + 'PFOS_realisations_{}_new.png'.format(lmc), dpi=400, bbox_inches='tight')
+    plt.savefig('PFOS_realisations_{}_new.png'.format(lmc), dpi=400, bbox_inches='tight')
     plt.show()
-''' 
-    
-    
-    
+'''       
+
+
+
+
 #### ALL TOGETHER IN ONE ####
 def plotconfig_new(fig, axs, fgw):
     for i in range(3):
@@ -233,21 +214,22 @@ axs[0][1].yaxis.set_label_position("right")
 axs[0][1].yaxis.tick_right() 
 
 for ll, lmc in enumerate([8.5, 9.0, 9.5]):
+    print('On lmc {}'.format(lmc))
     
     axs[ll][1].yaxis.set_label_position("right")
     axs[ll][1].yaxis.tick_right() 
     legend_patch= []
     
     for dd, pd in enumerate([1.0, 1.5, 2.0]):
+        print('... pd {} \t'.format(pd), end='\r')
         OSarray = np.zeros((realisations, bins))
         SNarray = np.zeros((realisations, bins))
         for i in range(realisations):
-            print('... on lmc {}, pd {}, realisation {}'.format(lmc, pd, i), end='\r')
             run_dir = 'run_{}/noisemarginalised/'.format(i+1)
-            data = np.loadtxt(run_dir + 'OS_spectrum_CGW{}_pd{}_NM.txt'.format(lmc, pd))
+            data = np.loadtxt(run_dir + 'OS_spectrum_IPTA20_CGW{}_pd{}_NM.txt'.format(lmc, pd))
             OS, SN = distribution(data, test_frequencies)
             OSarray[i], SNarray[i] = OS, SN
-        print()
+        print('DONE')
         # produce ranges for plotting
         OS_avg = np.average(OSarray, axis=0)
         OS_range = np.max(OSarray, axis=0) - OS_avg
@@ -262,7 +244,7 @@ for ll, lmc in enumerate([8.5, 9.0, 9.5]):
         
         axs[ll][1].errorbar(test_frequencies*1e9, OS_avg/OS_range,
                         ls='', linewidth=3, elinewidth=3, marker=markers[dd],
-                        color=color_tabl[ll][dd], label='$d_\mathrm{p} = $'+'{}kpc'.format(pd))
+                        color=color_tabl[ll][dd], label='$\zeta = {}$'.format(pd))
         
         legend_patch.append(plt.Line2D((0,0), (0,0), ls='none', marker=markers[dd], color=color_tabl[ll][dd]))
         
@@ -271,8 +253,8 @@ for ll, lmc in enumerate([8.5, 9.0, 9.5]):
     
     axs[ll][1].legend(loc = 'upper right')
 
-plotconfig_new(fig, axs, 22.3e-9)
+plotconfig_new(fig, axs, fgw)
 
-plt.savefig(head_dir + 'isotropic-PFOS_realisations.png', dpi=400, bbox_inches='tight')
+plt.savefig('PFOS_realisations-galactic.png', dpi=400, bbox_inches='tight')
 plt.show()
 
