@@ -68,7 +68,7 @@ color_tabl = [colors_85, colors_90, colors_95]
 
 markers = ['D', 'o', '*', 'h']
 
-legends = ['$\zeta = 0.8$', '$\zeta = 0.9$', '$\zeta = 1.0$']
+legends = ['$\zeta = 1.0$', '$\zeta = 0.9$', '$\zeta = 0.8$']
 
 
 '''
@@ -118,6 +118,7 @@ for ll, lmc in enumerate([8.5, 9.0, 9.5]):
     plt.show()
 '''
 
+'''
 for ll, lmc in enumerate([8.5, 9.0, 9.5]):
     
     fig, axs = plt.subplots(nrows=1, ncols=2, figsize=(15, 5))
@@ -127,7 +128,7 @@ for ll, lmc in enumerate([8.5, 9.0, 9.5]):
     plotconfig(fig, axs, fgw)
     
     legend_patch= []
-    for dd, zeta in enumerate([0.8, 0.9, 1.0]):
+    for dd, zeta in enumerate([1.0, 0.9, 0.8]):
         OSarray = np.zeros((realisations, bins))
         SNarray = np.zeros((realisations, bins))
         for i in range(realisations):
@@ -148,17 +149,15 @@ for ll, lmc in enumerate([8.5, 9.0, 9.5]):
         SN_avg = np.average(SNarray, axis=0)
         SN_range = np.max(SNarray, axis=0) - SN_avg
         
-        '''
-        # old verison with OS/dOS
-        axs[0].errorbar(np.log10(test_frequencies)+dd*0.01, OS_avg, yerr = OS_range,
-                       ls='', markersize=0, capsize=3, linewidth=3, elinewidth=3,
-                       color=color_tabl[ll][dd])
-        axs[1].errorbar(np.log10(test_frequencies)+dd*0.01, SN_avg, yerr = SN_range,
-                       ls='', markersize=0, capsize=3, linewidth=3, elinewidth=3,
-                       color=color_tabl[ll][dd])
-        '''
-
         
+        # old verison with OS/dOS
+        #axs[0].errorbar(np.log10(test_frequencies)+dd*0.01, OS_avg, yerr = OS_range,
+        #               ls='', markersize=0, capsize=3, linewidth=3, elinewidth=3,
+        #               color=color_tabl[ll][dd])
+        #axs[1].errorbar(np.log10(test_frequencies)+dd*0.01, SN_avg, yerr = SN_range,
+        #               ls='', markersize=0, capsize=3, linewidth=3, elinewidth=3,
+        #               color=color_tabl[ll][dd])
+            
         
         
         # new version with spread of distribution
@@ -182,8 +181,77 @@ for ll, lmc in enumerate([8.5, 9.0, 9.5]):
     plt.legend(legend_patch, legends, loc = 'upper left')
     plt.savefig('PFOS_realisations_{}_new.png'.format(lmc), dpi=400, bbox_inches='tight')
     plt.show()
+'''       
+
+
+
+
+#### ALL TOGETHER IN ONE ####
+def plotconfig_new(fig, axs, fgw):
+    for i in range(3):
+        axs[i][0].axvline(fgw*1e9, ls=':', color='dimgray')
+        axs[i][0].axvline(0.9*fgw*1e9, ls=':', color='darkgray')
+        axs[i][0].axvline(0.8*fgw*1e9, ls=':', color='darkgray')
+        axs[i][1].axvline(fgw*1e9, ls=':', color='dimgray')
+        axs[i][1].axvline(0.9*fgw*1e9, ls=':', color='darkgray')
+        axs[i][1].axvline(0.8*fgw*1e9, ls=':', color='darkgray')
+        
+        axs[i][0].set_ylabel('$P(f)$', fontsize=14)
+        axs[i][1].set_ylabel(r'$\overline{P} / (P_\mathrm{max}-P_\mathrm{min})$', fontsize=14)
+    
+    axs[2][0].set_xlabel('$f_\mathrm{gw}$ / nHz' , fontsize=14)
+    axs[2][1].set_xlabel('$f_\mathrm{gw}$ / nHz' , fontsize=14)
+    axs[2][0].set_ylabel('$P(f)$', fontsize=14)
+    axs[2][1].set_ylabel(r'$\overline{P} / (P_\mathrm{max}-P_\mathrm{min})$', fontsize=14)
+    
+    return None
         
 
 
+fig, axs = plt.subplots(nrows=3, ncols=2, figsize=(10, 13), sharex = True)
+plt.subplots_adjust(wspace=0.02, hspace=0.1)
+axs[0][1].yaxis.set_label_position("right")
+axs[0][1].yaxis.tick_right() 
 
+for ll, lmc in enumerate([8.5, 9.0, 9.5]):
+    axs[ll][1].yaxis.set_label_position("right")
+    axs[ll][1].yaxis.tick_right() 
+    legend_patch= []
+    
+    for dd, zeta in enumerate([1.0, 0.9, 0.8]):
+        OSarray = np.zeros((realisations, bins))
+        SNarray = np.zeros((realisations, bins))
+        for i in range(realisations):
+            run_dir = 'run_{}/noisemarginalised/'.format(i+1)
+            data = np.loadtxt(run_dir + 'OS_spectrum_CGW{}_zeta{}_NM.txt'.format(lmc, zeta))
+            OS, SN = distribution(data, test_frequencies)
+            OSarray[i], SNarray[i] = OS, SN
+ 
+        # produce ranges for plotting
+        OS_avg = np.average(OSarray, axis=0)
+        OS_range = np.max(OSarray, axis=0) - OS_avg
+        SN_avg = np.average(SNarray, axis=0)
+        SN_range = np.max(SNarray, axis=0) - SN_avg
+        
+       
+        # new version with spread of distribution
+        axs[ll][0].errorbar(test_frequencies*1e9+dd*0.5, OS_avg, yerr = OS_range,
+                       ls='', markersize=0, capsize=3, linewidth=3, elinewidth=3,
+                       color=color_tabl[ll][dd])
+        
+        axs[ll][1].errorbar(test_frequencies*1e9, OS_avg/OS_range,
+                        ls='', linewidth=3, elinewidth=3, marker=markers[dd],
+                        color=color_tabl[ll][dd], label='$\zeta = {}$'.format(zeta))
+        
+        legend_patch.append(plt.Line2D((0,0), (0,0), ls='none', marker=markers[dd], color=color_tabl[ll][dd]))
+        
+          
+    
+    
+    axs[ll][1].legend(loc = 'upper right')
+
+plotconfig_new(fig, axs, fgw)
+
+plt.savefig('ring-PFOS_realisations.png', dpi=400, bbox_inches='tight')
+plt.show()
 
