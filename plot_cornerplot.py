@@ -88,8 +88,12 @@ if __name__=='__main__':
     params = list(np.loadtxt(args.dir + args.parameter, dtype=str))
     pars = args.pars
 
-    colors = ['#5F9EA0', 'r', 'cyan', '#6199AE']
-    linestyles = ['-', ':', '-.', '--']
+    colors = {'8.5': ['#5F9EA0', 'r', 'cyan', '#6199AE'],
+              '8.7': ['#5F9EA0', 'r', 'cyan', '#6199AE'],
+              '9.0': ['#5F9EA0', 'r', 'cyan', '#6199AE'],
+              '9.5': ['#5F9EA0', 'r', 'cyan', '#6199AE']
+             }
+    linestyles = [':', '-', '-.', '--']
  
     print('\nCreating a cornerplot with {} chains \n'.format(number_chains))
 
@@ -118,11 +122,11 @@ if __name__=='__main__':
             names = params[pars[0]:pars[1]]
             lbls = [labels[parname] for parname in names]
 
-            cc.add_chain(chain_segment, parameters = lbls, name=args.names[ii], color= colors[ii], linestyle=linestyles[ii])
+            cc.add_chain(chain_segment, parameters = lbls, name=args.names[ii], color= colors[str(args.lmc)][ii], linestyle=linestyles[ii])
 
         else:
             lbls = [labels[parname] for parname in params]
-            cc.add_chain(chain_final, parameters = lbls, name=args.names[ii], color= colors[ii], linestyle=linestyles[ii])
+            cc.add_chain(chain_final, parameters = lbls, name=args.names[ii], color= colors[str(args.lmc)][ii], linestyle=linestyles[ii])
 
 
      
