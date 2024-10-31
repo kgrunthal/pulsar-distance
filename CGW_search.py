@@ -237,11 +237,12 @@ def set_up_global_options():
     parser.add_argument('--psrTerm', action="store_true", default=False, help='Simulate CGW with or without pulsar term')
     parser.add_argument('--pd', type=float, default=1.0)
     
+    parser.add_argument('--run_sampler', action="store_true", default=False, help='run the MCMC chain')
     parser.add_argument('--analysis', action="store_true", default=False, help='Save cornerplot from the MCMC run')
     parser.add_argument('--use_distance', action="store_true", default=False, help='Use the randomly drawn distance')
     parser.add_argument('--sample_pdist', action="store_true", default=False, help='Use the randomly drawn distance')
 
-    parser.add_argument('--Nsample', type=int, default=1e7, help='number of MCMC draws')
+    parser.add_argument('--Nsample', type=int, default=1e6, help='number of MCMC draws')
     return parser.parse_args()
 
 
@@ -281,7 +282,9 @@ def PTA_model(psrs, ptamodel, psrTerm=True, pdist=1., sample_pdist=False):
             log10_h = parameter.Uniform(-16, -11)('log10_h')        # strain amplitude
             log10_fgw = parameter.Uniform(-8.5, -6.5)('log10_fgw')    # gw frequency
             phase0 = parameter.Uniform(0, 2*np.pi)('phase0')        # gw phase
+            #phase0 = parameter.Constant(np.pi)('phase0')
             psi = parameter.Uniform(0, np.pi)('psi')                # gw polarization 
+            #psi = parameter.Constant(np.pi/2.)('psi')
             cos_inc = parameter.Uniform(-1, 1)('cos_inc')           # inclination of binary with respect to Earth
 
             if psrTerm == True:
@@ -433,20 +436,22 @@ def main():
         PTA = PTA_model(ePSRs, args.ptamodel, psrTerm=args.psrTerm, pdist=args.pd)
     
     
-    print(PTA.params) 
-    x0 = np.hstack([p.sample() for p in PTA.params])
-    iteration = 0
+    print(PTA.params)
     
-    #print('... looking for a suitable initial sample, iteration {}'.format(iteration), end = '\r', flush=True)
-    #while PTA.get_lnlikelihood(x0) < 0. or PTA.get_lnprior(x0) == float(-np.inf):
-    #    iteration += 1
-    #    x0 = np.hstack([p.sample() for p in PTA.params])
-    #    print('\r ... looking for a suitable initial sample, iteration {}'.format(iteration), end = '\r',flush=True)
-    #print(' \n ... found a sample' , flush = True)
+    if args.run_sampler == True:
+        x0 = np.hstack([p.sample() for p in PTA.params])
+        iteration = 0
+    
+        #print('... looking for a suitable initial sample, iteration {}'.format(iteration), end = '\r', flush=True)
+        #while PTA.get_lnlikelihood(x0) < 0. or PTA.get_lnprior(x0) == float(-np.inf):
+        #    iteration += 1
+        #    x0 = np.hstack([p.sample() for p in PTA.params])
+        #    print('\r ... looking for a suitable initial sample, iteration {}'.format(iteration), end = '\r',flush=True)
+        #print(' \n ... found a sample' , flush = True)
 
     
-    smpl = sampler.setup_sampler(PTA, outdir=outD)
-    smpl.sample(x0, args.Nsample, SCAMweight=60, AMweight=0, DEweight=30)#, burn=int(0.3*args.Nsample))
+        smpl = sampler.setup_sampler(PTA, outdir=outD)
+        smpl.sample(x0, args.Nsample, SCAMweight=60, AMweight=0, DEweight=30)#, burn=int(0.3*args.Nsample))
     
     if args.analysis == True:
         _ = produce_output(outdir = outD)

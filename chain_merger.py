@@ -36,19 +36,19 @@ def set_up_global_options():
 
 if __name__=='__main__':
     args = set_up_global_options()
-    
+    analysis_folder = '/CGWsearch_noPT/' 
     MCMCfolder_list = sorted(glob.glob(args.path + args.basestring + '*'))
     print(MCMCfolder_list)
     MCMCfolder = []
     for folder in MCMCfolder_list:
-        chainfile = Path(folder + '/CGWsearch_noPT/chain_1.txt')
+        chainfile = Path(folder + analysis_folder + '/chain_1.txt')
         if chainfile.exists():
             MCMCfolder.append(folder)
         else:
             print('Skip', folder)
 
     # initialise full chain with first folder
-    chain_raw = np.loadtxt(MCMCfolder[0] + '/CGWsearch_noPT/chain_1.txt')
+    chain_raw = np.loadtxt(MCMCfolder[0] + analysis_folder + '/chain_1.txt')
     
     burn = int(0.3*chain_raw.shape[0])
     chain = chain_raw[burn:]
@@ -60,7 +60,7 @@ if __name__=='__main__':
     chain_full = chain_thinned.copy()
     
     for folder in MCMCfolder[1:]:
-        chain_raw = np.loadtxt(folder + '/CGWsearch_noPT/chain_1.txt')
+        chain_raw = np.loadtxt(folder + analysis_folder + '/chain_1.txt')
         
         burn = int(0.3*chain_raw.shape[0])
         chain = chain_raw[burn:]

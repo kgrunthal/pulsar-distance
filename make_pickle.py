@@ -54,6 +54,11 @@ def S(A, gamma, f):
     A_c = (A**2)/(12*np.pi**2.)
     return A_c*((f/fc)**(-1*gamma))*(fc**(-3.))
 
+
+def kappa(lmc, lmc_ref = 8.7):
+    ratio = 10**(lmc - lmc_ref)
+    return ratio**(5/3)
+
 def singlebin(amp, gamma, f_window, f):
     spectrum = 1e-50*np.ones(len(f))
     window = [ii for ii in range(len(f)) if f[ii] > f_window[0] and f[ii] < f_window[1]]
@@ -725,7 +730,7 @@ def createFreq(
     return f
 
 
-def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=True, phase_approx=True, evolve=False, Filter=False, f0=None, distance_fix = False):
+def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=True, phase_approx=True, evolve=False, Filter=False, f0=None, distance_fix = False, scale_to_87 =False):
     ePSRs = []
     sgn = signal.split(',')
     print('psrTerm=', psrTerm)
@@ -756,12 +761,17 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
             elif s=='CGW':
                 print(fgw)
                 for n in range(int(Ncgw)):
+                    if scale_to_87 == True:
+                        dlum = kappa(np.log10(Mc[n])) * 15.
+                    else:
+                        dlum = 15.
+
                     ADD_CGW(ltp,
                             #np.pi, 0., #CGWtheta CGWphi isotropic
                             #0., 0., #CGWtheta CGWphi ring,perpendicular
                             np.pi/2., np.pi, #Violin plot test
                             #0.3*np.pi, 0., #CGWtheta CGWphi ring,test
-                            Mc[n], 15., fgw[n],
+                            Mc[n], dlum, fgw[n],
                             #np.pi, np.pi, np.pi,    # OS analysis
                             np.pi, np.pi/2., np.pi/2.,  # Phi0, Psi, i
                             pdist = pdistances[ii],
@@ -886,6 +896,7 @@ def set_up_global_options():
     parser.add_argument('--zeta', type=float, default=1.0)
     parser.add_argument('--pdistance', type=float, default=1.0)
     parser.add_argument('--pdist_fix', action="store_true", default=False, help='create fixed pulsar distances')
+    parser.add_argument('--scale_to_87', action="store_true", default=False, help='scale strain amplitude to log10Mc = 8.7')
 
     return parser.parse_args()
 
@@ -928,7 +939,8 @@ def main():
     ePSRs = prime_pulsars(PSRs, distances,
                           args.signal,
                           args.ncgw, fgw, mc, zeta = args.zeta,
-                          Filter=False, psrTerm = args.psrTerm, evolve=False, phase_approx=True, distance_fix = args.pdist_fix)
+                          Filter=False, psrTerm = args.psrTerm, evolve=False, phase_approx=True, distance_fix = args.pdist_fix,
+                          scale_to_87 = args.scale_to_87)
 
     with open(args.outdir+'psrs.pkl', 'wb') as psrpickle:
         pickle.dump(ePSRs, psrpickle)

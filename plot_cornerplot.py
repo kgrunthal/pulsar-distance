@@ -98,17 +98,18 @@ if __name__=='__main__':
     for ii, chain in enumerate(args.chain):
         print('... on chain', ii+1)
         chain_raw = np.loadtxt(args.dir + chain)
+        #np.random.shuffle(chain_raw)
         
         if args.burn != 0.:
             burn = int(args.burn*chain_raw.shape[0])
             chain_burn = chain_raw[burn:]
 
             corr_length, mean, sigma = acor.acor(chain_burn.T)
-            chain_final = chain_burn[::int(corr_length)]
+            chain_final = chain_burn #[::int(corr_length)]
         else:
             cl, _, _ = acor.acor(chain_raw.T)
-            chain_final = chain_raw[::int(cl/10)]
-            print('chain {} - correlation length: {}'.format(ii, cl))
+            chain_final = chain_raw #[::int(cl/10)]
+            #print('chain {} - correlation length: {}'.format(ii, cl))
 
 
 

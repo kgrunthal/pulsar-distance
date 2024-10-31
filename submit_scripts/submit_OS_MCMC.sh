@@ -1,10 +1,11 @@
 #!/bin/bash
 
 #PAR_DIR=/u/kgrunthal/HD/par/isotropic/
-PAR_DIR=/u/kgrunthal/HD/par/ring/
+PAR_DIR=/u/kgrunthal/HD/ska_sim/par_20/
+#PAR_DIR=/u/kgrunthal/HD/par/ring/
 RESULT_DIR=/u/kgrunthal/HD/out/
 
-#: <<'END_COMMENT'
+: <<'END_COMMENT'
 # different zeta
 for i in {1..50}; do
 for lmc in 8.5 9.0 9.5 ; do
@@ -36,13 +37,13 @@ for lmc in 8.5 9.0 9.5 ; do
     done
 done
 done
-#END_COMMENT
+END_COMMENT
 
 
 
 ################################
 
-: <<'END_COMMENT'
+#: <<'END_COMMENT'
 for i in {11..50}; do
 for lmc in 8.5 9.0 9.5; do
     for pd in 1.0 1.5 2.0; do
@@ -78,7 +79,7 @@ for lmc in 8.5 9.0 9.5; do
 done
 done
 
-END_COMMENT
+#END_COMMENT
 
 #############################
 

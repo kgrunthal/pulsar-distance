@@ -1,38 +1,40 @@
 #!/bin/bash
 
 #:<< END_COMMENT
-for i in {1..100}; do
-#for lmc in 8.5 9.0 9.5; do
-for lmc in 8.8; do
-#for pd in 1.0 1.5 2.0; do
-for pd in 4.0; do
-    MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_newparams_CGW$lmc\_pd$pd\_$i\/
+for i in {1..50}; do
+for lmc in 9.0 9.5; do
+#for lmc in 8.7; do
+for pd in 1.0 2.0; do
+#for pd in 1.0 4.0; do
+    #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_newparams_CGW$lmc\_pd$pd\_$i\/
+    MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_scaleto87_CGW$lmc\_pd$pd\_$i\/
+
     NAME=CGW_$lmc\_$pd
+
     RESULT_DIR_noPT=$MCMC_OUTDIR/CGWsearch_noPT/
-    RESULT_DIR_PT=$MCMC_OUTDIR/CGWsearch_PT/
-    RESULT_DIR_PT_pphase=$MCMC_OUTDIR/CGWsearch_PT_pphase/
+    RESULT_DIR_noPT_fixparam=$MCMC_OUTDIR/CGWsearch_noPT_fixPhi0Psi/
+
 
     if [ ! -d "$RESULT_DIR_noPT/" ]; then
          mkdir $RESULT_DIR_noPT
     fi
 
-    #if [ ! -d "$RESULT_DIR_PT/" ]; then
-    #     mkdir $RESULT_DIR_PT
+    #if [ ! -d "$RESULT_DIR_noPT/" ]; then
+    #     mkdir $RESULT_DIR_noPT_fixPhi0Psi/
     #fi
 
-    #if [ ! -d "$RESULT_DIR_PT_pphase/" ]; then
-    #     mkdir $RESULT_DIR_PT_pphase
-    #fi
 
-    
-    sbatch -p short.q --time=04:00:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/CGW_noPT.out --error=$MCMC_OUTDIR/slurm_output/CGW_noPT.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 CGW_search.py --basedir $MCMC_OUTDIR --outdir $RESULT_DIR_noPT --ptamodel TM,WN,CGW --analysis --use_distance"
+    ### all parameters ###
+    # sampling
+    sbatch -p short.q --time=04:00:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/CGW_noPT.out --error=$MCMC_OUTDIR/slurm_output/CGW_noPT.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 CGW_search.py --basedir $MCMC_OUTDIR --outdir $RESULT_DIR_noPT --ptamodel TM,WN,CGW --analysis --use_distance --run_sampler"
 
-     
-#    sbatch -p short.q --time=03:00:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/CGW_PT_pphase.out --error=$MCMC_OUTDIR/slurm_output/CGW_PT_pphase.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 CGW_search.py --basedir $MCMC_OUTDIR --outdir $RESULT_DIR_PT_pphase --ptamodel TM,WN,CGW --pd $pd --psrTerm --analysis --use_distance" 
+    # analysis only 
+#    sbatch -p short.q --time=00:10:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/chain_analysis.out --error=$MCMC_OUTDIR/slurm_output/chain_analysis.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 CGW_search.py --basedir $MCMC_OUTDIR --outdir $RESULT_DIR_noPT --ptamodel TM,WN,CGW --analysis --use_distance"
 
-#    sbatch -p short.q --time=00:30:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/CGW_PT_analysis.out --error=$MCMC_OUTDIR/slurm_output/CGW_PT_analysis.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 CGW_search.py --basedir $MCMC_OUTDIR --outdir $RESULT_DIR_PT --ptamodel TM,WN,CGW --pd $pd --psrTerm --analysis --use_distance --sample_pdist"
 
-#    singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 CGW_search.py --basedir $MCMC_OUTDIR --outdir $RESULT_DIR_PT --ptamodel TM,WN,CGW --pd $pd --psrTerm --analysis --use_distance --Nsample 50000 --sample_pdist
+    ### fix Phi0 and Psi ### 
+    # sampling
+#    sbatch -p short.q --time=04:00:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/CGW_noPT_fixPhi0Psi.out --error=$MCMC_OUTDIR/slurm_output/CGW_noPT_fixPhi0Psi.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 CGW_search.py --basedir $MCMC_OUTDIR --outdir $RESULT_DIR_noPT --ptamodel TM,WN,CGW --analysis --use_distance --run_sampler"
 
 done
 done
