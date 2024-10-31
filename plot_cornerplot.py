@@ -72,7 +72,7 @@ def set_up_global_options():
     parser.add_argument('--names', type=str, nargs='*', default=None,
                         help='name of the chains')
 
-    parser.add_argument('--lmc', type=float, default = None, help='percentage of chain to cut')
+    parser.add_argument('--lmc', type=float, nargs='*', default = None, help='logmc')
     parser.add_argument('--burn', type=float, default = 0.3, help='percentage of chain to cut')
     parser.add_argument('--result', type=str, default=None, help='Directory for the output')
     parser.add_argument('--parameter', type=str, default=None, help='Name of parameter file')
@@ -88,11 +88,12 @@ if __name__=='__main__':
     params = list(np.loadtxt(args.dir + args.parameter, dtype=str))
     pars = args.pars
 
-    colors = {'8.5': ['#5F9EA0', 'r', 'cyan', '#6199AE'],
+    colors = {'8.5': ['mediumpurple', 'mediumorchid', 'plum'],
               '8.7': ['#5F9EA0', 'r', 'cyan', '#6199AE'],
-              '9.0': ['#5F9EA0', 'r', 'cyan', '#6199AE'],
-              '9.5': ['#5F9EA0', 'r', 'cyan', '#6199AE']
+              '9.0': ['navy', 'tab:blue', 'skyblue'],
+              '9.5': ['green', 'limegreen' , 'lawngreen'] 
              }
+
     linestyles = [':', '-', '-.', '--']
  
     print('\nCreating a cornerplot with {} chains \n'.format(number_chains))
@@ -118,15 +119,18 @@ if __name__=='__main__':
 
 
         if pars is not None:
-            chain_segment = chain_final[:,pars[0]:pars[1]]
-            names = params[pars[0]:pars[1]]
-            lbls = [labels[parname] for parname in names]
+            chain_segment = np.zeros((len(chain_final[:,0]), len(pars)) )
+            lbls = []
+            for j, n in enumerate(pars):
+                chain_segment[:, j] = chain_final[:,n]
+                lbls.append(labels[params[j]])
+            
 
-            cc.add_chain(chain_segment, parameters = lbls, name=args.names[ii], color= colors[str(args.lmc)][ii], linestyle=linestyles[ii])
+            cc.add_chain(chain_segment, parameters = lbls, name=args.names[ii], color= colors[str(args.lmc[ii])][ii], linestyle=linestyles[ii])
 
         else:
             lbls = [labels[parname] for parname in params]
-            cc.add_chain(chain_final, parameters = lbls, name=args.names[ii], color= colors[str(args.lmc)][ii], linestyle=linestyles[ii])
+            cc.add_chain(chain_final, parameters = lbls, name=args.names[ii], color= colors[str(args.lmc[ii])][ii], linestyle=linestyles[ii])
 
 
      
@@ -138,7 +142,7 @@ if __name__=='__main__':
 
     out = args.dir + args.result
 
-    if args.lmc is not None:
+    if args.lmc is not None and len(args.lmc) == 1:
         truthvals = injected_values(22.3e-9, args.lmc)
         truthdict = {}
         for p in params:
