@@ -11,6 +11,7 @@ import os, glob, json, sys, argparse
 import matplotlib
 #matplotlib.use('GTK3Agg')
 import matplotlib.pyplot as plt
+import matplotlib.colors as clr
 import scipy.linalg as sl
 import acor
 from chainconsumer import ChainConsumer
@@ -88,13 +89,13 @@ if __name__=='__main__':
     params = list(np.loadtxt(args.dir + args.parameter, dtype=str))
     pars = args.pars
 
-    colors = {'8.5': ['mediumpurple', 'mediumorchid', 'plum'],
-              '8.7': ['#5F9EA0', 'r', 'cyan', '#6199AE'],
-              '9.0': ['navy', 'tab:blue', 'skyblue'],
-              '9.5': ['green', 'limegreen' , 'lawngreen'] 
+    colors = {'8.5': [clr.to_hex('mediumpurple'), clr.to_hex('mediumorchid'), clr.to_hex('plum')],
+              '8.7': [clr.to_hex('firebrick'), clr.to_hex('coral')],
+              '9.0': [clr.to_hex('navy'), clr.to_hex('tab:blue'), clr.to_hex('skyblue')],
+              '9.5': [clr.to_hex('green'), clr.to_hex('limegreen') , clr.to_hex('lawngreen')] 
              }
 
-    linestyles = [':', '-', '-.', '--']
+    linestyles = ['-', '-', '-.', '--']
  
     print('\nCreating a cornerplot with {} chains \n'.format(number_chains))
 
@@ -102,6 +103,7 @@ if __name__=='__main__':
     cc = ChainConsumer()
     for ii, chain in enumerate(args.chain):
         print('... on chain', ii+1)
+
         chain_raw = np.loadtxt(args.dir + chain)
         #np.random.shuffle(chain_raw)
         
@@ -141,9 +143,9 @@ if __name__=='__main__':
                  summary=args.summary, sigma2d=False)
 
     out = args.dir + args.result
-
-    if args.lmc is not None and len(args.lmc) == 1:
-        truthvals = injected_values(22.3e-9, args.lmc)
+    
+    if args.lmc is not None and np.all(np.array(args.lmc) == args.lmc[0]):
+        truthvals = injected_values(22.3e-9, args.lmc[0])
         truthdict = {}
         for p in params:
             truthdict[labels[p]] = truthvals[p]
@@ -154,7 +156,7 @@ if __name__=='__main__':
     else:
         fig = cc.plotter.plot(legend=True, filename=out)
 
-    fig.savefig(out)
+    fig.savefig(out, bbox_inches='tight')
 
 
     
