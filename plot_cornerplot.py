@@ -125,7 +125,7 @@ if __name__=='__main__':
             lbls = []
             for j, n in enumerate(pars):
                 chain_segment[:, j] = chain_final[:,n]
-                lbls.append(labels[params[j]])
+                lbls.append(labels[params[n]])
             
 
             cc.add_chain(chain_segment, parameters = lbls, name=args.names[ii], color= colors[str(args.lmc[ii])][ii], linestyle=linestyles[ii])
