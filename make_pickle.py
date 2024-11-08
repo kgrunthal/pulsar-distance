@@ -921,6 +921,7 @@ def main():
     #toaerr = 0.01 # in us
 
     if args.pdist_fix == True:
+        #np.random.seed(42)
         #distances = np.random.uniform(0.8*args.pdistance, 1.2*args.pdistance, len(parfiles))
         distances = np.random.uniform(args.pdistance-0.2, args.pdistance+0.2, len(parfiles))
     else:

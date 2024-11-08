@@ -233,7 +233,7 @@ def make_fake_pulsar(phi, theta, DIR=""):
     
     output += "RAJ           %s 0\n"%RAJ
     output += "DECJ          %s 0\n"%DECJ
-    print(output)
+    #print(output)
     period = 0.001*np.random.uniform(1,5) #seconds
     output += "F0            %0.10f 0\n"%(1.0/period)
     
@@ -249,7 +249,32 @@ def make_fake_pulsar(phi, theta, DIR=""):
     output += "MODE 1\n"
     
     
-    filename = "%s%s.par"%(DIR,name)
+    filename = "%s%s.par"%(DIR+'/par_fix/',name)
+    with open(filename,'w') as FILE:
+        FILE.write(output)
+
+
+    output = "PSR           %s\n"%name
+
+    output += "RAJ           %s 1\n"%RAJ
+    output += "DECJ          %s 1\n"%DECJ
+    #print(output)
+    period = 0.001*np.random.uniform(1,5) #seconds
+    output += "F0            %0.10f 1\n"%(1.0/period)
+
+    output += "PEPOCH        55000.0\n"
+    output += "POSEPOCH      55000.0\n"
+
+    dist = np.random.uniform(0.1,3) #kpc
+    #output += "PX            %0.5f 1\n"%(1.0/dist)
+
+    output += "EPHEM         DE440\n"
+
+    output += "CLK           TT(BIPM2021)\n"
+    output += "MODE 1\n"
+
+
+    filename = "%s%s.par"%(DIR+'/par/', name)
     with open(filename,'w') as FILE:
         FILE.write(output)
 
@@ -293,7 +318,7 @@ def make_parfiles(Npsr, distribution='isotropic', datadir=''):
         phis, thetas = generate_ska_pulsars(Npsr, datadir, plots=False)
         
     for i,n in enumerate(np.arange(Npsr)):
-        make_fake_pulsar(phis[i], thetas[i], DIR=datadir+'par/')
+        make_fake_pulsar(phis[i], thetas[i], DIR=datadir)
     
     return None
 
@@ -303,12 +328,13 @@ def make_parfiles(Npsr, distribution='isotropic', datadir=''):
 ##############################################################################
 ##############################################################################
 
-datadir = "./"
+datadir = sys.argv[1]
 
 
 
 # 1. create pulsars
-#subprocess.run("mkdir {}".format(datadir+'par').split(' '))
+subprocess.run("mkdir {}".format(datadir+'/par').split(' '))
+subprocess.run("mkdir {}".format(datadir+'/par_fix').split(' '))
 
-make_parfiles(int(sys.argv[1]), distribution='ring', datadir=datadir)
+make_parfiles(int(sys.argv[2]), distribution='ring', datadir=datadir)
 

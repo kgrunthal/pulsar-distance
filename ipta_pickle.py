@@ -504,7 +504,7 @@ def prime_pulsars(psrs, pdistances, signal, noisedict,
                     ADD_CGW(ltp,
                             np.pi/2., np.pi,
                             Mc[n], 15., fgw[n],
-                            np.pi, np.pi, np.pi,
+                            np.pi, np.pi/2., np.pi/2.,
                             pdist = pdistances[ii],
                             zeta = zeta,
                             psrTerm=psrTerm, phase_approx=phase_approx, evolve=evolve, pd_fix = distance_fix)
