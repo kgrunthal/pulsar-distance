@@ -61,8 +61,20 @@ def generate_ska_pulsars(Npsr, datadir, plots=True):
     ra, dec, z = np.zeros(Npsr), np.zeros(Npsr), np.zeros(Npsr)
     
     # heliocentric distance
-    x = np.random.power(3, size = Npsr)
-    dist = 10*np.ones(Npsr) - 5*x
+    
+    # larger than 5 kpc
+    #x = np.random.power(3, size = Npsr)
+    #dist = 10*np.ones(Npsr) - 5*x
+    
+    # similar to IPTA distribution
+    ipta_dict = json.load(open('./ipta_sim/metadata/pulsar_properties.json', 'r'))
+    
+    dist = np.array([ipta_dict[pkey]['dist_dm'] for pkey in ipta_dict.keys()])
+    offsets = np.random.uniform(-0.2, 0.3, len(dist))
+    
+    for kk, d in enumerate(dist):
+        dist[kk] = np.max([dist[kk], dist[kk] + offsets[kk]])
+        
     
     nmax_sparse = 5
     n_sparse = 0
