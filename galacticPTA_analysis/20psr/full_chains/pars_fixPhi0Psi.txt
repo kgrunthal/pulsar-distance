@@ -1,0 +1,6 @@
+cos_gwtheta
+cos_inc
+gwphi
+log10_Mc
+log10_fgw
+log10_h
