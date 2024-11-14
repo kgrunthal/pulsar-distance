@@ -8,8 +8,6 @@ Created on Tue May  9 16:00:16 2023
 
 import numpy as np
 import os, glob, json, sys, argparse
-import matplotlib
-#matplotlib.use('GTK3Agg')
 import matplotlib.pyplot as plt
 import matplotlib.colors as clr
 import scipy.linalg as sl
@@ -23,11 +21,23 @@ import scipy.constants as sc
 SOLAR2S = sc.G / sc.c**3 *1.98855e30
 MPC2S = sc.parsec / sc.c * 1e6
 
+###############################################################################
+#   font and label settings 
+
+plt.rcParams['font.family'] = "serif"
+#plt.rcParams['font.sans-serif'] = "Times"
+
+plt.rcParams['text.usetex']= False
+plt.rcParams['xtick.labelsize'] = 10.0
+plt.rcParams['ytick.labelsize'] = 10.0
+plt.rcParams['axes.labelsize'] = 20.0
+
+
 
 # names for nice labels
 labels = {
           'cos_gwtheta': r'cos$\theta_\mathrm{GW}$',
-          'cos_inc': r'cos$i$', 
+          'cos_inc': r'cos$\iota$', 
           'gwphi': r'$\phi_\mathrm{GW}$',
           'log10_Mc': r'log$_{10}M_\mathrm{c}$',
           'log10_fgw': r'log$_{10}f_\mathrm{GW}$',
@@ -78,6 +88,8 @@ def set_up_global_options():
     parser.add_argument('--result', type=str, default=None, help='Directory for the output')
     parser.add_argument('--parameter', type=str, default=None, help='Name of parameter file')
     parser.add_argument('--summary', action = 'store_true', help='show constrained parameter values')
+    parser.add_argument('--comparison', action = 'store_true', help='show constrained parameter values')
+
     return parser.parse_args()
 
 
@@ -89,12 +101,16 @@ if __name__=='__main__':
     params = list(np.loadtxt(args.dir + args.parameter, dtype=str))
     pars = args.pars
 
-    colors = {'8.5': [clr.to_hex('mediumpurple'), clr.to_hex('mediumorchid'), clr.to_hex('plum')],
-              '8.7': [clr.to_hex('firebrick'), clr.to_hex('coral')],
-              '9.0': [clr.to_hex('navy'), clr.to_hex('tab:blue'), clr.to_hex('skyblue')],
-              '9.5': [clr.to_hex('green'), clr.to_hex('limegreen') , clr.to_hex('lawngreen')] 
-             }
+    if args.comparison is not True:
+        colors = {'8.5': [clr.to_hex('mediumpurple'), clr.to_hex('mediumorchid'), clr.to_hex('plum')],
+                  '8.7': [clr.to_hex('darkslategray'), clr.to_hex('darkcyan'), clr.to_hex('darkturquoise')],
+                  '9.0': [clr.to_hex('navy'), clr.to_hex('tab:blue'), clr.to_hex('skyblue')],
+                  '9.5': [clr.to_hex('green'), clr.to_hex('limegreen') , clr.to_hex('lawngreen')] 
+                 }
 
+    else:
+        colors = {'8.7': [clr.to_hex('firebrick'), clr.to_hex('coral')]}
+    
     linestyles = ['-', '-', '-.', '--']
  
     print('\nCreating a cornerplot with {} chains \n'.format(number_chains))
@@ -140,7 +156,7 @@ if __name__=='__main__':
                  #show_contour_labels = False, contour_labels='confidence', contour_label_font_size=14,
                  #shade_gradient=[3.0], 
                  sigmas=[1,2], shade_alpha=0.6, linewidths=1.,
-                 summary=args.summary, sigma2d=False)
+                 summary=args.summary, sigma2d=False, serif=True)
 
     out = args.dir + args.result
     

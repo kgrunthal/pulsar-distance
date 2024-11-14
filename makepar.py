@@ -348,5 +348,5 @@ datadir = sys.argv[1]
 subprocess.run("mkdir {}".format(datadir+'/par').split(' '))
 subprocess.run("mkdir {}".format(datadir+'/par_fix').split(' '))
 
-make_parfiles(int(sys.argv[2]), distribution='ring', datadir=datadir)
+make_parfiles(int(sys.argv[2]), distribution='galactic', datadir=datadir)
 

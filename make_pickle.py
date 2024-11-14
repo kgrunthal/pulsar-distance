@@ -915,8 +915,9 @@ def main():
     parfiles = glob.glob(args.par+'/*.par')
 
     obstimes = np.arange(50000,53652,14)
-    toaerr = 0.1
-    
+    #toaerr = 0.1 #us
+    toaerr = 0.3
+     
     #obstimes = np.arange(50000,60000,14)
     #toaerr = 0.01 # in us
 

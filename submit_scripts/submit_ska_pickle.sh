@@ -5,9 +5,9 @@ RESULT_DIR=/u/kgrunthal/HD/out/
 
 
 for i in {1..50} ; do
-for lmc in 8.5 9.0 9.5; do
-#for lmc in 8.5; do    
-    for pd in full far ipta; do
+#for lmc in 8.7 9.0 9.5; do
+for lmc in 9.0; do    
+    for pd in full over2.0; do
         MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_SKA_WN_CGW_RA12hDEC0deg_$lmc\_$pd\_$i\/
         
         NAME=$lmc\_$pd

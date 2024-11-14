@@ -1,14 +1,14 @@
 #!/bin/bash
 
 #:<< END_COMMENT
-for i in {1..100}; do
-for lmc in 9.5; do
-#for lmc in 8.7; do
-for pd in 1.0 2.0; do
-#for pd in 1.0 4.0; do
+for i in {1..50}; do
+#for lmc in 9.5; do
+for lmc in 8.7; do
+#for pd in 1.0 2.0; do
+for pd in 1.0 4.0; do
     #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_newparams_CGW$lmc\_pd$pd\_$i\/
     #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_fixpd_CGW$lmc\_pd$pd\_$i\/
-    MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_galactic20_CGW$lmc\_pd$pd\_$i\/
+    MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_galactic20_300ns_CGW$lmc\_pd$pd\_$i\/
 
     NAME=CGW_$lmc\_$pd
 

@@ -504,7 +504,7 @@ def prime_pulsars(psrs, pdistances, signal, noisedict,
                     ADD_CGW(ltp,
                             np.pi/2., np.pi,
                             Mc[n], 15., fgw[n],
-                            np.pi, np.pi, np.pi,
+                            np.pi, np.pi/2., np.pi/2.,
                             pdist = pdistances[ii],
                             zeta = zeta,
                             psrTerm=psrTerm, phase_approx=phase_approx, evolve=evolve, pd_fix = distance_fix)
@@ -608,27 +608,38 @@ def main():
         WNdict = json.load(WNfile)
     WNfile.close()
     
-    
+    np.random.seed(42)
+    cadska = np.random.uniform(12,17, len(names))
+    np.random.seed()
+    i = 0 
     # simulate pulsars
     for par,name in zip(pars, names):
         if name in psr_list:
             start, end = pspec[name]['start'], pspec[name]['end']
             cad = pspec[name]['cad']
 
-            obstimes_0 = np.arange(start, end+cad, cad, dtype=np.float128)
-            obstimes_var = np.random.uniform(-0.25*cad, 0.25*cad, len(obstimes_0))
-            obstimes = obstimes_0 + obstimes_var
-        
+            #IPTA time
+            obstimes_00 = np.arange(start, 62137.0, cad, dtype=np.float128)
+            obstimes_var = np.random.uniform(-0.25*cad, 0.25*cad, len(obstimes_00))
+            obstimes_01 = obstimes_00 + obstimes_var
+            
+            #SKA time
+            obstimes_10 = np.arange(62137.0, 64328.0+cadska[i], cadska[i], dtype=np.float128)
+            obstimes_var = np.random.uniform(-0.25*cadska[i], 0.25*cadska[i], len(obstimes_10))
+            obstimes_11 = obstimes_10 + obstimes_var
+
+            obstimes = np.append(obstimes_01, obstimes_11)
             fpsr = LT.fakepulsar(parfile = par,
                                  obstimes = obstimes,
                                  toaerr = pspec[name]['toa_err'], iters=1)
         
             PSRs.append(fpsr)
             distances.append(pspec[name]['dist_dm'])
-        
+ 
         else:
             continue
    
+        i += 1
 
  
     print('SKA PULSARS')
