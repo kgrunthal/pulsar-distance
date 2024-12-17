@@ -1,0 +1,22 @@
+
+
+# folders #
+###########
+*/__pycache__/
+./tar/
+./par/
+**MCMCout_*CGW*/
+**.tar.gz
+**/full_chains/
+#############
+
+**.pkl
+**.mat
+**.npy
+**_NM.txt
+
+# files #
+#########
+chain_1.txt
+**/chain*.txt
+

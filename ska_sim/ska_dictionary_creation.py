@@ -38,7 +38,7 @@ efacs = np.random.uniform(np.min(np.array(EFACs)), np.max(np.array(EFACs)), 114)
 equads = np.random.uniform(np.min(np.array(EQUADs)), np.max(np.array(EQUADs)), 114)
 
 #toa_errs = np.random.uniform(4, 6, 114)
-toa_errs = np.random.uniform(0.1, 4, 114)
+toa_errs = np.random.uniform(0.1, 2, 114)
 
 temptoaerr = np.array([ipta_dict[key]['toa_err'] for key in ipta_dict.keys()]) + np.random.uniform(-0.1,0.1)
 toa_errs = np.array([np.max([0.1, x]) for x in temptoaerr])

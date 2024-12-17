@@ -1,0 +1,9 @@
+PSR           J0600+0000
+RAJ           06:00:00 0
+DECJ          +00:00:00 0
+F0            311.9169292929 0
+PEPOCH        55000.0
+POSEPOCH      55000.0
+EPHEM         DE440
+CLK           TT(BIPM2021)
+MODE 1

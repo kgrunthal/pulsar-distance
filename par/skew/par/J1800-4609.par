@@ -1,0 +1,9 @@
+PSR           J1800-4609
+RAJ           18:00:00 1
+DECJ          -46:09:52.04936644 1
+F0            282.5817599685 1
+PEPOCH        55000.0
+POSEPOCH      55000.0
+EPHEM         DE440
+CLK           TT(BIPM2021)
+MODE 1
