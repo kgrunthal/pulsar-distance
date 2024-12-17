@@ -599,7 +599,7 @@ def main():
             out_maxLH[ii] = OS_output
 
         np.savetxt(args.result + '.txt', out_maxLH, delimiter='\t')
-
+        '''
         print()
         print(50*'-' + '\n' + 50*'-')
         print('Calculating OS stats (noise draws)')
@@ -635,7 +635,7 @@ def main():
             out_noisedraws[int(3*ii+2)] = sn
 
         np.savetxt(args.result + '_NM.txt', out_noisedraws, delimiter='\t')
-
+        '''
 
     #------------------------------------------------------------
    

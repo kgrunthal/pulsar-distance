@@ -570,6 +570,7 @@ def main():
 
         print()
         print(50*'-' + '\n' + 50*'-')
+        '''
         print('Calculating OS stats (noise draws)')
         N = args.N
         print('...Iterating over {} chain draws'.format(N))
@@ -603,7 +604,7 @@ def main():
             out_noisedraws[int(3*ii+2)] = sn
         
         np.savetxt(args.result + '_NM.txt', out_noisedraws, delimiter='\t') 
-
+        '''
 
     #------------------------------------------------------------
 

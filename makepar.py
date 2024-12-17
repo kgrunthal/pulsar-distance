@@ -73,7 +73,11 @@ def generate_ska_pulsars(Npsr, datadir, plots=True):
     offsets = np.random.uniform(-0.2, 0.3, len(dist))
     
     for kk, d in enumerate(dist):
-        dist[kk] = np.max([dist[kk], dist[kk] + offsets[kk]])
+        d_temp = dist[kk] + offsets[kk]
+        if d_temp < 1.:
+            dist[kk] = np.random.uniform(1,7)
+        else:
+            dist[kk] = d_temp
         
     
     nmax_sparse = 5
@@ -341,12 +345,16 @@ def make_parfiles(Npsr, distribution='isotropic', datadir=''):
 ##############################################################################
 
 datadir = sys.argv[1]
-
+nPSR = int(sys.argv[2])
+distribution = sys.argv[3]
 
 
 # 1. create pulsars
+
+subprocess.run("mkdir {}".format(datadir).split(' '))
+
 subprocess.run("mkdir {}".format(datadir+'/par').split(' '))
 subprocess.run("mkdir {}".format(datadir+'/par_fix').split(' '))
 
-make_parfiles(int(sys.argv[2]), distribution='galactic', datadir=datadir)
+make_parfiles(nPSR, distribution=distribution, datadir=datadir)
 

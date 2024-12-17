@@ -730,23 +730,26 @@ def createFreq(
     return f
 
 
-def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=True, phase_approx=True, evolve=False, Filter=False, f0=None, distance_fix = False, scale_to_87 =False):
+def prime_pulsars(psrs, pdistances, signal, Ncgw, Fgw, Mc, zeta=None, psrTerm=True, phase_approx=True, evolve=False, Filter=False, f0=None, distance_fix = False, scale_to =None):
     ePSRs = []
     sgn = signal.split(',')
+    parameter_dict = {}
     print('psrTerm=', psrTerm)
     for ii, ltp in enumerate(psrs):
-        
+        parameter_dict[ltp.name] = {}
         LT.make_ideal(ltp)
         stoas_temp = ltp.stoas[:]
         
         outstr = ltp.name
         LT.add_efac(ltp, efac=1.0)
+        parameter_dict[ltp.name]['WN'] = {'efac': 1.0, 'equad': 0}
         outstr += ' added WN'
         
         for s in sgn:
             if s=='RN':
                 log10A = np.random.uniform(-14.,-12.)
                 gamma = np.random.uniform(1.7,2.2)
+                parameter_dict[ltp.name]['RN'] = np.array([[-14,-12], [1.7,2.2]])
 
                 #log10A = np.random.uniform(-14.,-11.)
                 #gamma = np.random.uniform(1.0,3.0)
@@ -759,24 +762,35 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
                 outstr += ' added CRN'
                 
             elif s=='CGW':
-                print(fgw)
+                print(Fgw)
                 for n in range(int(Ncgw)):
-                    if scale_to_87 == True:
-                        dlum = kappa(np.log10(Mc[n])) * 15.
+                    if scale_to is not None:
+                        dlum = kappa(np.log10(Mc[n]), lmc_ref = scale_to) * 15.
                     else:
                         dlum = 15.
+                    print('dlum is', dlum)
+                    #CGWtheta, CGWphi = 0., 0.			# ring, perpendicular
+                    #CGWtheta, CGWphi = np.pi, 0                 # OS isotropic, galactic, IPTA
+                    CGWtheta, CGWphi = np.pi/2, np.pi           # MCMC recovery simulations
 
+
+                    mc = Mc[n]
+                    fgw = Fgw[n]
+                    #Phi0, Psi, iota = np.pi, np.pi, np.pi	# OS analysis
+                    Phi0, Psi, iota = np.pi, np.pi/2., np.pi/2.	# MCMC recovery simulations
+                    pdist = pdistances[ii]
+                    
                     ADD_CGW(ltp,
-                            #np.pi, 0., #CGWtheta CGWphi isotropic
-                            #0., 0., #CGWtheta CGWphi ring,perpendicular
-                            np.pi/2., np.pi, #Violin plot test
-                            #0.3*np.pi, 0., #CGWtheta CGWphi ring,test
-                            Mc[n], dlum, fgw[n],
-                            #np.pi, np.pi, np.pi,    # OS analysis
-                            np.pi, np.pi/2., np.pi/2.,  # Phi0, Psi, i
+                            CGWtheta, CGWphi,
+                            mc, dlum, fgw,
+                            Phi0, Psi, iota,
                             pdist = pdistances[ii],
                             zeta = zeta,
                             psrTerm=psrTerm, phase_approx=phase_approx, evolve=evolve, pd_fix = distance_fix)
+
+                    parameter_dict[ltp.name]['CGW{}'.format(n)] = {'theta': CGWtheta, 'phi': CGWphi, 'log_mc': np.log10(mc), 'log_fgw': np.log10(fgw), 'dlum': dlum,
+                                                                   'Phi0': Phi0, 'Psi': Psi, 'iota': iota, 'zeta': zeta, 'dist_p': pdistances[ii],
+                                                                   'psrTerm': str(psrTerm), 'phase_approx': str(phase_approx), 'evolve':str(evolve)}
                     outstr += ' added CGW psrterm={} evolve={}, pdist_fix={}, {}'.format(psrTerm, evolve, distance_fix, n+1)
             
             
@@ -877,7 +891,7 @@ def prime_pulsars(psrs, pdistances, signal, Ncgw, fgw, Mc, zeta=None, psrTerm=Tr
     for p in psrs:
         ePSRs.append(Pulsar(p))
         
-    return ePSRs
+    return ePSRs, parameter_dict
 
 
 
@@ -896,7 +910,7 @@ def set_up_global_options():
     parser.add_argument('--zeta', type=float, default=1.0)
     parser.add_argument('--pdistance', type=float, default=1.0)
     parser.add_argument('--pdist_fix', action="store_true", default=False, help='create fixed pulsar distances')
-    parser.add_argument('--scale_to_87', action="store_true", default=False, help='scale strain amplitude to log10Mc = 8.7')
+    parser.add_argument('--scale_to', type=float, default=None, help='scale strain amplitude to log10Mc = 8.7')
 
     return parser.parse_args()
 
@@ -938,11 +952,11 @@ def main():
     fgw = np.array(args.fgw)*1e-9
     mc = 10**np.array(args.lmc)
 
-    ePSRs = prime_pulsars(PSRs, distances,
+    ePSRs, parameter_dict = prime_pulsars(PSRs, distances,
                           args.signal,
                           args.ncgw, fgw, mc, zeta = args.zeta,
                           Filter=False, psrTerm = args.psrTerm, evolve=False, phase_approx=True, distance_fix = args.pdist_fix,
-                          scale_to_87 = args.scale_to_87)
+                          scale_to = args.scale_to)
 
     with open(args.outdir+'psrs.pkl', 'wb') as psrpickle:
         pickle.dump(ePSRs, psrpickle)
@@ -950,6 +964,11 @@ def main():
     with open(args.outdir+'distances.json', 'w') as f:
         json.dump(pd_dict, f, indent=4)
     f.close()
+
+    with open(args.outdir+'injected_parameters.json', 'w') as ipj:
+        json.dump(parameter_dict, ipj, indent=4)
+    ipj.close()
+
 
     psrpickle.close()
     print('Simulation done')

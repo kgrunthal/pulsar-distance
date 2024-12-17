@@ -4,7 +4,7 @@
 for i in {1..50}; do
 
 #for lmc in 8.5 9.0 9.5; do
-for lmc in 9.0; do
+for lmc in 8.7 9.0; do
 
 #for pd in low; do
 #for pd in low mid high; do
@@ -37,7 +37,11 @@ for pd in full over2.0; do
         #sbatch -p long.q --time=06:00:00 --mem=20GB --output=$MCMC_OUTDIR/slurm_output/CGW_noPT.out --error=$MCMC_OUTDIR/slurm_output/CGW_noPT.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 CGW_search_IPTA-SKA.py --basedir $MCMC_OUTDIR --outdir $RESULT_DIR_noPT --ptamodel TM,WN,CGW --noisefile /u/kgrunthal/HD/ipta_sim/WN_dictionary.json --analysis --use_distance"
 
         # SKA
-        sbatch -p long.q --time=10:00:00 --mem=20GB --output=$MCMC_OUTDIR/slurm_output/CGW_noPT.out --error=$MCMC_OUTDIR/slurm_output/CGW_noPT.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 CGW_search_IPTA-SKA.py --basedir $MCMC_OUTDIR --outdir $RESULT_DIR_noPT --ptamodel TM,WN,CGW --noisefile /u/kgrunthal/HD/ska_sim/FULL_WN_dictionary.json --analysis --use_distance"
+        # with sampling
+        #sbatch -p long.q --time=10:00:00 --mem=20GB --output=$MCMC_OUTDIR/slurm_output/CGW_noPT.out --error=$MCMC_OUTDIR/slurm_output/CGW_noPT.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 CGW_search_IPTA-SKA.py --basedir $MCMC_OUTDIR --outdir $RESULT_DIR_noPT --ptamodel TM,WN,CGW --noisefile /u/kgrunthal/HD/ska_sim/FULL_WN_dictionary.json --analysis --run --use_distance"
+
+        # without sampling
+        sbatch -p short.q --time=00:20:00 --mem=20GB --output=$MCMC_OUTDIR/slurm_output/CGW_noPT_analysis.out --error=$MCMC_OUTDIR/slurm_output/CGW_noPT_analysis.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 CGW_search_IPTA-SKA.py --basedir $MCMC_OUTDIR --outdir $RESULT_DIR_noPT --ptamodel TM,WN,CGW --noisefile /u/kgrunthal/HD/ska_sim/FULL_WN_dictionary.json --analysis --use_distance"
     fi
  
 

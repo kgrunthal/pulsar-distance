@@ -1,15 +1,16 @@
 #!/bin/bash
 
 #:<< END_COMMENT
-for i in {1..50}; do
-#for lmc in 9.5; do
+for i in {1..100}; do
+#for lmc in 9.0; do
 for lmc in 8.7; do
 #for pd in 1.0 2.0; do
 for pd in 1.0 4.0; do
     #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_newparams_CGW$lmc\_pd$pd\_$i\/
     #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_fixpd_CGW$lmc\_pd$pd\_$i\/
-    MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_galactic20_300ns_CGW$lmc\_pd$pd\_$i\/
-
+    #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_galactic20_300ns_CGW$lmc\_pd$pd\_$i\/
+    #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_galactic20_scaleto8.7_CGW$lmc\_pd$pd\_$i/
+    MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_5h_CGW$lmc\_pd$pd\_$i/
     NAME=CGW_$lmc\_$pd
 
     RESULT_DIR_noPT=$MCMC_OUTDIR/CGWsearch_noPT/

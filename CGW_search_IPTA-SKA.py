@@ -238,7 +238,8 @@ def set_up_global_options():
 
     parser.add_argument('--psrTerm', action="store_true", default=False, help='Simulate CGW with or without pulsar term')
     parser.add_argument('--pd', type=float, default=1.0)
-    
+
+    parser.add_argument('--run', action="store_true", default=False, help='run the MCMC')
     parser.add_argument('--analysis', action="store_true", default=False, help='Save cornerplot from the MCMC run')
     parser.add_argument('--use_distance', action="store_true", default=False, help='Use the randomly drawn distance')
     parser.add_argument('--sample_pdist', action="store_true", default=False, help='Use the randomly drawn distance')
@@ -464,9 +465,10 @@ def main():
     #    print('\r ... looking for a suitable initial sample, iteration {}'.format(iteration), end = '\r',flush=True)
     #print(' \n ... found a sample' , flush = True)
 
+    if args.run == True:
+        smpl = sampler.setup_sampler(PTA, outdir=outD)
+        smpl.sample(x0, args.Nsample, SCAMweight=60, AMweight=0, DEweight=30)#, burn=int(0.3*args.Nsample))
     
-    smpl = sampler.setup_sampler(PTA, outdir=outD)
-    smpl.sample(x0, args.Nsample, SCAMweight=60, AMweight=0, DEweight=30)#, burn=int(0.3*args.Nsample))
     
     if args.analysis == True:
         _ = produce_output(outdir = outD)

@@ -1,17 +1,17 @@
 #!/bin/bash
 
 #PAR_DIR=/u/kgrunthal/HD/par/isotropic/
-PAR_DIR=/u/kgrunthal/HD/ska_sim/par_20/
+#PAR_DIR=/u/kgrunthal/HD/ipta_sim/par/all/
 #PAR_DIR=/u/kgrunthal/HD/par/ring/
-RESULT_DIR=/u/kgrunthal/HD/out/
+PAR_DIR=/u/kgrunthal/HD/ska_sim/par_20/
 
 : <<'END_COMMENT'
 # different zeta
-for i in {1..50}; do
+for i in {51..100}; do
 for lmc in 8.5 9.0 9.5 ; do
     for zeta in 0.8 0.9 1.0 ; do
-        RESULT_DIR=/u/kgrunthal/HD/out/WN_CGW_zeta/run_$i\/
-        MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_ring_CGW$lmc\_zeta$zeta\_$i\/
+        RESULT_DIR=/u/kgrunthal/HD/out/WN_CGW_zeta/
+        MCMC_OUTDIR=/u/kgrunthal/HD/OS_simulations/ring_20/MCMCout_ring_CGW$lmc\_zeta$zeta\_$i\/
         #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_RNCGW$lmc\_earth/
         OUTFILE=OS_spectrum_CGW$lmc\_zeta$zeta
         NAME=OS_$lmc\_$zeta
@@ -44,16 +44,22 @@ END_COMMENT
 ################################
 
 #: <<'END_COMMENT'
-for i in {11..50}; do
-for lmc in 8.5 9.0 9.5; do
-    for pd in 1.0 1.5 2.0; do
-    #for pd in low mid high over1.0 over1.5 over2.0; do
-        RESULT_DIR=/u/kgrunthal/HD/out/20PSR-galactic/
-        #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_isotropic_singleRN_CGW$lmc\_pd$pd\_$i\/
-        MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_IPTA20_CGW$lmc\_pd$pd\_$i/
-        #MCMC_OUTDIR=/u/kgrunthal/HD/IPTA_CGW-RA12hDEC0deg/MCMCout_IPTA_WN_CGW_RA12hDEC0deg_$lmc\_$pd\_$i/
+for i in {1..100}; do
+#for lmc in 8.5 9.0 9.5; do
+for lmc in 8.7; do
+    #for pd in 1.0 1.5 2.0; do
+    for pd in 1.0 4.0; do
+    #for pd in full over2.0; do
+        #RESULT_DIR=/u/kgrunthal/HD/out/IPTA_OS/
+        #RESULT_DIR=/u/kgrunthal/HD/out/WN_CGW_pd/
+        #RESULT_DIR=/u/kgrunthal/HD/out/galactic_scaleto8.7/
+        RESULT_DIR=/u/kgrunthal/HD/out/galactic_h5/
 
-        OUTFILE=OS_spectrum_IPTA20_CGW$lmc\_pd$pd
+        #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_galactic20_scaleto8.7_CGW$lmc\_pd$pd\_$i\/
+        MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_galactic20_5h_CGW$lmc\_pd$pd\_$i/
+        #MCMC_OUTDIR=/u/kgrunthal/HD/OS_simulations/isotropic_20/MCMCout_isotropic_CGW$lmc\_pd$pd\_$i/
+        #MCMC_OUTDIR=/u/kgrunthal/HD/OS_simulations/galactic_20/MCMCout_galactic_CGW$lmc\_pd$pd\_$i/
+        OUTFILE=OS_spectrum_CGW$lmc\_pd$pd
         NAME=$lmc\_$pd\_spec
 
         if [ ! -d "$MCMC_OUTDIR/" ]; then
@@ -63,7 +69,11 @@ for lmc in 8.5 9.0 9.5; do
         if [ ! -d "$MCMC_OUTDIR/slurm_output" ]; then
             mkdir $MCMC_OUTDIR/slurm_output
         fi
-        
+
+        if [ ! -d "$MCMC_OUTDIR/PFOS" ]; then
+            mkdir $MCMC_OUTDIR/PFOS
+        fi
+
         if [ ! -d "$RESULT_DIR/" ]; then
             mkdir $RESULT_DIR
         fi
@@ -73,7 +83,7 @@ for lmc in 8.5 9.0 9.5; do
         fi
 
 
-        sbatch -p short.q --time=01:00:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/spectrum.out --error=$MCMC_OUTDIR/slurm_output/spectrum.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 /u/kgrunthal/HD/HD_with_OS.py --par $PAR_DIR --outdir $MCMC_OUTDIR/ --result $RESULT_DIR/run_$i\/$OUTFILE --psrpickle $MCMC_OUTDIR/psrs.pkl --ptamodel TM,WN,CRN_fs --OStype spectrum --N 1000"
+        sbatch -p short.q --time=02:00:00 --mem=12GB --output=$MCMC_OUTDIR/slurm_output/spectrum.out --error=$MCMC_OUTDIR/slurm_output/spectrum.err --job-name=$NAME --wrap="singularity exec -B /scratch/kgrunthal/,/hercules/results/kgrunthal/,/u/kgrunthal/ /scratch/kgrunthal/MPTA_singularity/ python3 /u/kgrunthal/HD/HD_with_OS.py --par $PAR_DIR --outdir $MCMC_OUTDIR/PFOS/ --result $RESULT_DIR/run_$i\/$OUTFILE --psrpickle $MCMC_OUTDIR/psrs.pkl --ptamodel TM,WN,CRN_fs --OStype spectrum --N 1000"
 
     done
 done
