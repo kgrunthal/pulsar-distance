@@ -16,11 +16,10 @@ import os
 import scipy.constants as sc
 #import scipy.signal as signal
 import matplotlib.pyplot as plt
+import matplotlib.patches as patches
 
 from astropy import units as u
 from astropy.coordinates import SkyCoord
-
-from enterprise_extensions import model_utils as util
 
 
 plt.rcParams['font.family'] = "serif"
@@ -38,9 +37,12 @@ KPC2S = sc.parsec / sc.c * 1e3
 MPC2S = sc.parsec / sc.c * 1e6
 
 
+'''
+### FROM PICKLE ###
+from enterprise_extensions import model_utils as util
 
 
-def gw_frequencies(psr, gwtheta, gwphi, mc, dist, fgw):
+def gw_frequencies_psr(psr, gwtheta, gwphi, mc, dist, fgw):
     
     # convert units
     mc *= SOLAR2S  # convert from solar masses to seconds
@@ -58,8 +60,7 @@ def gw_frequencies(psr, gwtheta, gwphi, mc, dist, fgw):
 
     # various factors invloving GW parameters
     fac1 = 256 / 5 * mc ** (5 / 3) * w0 ** (8 / 3)
-
-
+    
     # pulsar location
     ptheta = psr.theta
     pphi = psr.phi
@@ -70,7 +71,7 @@ def gw_frequencies(psr, gwtheta, gwphi, mc, dist, fgw):
 
     cosMu = -np.dot(omhat, phat)
 
-    pd = psr._pdist[0]
+    pd = psr._pdist
     # convert units
     pd *= KPC2S  # convert from kpc to seconds
 
@@ -79,7 +80,6 @@ def gw_frequencies(psr, gwtheta, gwphi, mc, dist, fgw):
     omega_p = w0 * (1 + fac1 * pd * (1 - cosMu)) ** (-3 / 8)
             
     return omega / np.pi, omega_p / np.pi
-
 
 
 
@@ -148,7 +148,135 @@ plt.ylabel('f / nHz')
 
 plt.xlim(-1, len(PSRs)+2)
 plt.savefig('./frequency_distribution/' + args.folder.split('/')[-1] + '.png', dpi=400, bbox_inches='tight')
-    
+'''  
 
+
+### RAW ###
+
+colors_85= ['mediumpurple', 'mediumorchid', 'plum']  # 0.8, 0.9, 1.0
+#colors_87= ['darkred', 'red', 'orange']  # 0.8, 0.9, 1.0
+colors_87= ['darkslategray', 'darkcyan', 'darkturquoise']  # 0.8, 0.9, 1.0
+colors_90= ['navy', 'tab:blue', 'skyblue']  # 0.8, 0.9, 1.0
+colors_95= ['green', 'limegreen' , 'lawngreen']  # 0.8, 0.9, 1.0
+
+color_tabl = [colors_95, colors_90, colors_85]
+
+legend_names = ['$d_\mathrm{p} = 1.0$kpc', '$d_\mathrm{p} = 1.5$kpc', '$d_\mathrm{p} = 2.0$kpc']
+
+
+def gw_frequencies(ptheta, pphi, pdist, gwtheta, gwphi, mc, dist, fgw):
     
+    # convert units
+    mc *= SOLAR2S  # convert from solar masses to seconds
+    dist *= MPC2S  # convert from Mpc to seconds
+
+    # define initial orbital frequency
+    w0 = np.pi * fgw
+
+    # define variable for later use
+    cosgwtheta, cosgwphi = np.cos(gwtheta), np.cos(gwphi)
+    singwtheta, singwphi = np.sin(gwtheta), np.sin(gwphi)
     
+    # unit vectors to GW source
+    omhat = np.array([-singwtheta * cosgwphi, -singwtheta * singwphi, -cosgwtheta])
+    
+    # various factors invloving GW parameters
+    fac1 = 256 / 5 * mc ** (5 / 3) * w0 ** (8 / 3)
+    
+    # pulsar location
+    ptheta = ptheta
+    pphi = pphi
+
+    # use definition from Sesana et al 2010 and Ellis et al 2012
+    phat = np.array([np.sin(ptheta) * np.cos(pphi), np.sin(ptheta) * np.sin(pphi), np.cos(ptheta)])
+
+    cosMu = -np.dot(omhat, phat)
+
+    pd = pdist
+    pd *= KPC2S  # convert from kpc to seconds
+
+    # frequencies and phases
+    omega = w0
+    omega_p = w0 * (1 + fac1 * pd * (1 - cosMu)) ** (-3 / 8)
+            
+    return omega / np.pi, omega_p / np.pi
+
+
+def generate_isotropic_distribution(Npsr):
+    i = np.arange(0, Npsr, dtype=float) + 0.5
+    golden_ratio = (1 + 5**0.5)/2
+    costhetas = 1 - 2*i/Npsr
+    thetas = np.arccos(costhetas) - np.pi/2
+    phis = np.mod(2 * np.pi * i / golden_ratio, 2*np.pi)
+    
+    return thetas, phis
+
+
+# GW source details
+fgw = 22.3e-9
+gw_dist = 15
+gwtheta = np.pi
+gwphi = np.pi
+
+
+# PTA details
+Npsr = 20
+pthetas, pphis = generate_isotropic_distribution(Npsr)
+
+Tobs = 10*365.25*24*3600
+f_pta = 1/Tobs
+
+bin_min = 200
+
+fig, ax = plt.subplots(figsize=(8,5))
+
+
+for ll, lmc in enumerate([9.5, 9.0, 8.5]):
+    
+    legend_patches = []
+    for dd, pdist in enumerate([1.0, 1.5, 2.0]):
+        distances = pdist*np.ones(Npsr)
+        f_e, f_p = gw_frequencies(pthetas, pphis, distances, gwtheta, gwphi, 10**lmc, gw_dist, fgw)
+        _,_,patch = ax.hist(f_p*1e9, bins=7,
+                             color=color_tabl[ll][dd], alpha=0.8)
+        legend_patches.append(patch[0])
+        
+        bin_min_temp = int(np.min(f_p)/f_pta)
+        if bin_min_temp < bin_min:
+            bin_min = bin_min_temp
+
+    legend = ax.legend(legend_patches, legend_names,
+                       title='log$_{10}M_\mathrm{c}$ = '+ '{}'.format(lmc),
+                       bbox_to_anchor=(0.3+0.3*ll, -0.17),
+                       frameon=False) 
+    
+    fig.add_artist(legend)
+    
+bin_max = 1 + int(f_e/f_pta)
+
+for i in range(bin_min, bin_max):
+    ax.axvline(i*f_pta*1e9, ls='--', lw = 1, color='gray', zorder=0)
+    ax.text(i*f_pta*1e9, 10.5, '${}/T$'.format(i),
+             fontsize=9, color='gray', backgroundcolor='w',
+             ha='center')
+
+ax.axvline(f_e*1e9, lw=3, color='red')
+ax.text(f_e*1e9+0.2, 8, '$f_\mathrm{GW, Earth}$',
+         color='r', rotation='vertical', fontsize=12)
+
+# box for legend
+box = patches.Rectangle((0,0), 1, 1, fill=False, edgecolor='none',
+                                 visible=False)
+plt.legend([box, box], ['', ''], ncol=2, borderpad=4, columnspacing=25,
+           bbox_to_anchor=(0.93, -0.15))
+
+plt.ylim(0,11.5)
+plt.xlim(right=24)
+plt.xlabel('$f_\mathrm{GW}$ / nHz')
+plt.ylabel('number of pulsars')
+
+#plt.savefig('frequency_distribution-isotropic.png', dpi=400, bbox_inches='tight')
+plt.show()
+
+
+
