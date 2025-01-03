@@ -929,9 +929,10 @@ def main():
     parfiles = glob.glob(args.par+'/*.par')
 
     obstimes = np.arange(50000,53652,14)
-    #toaerr = 0.1 #us
-    toaerr = 0.3
-     
+    toaerr = 0.1 #us
+    #toaerr = 0.3
+    
+    # not in distance sim 
     #obstimes = np.arange(50000,60000,14)
     #toaerr = 0.01 # in us
 

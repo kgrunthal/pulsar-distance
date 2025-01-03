@@ -51,12 +51,13 @@ for lmc in 8.7; do
     for pd in 1.0 4.0; do
     #for pd in full over2.0; do
         #RESULT_DIR=/u/kgrunthal/HD/out/IPTA_OS/
-        #RESULT_DIR=/u/kgrunthal/HD/out/WN_CGW_pd/
-        #RESULT_DIR=/u/kgrunthal/HD/out/galactic_scaleto8.7/
-        RESULT_DIR=/u/kgrunthal/HD/out/galactic_h5/
+        #RESULT_DIR=/u/kgrunthal/HD/out/20PSR-galactic/
+        #RESULT_DIR=/u/kgrunthal/HD/out/galactic20_scaleto8.7/
+        RESULT_DIR=/u/kgrunthal/HD/out/galactic20_5h/
 
         #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_galactic20_scaleto8.7_CGW$lmc\_pd$pd\_$i\/
         MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_galactic20_5h_CGW$lmc\_pd$pd\_$i/
+        #MCMC_OUTDIR=/u/kgrunthal/HD/MCMCout_galactic20_CGW$lmc\_pd$pd\_$i/
         #MCMC_OUTDIR=/u/kgrunthal/HD/OS_simulations/isotropic_20/MCMCout_isotropic_CGW$lmc\_pd$pd\_$i/
         #MCMC_OUTDIR=/u/kgrunthal/HD/OS_simulations/galactic_20/MCMCout_galactic_CGW$lmc\_pd$pd\_$i/
         OUTFILE=OS_spectrum_CGW$lmc\_pd$pd
@@ -71,7 +72,7 @@ for lmc in 8.7; do
         fi
 
         if [ ! -d "$MCMC_OUTDIR/PFOS" ]; then
-            mkdir $MCMC_OUTDIR/PFOS
+            mkdir $MCMC_OUTDIR/PFOS/
         fi
 
         if [ ! -d "$RESULT_DIR/" ]; then
