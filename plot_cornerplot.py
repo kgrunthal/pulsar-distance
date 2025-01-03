@@ -58,11 +58,21 @@ labels = {
          }
 
 
+def kappa(lmc, lmc_ref = 8.7):
+    ratio = 10**(lmc - lmc_ref)
+    return ratio**(5/3)
 
-def injected_values(fgw, logMc):
+
+
+def injected_values(fgw, logMc, scale_to):
     Mc = (10**logMc)*SOLAR2S
-    dlum = 15*MPC2S
+    if scale_to is None:
+        dlum = 15*MPC2S
+    else:
+        dlum = kappa(logMc, lmc_ref = scale_to) * 15. *MPC2S
+
     h = 2 * Mc**(5/3) * (np.pi*fgw)**(2/3) /dlum
+
     return {'cos_gwtheta': np.cos(np.pi/2),
             'gwphi': np.pi,
             'log10_h': np.log10(h),
@@ -84,6 +94,8 @@ def set_up_global_options():
                         help='name of the chains')
 
     parser.add_argument('--lmc', type=float, nargs='*', default = None, help='logmc')
+    parser.add_argument('--scaleto', type=float, default = None, help='scaling to')
+
     parser.add_argument('--burn', type=float, default = 0.3, help='percentage of chain to cut')
     parser.add_argument('--result', type=str, default=None, help='Directory for the output')
     parser.add_argument('--parameter', type=str, default=None, help='Name of parameter file')
@@ -102,11 +114,17 @@ if __name__=='__main__':
     pars = args.pars
 
     if args.comparison is not True:
-        colors = {'8.5': [clr.to_hex('mediumpurple'), clr.to_hex('mediumorchid'), clr.to_hex('plum')],
-                  '8.7': [clr.to_hex('darkslategray'), clr.to_hex('darkcyan'), clr.to_hex('darkturquoise')],
-                  '9.0': [clr.to_hex('navy'), clr.to_hex('tab:blue'), clr.to_hex('skyblue')],
-                  '9.5': [clr.to_hex('green'), clr.to_hex('limegreen') , clr.to_hex('lawngreen')] 
-                 }
+        if args.scaleto is None:
+            colors = {'8.5': [clr.to_hex('mediumpurple'), clr.to_hex('mediumorchid'), clr.to_hex('plum')],
+                      '8.7': [clr.to_hex('darkslategray'), clr.to_hex('darkcyan'), clr.to_hex('darkturquoise')],
+                      '9.0': [clr.to_hex('navy'), clr.to_hex('tab:blue'), clr.to_hex('skyblue')],
+                      '9.5': [clr.to_hex('green'), clr.to_hex('limegreen') , clr.to_hex('lawngreen')] 
+                     }
+        else:
+            colors = {'9.0': [clr.to_hex('navy'), clr.to_hex('tab:blue'), clr.to_hex('skyblue')],
+                      '8.7': [clr.to_hex('green'), clr.to_hex('limegreen') , clr.to_hex('lawngreen')]
+                     }
+
 
     else:
         colors = {'8.7': [clr.to_hex('firebrick'), clr.to_hex('coral')]}
@@ -161,7 +179,7 @@ if __name__=='__main__':
     out = args.dir + args.result
     
     if args.lmc is not None and np.all(np.array(args.lmc) == args.lmc[0]):
-        truthvals = injected_values(22.3e-9, args.lmc[0])
+        truthvals = injected_values(22.3e-9, args.lmc[0], args.scaleto)
         truthdict = {}
         for p in params:
             truthdict[labels[p]] = truthvals[p]
