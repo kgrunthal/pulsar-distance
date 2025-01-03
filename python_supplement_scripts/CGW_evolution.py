@@ -189,31 +189,92 @@ def waveform(
 
 
 
+def fitted_curve(fitresult, TOAs, RA, DEC, dp):
+    fv = []
+    for ii, key in enumerate(fitresult.keys()):
+        fv.append(np.array([fitresult[key][0],
+                            fitresult[key][0] + fitresult[key][1],
+                            fitresult[key][0] + fitresult[key][2]])
+                  )
+    fv = np.array(fv)
 
+    # CGW #
+    dl = 15   #Mpc
+    
+    gwtheta = np.arccos(fv[0])
+    gwphi = fv[1]
+    inc = np.arccos(fv[2])
+    fgw = 10**fv[3]
+    mc = 10**fv[4]
+    h = 10**fv[5]
+    phase0 = fv[6]
+    psi = fv[7]
+
+    psrTerm = True
+    evolve = False
+    phase_approx = True
+    zeta = -1
+    
+    wv = np.zeros((3, len(TOAs)) )
+
+    for i in range(3):
+        res, omega = waveform(TOAs, RA, DEC, gwtheta[i], gwphi[i], mc[i], dl, fgw[i], phase0[i], psi[i], inc[i],
+                                pdist=pd, zeta=zeta, psrTerm = psrTerm, evolve=evolve, phase_approx=phase_approx)
+
+        wv[i] = res[1]
+    
+    return wv
+    
+
+    
+
+
+fit_result_1 = {'cos_gwtheta': np.array([-0.010, 0.028, -0.035]),
+                'gw_phi': np.array([3.157, 0.041, -0.033]),
+                'cosi': np.array([-0.001, 0.035, -0.030]),
+                'log10_fgw': np.array([-7.651, 0.0024, -0.0028]),
+                'log10_Mc': np.array([8.8, 0, 0]),
+                'log10_h': np.array([-13.838, 0.035, -0.041]),
+                'phi0': np.array([np.pi, 0, 0]),
+                'psi': np.array([np.pi/2, 0, 0])
+                }
+
+fit_result_4 = {'cos_gwtheta': np.array([-0.010, 0.18, -0.18]),
+                'gw_phi': np.array([3.14, 0.11, -0.14]),
+                'cosi': np.array([-0.006, 0.061, -0.052]),
+                'log10_fgw': np.array([-7.651, 0.002, -0.0029]),
+                'log10_Mc': np.array([8.8, 0, 0]),
+                'log10_h': np.array([-13.840, 0.047, -0.049]),
+                'phi0': np.array([np.pi, 0,0]),
+                'psi': np.array([np.pi/2, 0, 0])
+                }
+
+fit_results = [fit_result_1, fit_result_4]
 
 # Pulsar #
 name='J1514-1428'
-#RA, DEC = '00h24m47s', '-20d29m14s'       #J0024-2029
+RA, DEC = '00h24m47s', '-20d29m14s'       #J0024-2029
 RA, DEC = '15h14m47s', '-14d28m14s'       #J1514-1428
 
 
 TOAs = np.arange(50000, 53652, 14)
+#TOAs = np.arange(50000, 50000+18.08*365.25, 14)
 Tobs = (np.max(TOAs) - np.min(TOAs)) * 24*3600
 fobs = 1/Tobs
 pdist = 1.
 
-print(fobs)
+
 # CGW #
 gwtheta = np.pi/2.
 gwphi = np.pi
 
-mc = 10**9.5
+mc = 10**8.8
 dl = 15         #Mpc
 fgw = 22.3*1e-9
 
 phase0 = np.pi
-psi = np.pi
-inc = np.pi
+psi = np.pi/2
+inc = np.pi/2
 
 psrTerm = True
 evolve = False
@@ -221,16 +282,52 @@ phase_approx = True
 zeta = -1
 
 
-residuals, omega = waveform(TOAs, RA, DEC, gwtheta, gwphi, mc, dl, fgw, phase0, psi, inc,
-                     pdist=1.0, zeta=zeta, psrTerm = psrTerm, evolve=evolve, phase_approx=phase_approx)
 
-plt.plot(TOAs, residuals[0], color='k', ls = '-', lw=2)
-plt.plot(TOAs, residuals[1], color='b', ls='--', label='Earth')
-plt.plot(TOAs, residuals[2], color = 'purple', ls = ':', label='Pulsar')
+fig,axs = plt.subplots(1,2, figsize = (15,5))
 
-plt.legend(loc='best')
+for i, pd in enumerate([1.0, 4.0]):
+    residuals, omega = waveform(TOAs, RA, DEC, gwtheta, gwphi, mc, dl, fgw, phase0, psi, inc,
+                     pdist=pd, zeta=zeta, psrTerm = psrTerm, evolve=evolve, phase_approx=phase_approx)
+
+    axs[i].plot(TOAs, residuals[0], color='k', ls = '-', lw=2)
+    axs[i].plot(TOAs, residuals[1], color='b', ls='--', label='Earth')
+    axs[i].plot(TOAs, residuals[2], color = 'purple', ls = ':', label='Pulsar')
+
+    axs[i].legend(loc='best')
+    
 plt.show()
 
+
+for i, pd in enumerate([1.0, 4.0]):
+    residuals, omega = waveform(TOAs, RA, DEC, gwtheta, gwphi, mc, dl, fgw, phase0, psi, inc,
+                     pdist=pd, zeta=zeta, psrTerm = psrTerm, evolve=evolve, phase_approx=phase_approx)
+
+    plt.plot(TOAs, residuals[0], ls = '-', lw=2, label=pd)
+    #plt.plot(TOAs, residuals[1], ls='-', label='Earth {}'.format(pd))
+    #plt.plot(TOAs, residuals[2], ls = '-', label='Pulsar {}'.format(pd))
+
+plt.legend(loc='best')
+    
+plt.show()
+
+
+print('FIT SOLUTION')
+fig,axs = plt.subplots(1,2, figsize = (15,5))
+for i, pd in enumerate([1.0, 4.0]):
+    residuals, omega = waveform(TOAs, RA, DEC, gwtheta, gwphi, mc, dl, fgw, phase0, psi, inc,
+                     pdist=pd, zeta=zeta, psrTerm = psrTerm, evolve=evolve, phase_approx=phase_approx)
+    #axs[i].plot(TOAs, residuals[0], color='darkgoldenrod', ls = '-', lw=2)
+    #axs[i].plot(TOAs, residuals[1], color='goldenrod', ls='--', label='Earth')
+    axs[i].plot(TOAs, residuals[2], color = 'gold', ls = '--', label='Pulsar')
+    
+    wv_f, wv_u, wv_l = fitted_curve(fit_results[i], TOAs, RA, DEC, pd)
+    
+    #axs[i].plot(TOAs, wv_f, color='darkblue', ls = '-', lw=2, label='Fit')
+    axs[i].plot(TOAs, wv_u, color='green', ls = '--', lw=2)
+    axs[i].plot(TOAs, wv_l, color='red', ls = '--', lw=2)
+    axs[i].legend(loc='best')
+    
+plt.show()
 
 
 
@@ -238,15 +335,16 @@ plt.show()
 ### evolve = False #####
 
 
-colors = ['mediumorchid', 'tab:blue', 'limegreen']  # 8.5, 9.0, 9.5
+colors = ['mediumorchid', 'firebrick', 'tab:blue', 'limegreen']  # 8.5, 9.0, 9.5
+#colors = ['mediumorchid', 'red', 'tab:blue', 'limegreen']  # 8.5, 9.0, 9.5
 distances = np.arange(0.5, 5, 0.01)
 
 
-fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(7, 9 y), sharex=True)
+fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(7, 9), sharex=True)
 plt.subplots_adjust(hspace=0.05)
 
 fgw_1 = 5e-9  #Hz
-for ii, lmc in enumerate([8.5,9.0,9.5]):
+for ii, lmc in enumerate([8.5,8.7,9.0,9.5]):
     f_e, f_p = np.zeros(len(distances)), np.zeros(len(distances))
     
     for i, dist in enumerate(distances):        
@@ -263,7 +361,7 @@ for f in range(1,3):
 
 
 fgw_2 = 22.3e-9  #Hz
-for ii, lmc in enumerate([8.5,9.0,9.5]):
+for ii, lmc in enumerate([8.5,8.7,9.0,9.5]):
     f_e, f_p = np.zeros(len(distances)), np.zeros(len(distances))
     
     for i, dist in enumerate(distances):        
@@ -276,20 +374,21 @@ for ii, lmc in enumerate([8.5,9.0,9.5]):
 axs[0].plot(distances, 1e9*f_e, label = 'earth term', color='k')
     
 for f in range(2,8):
+#for f in range(3,15):
     axs[0].axhline(1e9*f*fobs, ls=':', color='gray')
 
 
-axs[0].set_xlim(1.5, 5)
-axs[1].set_xlim(1.5, 5)
+axs[0].set_xlim(0.5, 5)
+axs[1].set_xlim(0.5, 5)
 axs[1].set_xlabel('Pulsar distance / kpc')
 axs[0].set_ylabel('$f_\mathrm{gw}$ / nHz')
 axs[1].set_ylabel('$f_\mathrm{gw}$ / nHz')
 plt.legend(bbox_to_anchor=(0.02,0.6))
-plt.savefig('CGW_FreqEvo_{}.png'.format(name), bbox_inches ='tight', dpi=400)
+#plt.savefig('CGW_FreqEvo_{}.png'.format(name), bbox_inches ='tight', dpi=400)
 plt.show()
+
+
 '''
-
-
 ### evolve = True ####
 
 residuals, omega = waveform(TOAs, RA, DEC, gwtheta, gwphi, mc, dl, fgw, phase0, psi, inc,

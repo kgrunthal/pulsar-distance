@@ -27,7 +27,7 @@ def omega_p_noevo(pd, mc=1e10, fgw=1e-8 , cosMu=0.):
     return omega_p-w0
 
 
-def omega_p_evo(toas, pd,  mc=10**9., fgw=5e-8 , cosMu=0.):
+def omega_p_evo(toas, pd,  mc=10**9.0, fgw=5e-8 , cosMu=0.):
     mc *= SOLAR2S  # convert from solar masses to seconds
     pd *= KPC2S
     toas = toas * 86400 
@@ -38,19 +38,26 @@ def omega_p_evo(toas, pd,  mc=10**9., fgw=5e-8 , cosMu=0.):
     omega = w0 * (1 - fac1 * toas) ** (-3 / 8)
     omega_p = w0 * (1 - fac1 * tp) ** (-3 / 8)
     
-    return omega-omega_p
+    return omega, omega_p
 
 distances = np.arange(0.5,2.5,0.5)
 
 toas = np.arange(50000,53652,14)
+toas = np.arange(50000,60000,14)
 
 for d in distances:
-    plt.plot(toas, omega_p_evo(toas, d), label='{} kpc'.format(d))
+    om = omega_p_evo(toas, d, fgw=22e-9)
+    #f = om/np.pi
+    #print(f[-1] - f[0])
+    plt.plot(toas, om[0], label='{} kpc'.format(d))
+    plt.plot(toas, om[1], label='{} kpc'.format(d))
+    
     
 plt.xlabel('TOA')
 plt.ylabel('$\omega_p - \omega_0$')
 plt.title('Mc = 1e8, fgw = {}'.format(5e-8))
 plt.legend(loc='best')
 plt.show()
+
 
 

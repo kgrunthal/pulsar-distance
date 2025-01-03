@@ -226,9 +226,13 @@ for ll, lmc in enumerate([8.5, 9.0, 9.5]):
         SNarray = np.zeros((realisations, bins))
         for i in range(realisations):
             run_dir = 'run_{}/noisemarginalised/'.format(i+1)
-            data = np.loadtxt(run_dir + 'OS_spectrum_CGW{}_zeta{}_NM.txt'.format(lmc, zeta))
-            OS, SN = distribution(data, test_frequencies)
-            OSarray[i], SNarray[i] = OS, SN
+            #data = np.loadtxt(run_dir + 'OS_spectrum_CGW{}_zeta{}_NM.txt'.format(lmc, zeta))
+            #OS, SN = distribution(data, test_frequencies)
+            #OSarray[i], SNarray[i] = OS, SN
+            
+            test = np.loadtxt('run_{}/maxLH/OS_spectrum_CGW{}_zeta{}.txt'.format(i+1, lmc, zeta)).transpose()
+            OSarray[i] = test[1]
+            
         print('DONE')
         # produce ranges for plotting
         OS_avg = np.average(OSarray, axis=0)
@@ -255,6 +259,6 @@ for ll, lmc in enumerate([8.5, 9.0, 9.5]):
 
 plotconfig_new(fig, axs, fgw)
 
-plt.savefig('ring-PFOS_realisations.png', dpi=400, bbox_inches='tight')
+#plt.savefig('ring-PFOS_realisations.png', dpi=400, bbox_inches='tight')
 plt.show()
 
